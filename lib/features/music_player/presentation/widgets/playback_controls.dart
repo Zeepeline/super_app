@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:super_app/core/theme/app_theme.dart';
 import '../controllers/player_ui_controller.dart';
@@ -32,7 +33,11 @@ class PlaybackControls extends StatelessWidget {
         children: [
           // Shuffle button
           IconButton(
-            onPressed: onShuffle,
+            onPressed: () {
+              onShuffle();
+              HapticFeedback.lightImpact();
+            },
+            tooltip: isShuffle ? 'Disable shuffle' : 'Enable shuffle',
             icon: Icon(
               Icons.shuffle,
               color: isShuffle
@@ -51,7 +56,11 @@ class PlaybackControls extends StatelessWidget {
           ),
           // Previous button
           IconButton(
-            onPressed: onSkipPrevious,
+            onPressed: () {
+              onSkipPrevious();
+              HapticFeedback.lightImpact();
+            },
+            tooltip: 'Previous track',
             icon: const Icon(
               Icons.skip_previous,
               color: Colors.white,
@@ -59,44 +68,62 @@ class PlaybackControls extends StatelessWidget {
             iconSize: 40,
           ),
           // Play/Pause button with pulse gradient
-          GestureDetector(
-            onTap: onPlayPause,
-            child: Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                  colors: [AppTheme.kPrimaryColor, AppTheme.kPrimaryContainerColor],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppTheme.kPrimaryContainerColor.withOpacity(0.4),
-                    blurRadius: 30,
-                    spreadRadius: 4,
+          Semantics(
+            label: isPlaying ? 'Pause' : 'Play',
+            button: true,
+            child: GestureDetector(
+              onTap: () {
+                onPlayPause();
+                HapticFeedback.mediumImpact();
+              },
+              child: Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: const LinearGradient(
+                    colors: [
+                      AppTheme.kPrimaryColor,
+                      AppTheme.kPrimaryContainerColor
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                ],
-              ),
-              child: Center(
-                child: Icon(
-                  isPlaying ? Icons.pause : Icons.play_arrow,
-                  color: AppTheme.kOnPrimaryContainerColor,
-                  size: 48,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.kPrimaryContainerColor.withOpacity(0.4),
+                      blurRadius: 30,
+                      spreadRadius: 4,
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Icon(
+                    isPlaying ? Icons.pause : Icons.play_arrow,
+                    color: AppTheme.kOnPrimaryContainerColor,
+                    size: 48,
+                  ),
                 ),
               ),
             ),
           ),
           // Next button
           IconButton(
-            onPressed: onSkipNext,
+            onPressed: () {
+              onSkipNext();
+              HapticFeedback.lightImpact();
+            },
+            tooltip: 'Next track',
             icon: const Icon(Icons.skip_next, color: Colors.white),
             iconSize: 40,
           ),
           // Repeat button
           IconButton(
-            onPressed: onRepeat,
+            onPressed: () {
+              onRepeat();
+              HapticFeedback.lightImpact();
+            },
+            tooltip: isRepeat ? 'Disable repeat' : 'Enable repeat',
             icon: Icon(
               Icons.repeat,
               color: isRepeat

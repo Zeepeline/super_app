@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/theme/app_theme.dart';
@@ -108,8 +109,13 @@ class MiniPlayer extends StatelessWidget {
                             ),
                           ),
                           IconButton(
-                            onPressed: () =>
-                                context.read<PlayerCubit>().toggleFavorite(),
+                            onPressed: () {
+                              context.read<PlayerCubit>().toggleFavorite();
+                              HapticFeedback.mediumImpact();
+                            },
+                            tooltip: track.isFavorite
+                                ? 'Remove from favorites'
+                                : 'Add to favorites',
                             icon: Icon(
                               track.isFavorite
                                   ? Icons.favorite
@@ -119,8 +125,11 @@ class MiniPlayer extends StatelessWidget {
                             ),
                           ),
                           IconButton(
-                            onPressed: () =>
-                                context.read<PlayerCubit>().togglePlayPause(),
+                            onPressed: () {
+                              context.read<PlayerCubit>().togglePlayPause();
+                              HapticFeedback.mediumImpact();
+                            },
+                            tooltip: track.isPlaying ? 'Pause' : 'Play',
                             icon: Icon(
                               track.isPlaying ? Icons.pause : Icons.play_arrow,
                               size: 32,
