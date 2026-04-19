@@ -39,17 +39,17 @@ class TrackModel extends TrackEntity {
     this.syncedLyricsField,
     this.plainLyricsField,
   }) : super(
-          id: idField,
-          title: titleField,
-          artist: artistField,
-          albumArtUrl: albumArtUrlField,
-          duration: durationField,
-          audioUrl: audioUrlField,
-          isFavorite: isFavoriteField,
-          localPath: localPathField,
-          syncedLyrics: syncedLyricsField,
-          plainLyrics: plainLyricsField,
-        );
+         id: idField,
+         title: titleField,
+         artist: artistField,
+         albumArtUrl: albumArtUrlField,
+         duration: durationField,
+         audioUrl: audioUrlField,
+         isFavorite: isFavoriteField,
+         localPath: localPathField,
+         syncedLyrics: syncedLyricsField,
+         plainLyrics: plainLyricsField,
+       );
 
   @override
   TrackModel copyWith({

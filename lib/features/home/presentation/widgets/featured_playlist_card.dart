@@ -30,9 +30,9 @@ class FeaturedPlaylistCard extends StatelessWidget {
           Text(
             playlist.title.toUpperCase(),
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -0.5,
-                ),
+              fontWeight: FontWeight.bold,
+              letterSpacing: -0.5,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

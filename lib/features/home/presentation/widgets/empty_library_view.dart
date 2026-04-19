@@ -48,10 +48,7 @@ class EmptyLibraryView extends StatelessWidget {
                         color: Color(0xFF00E5FF),
                         shape: BoxShape.circle,
                         boxShadow: [
-                          BoxShadow(
-                            color: Color(0xFF00E5FF),
-                            blurRadius: 10,
-                          ),
+                          BoxShadow(color: Color(0xFF00E5FF), blurRadius: 10),
                         ],
                       ),
                     ),
@@ -65,26 +62,29 @@ class EmptyLibraryView extends StatelessWidget {
               'THE CURATOR\'S\nSILENCE',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                    fontSize: 32,
-                    height: 1.0,
-                    letterSpacing: -1,
-                  ),
+                fontSize: 32,
+                height: 1.0,
+                letterSpacing: -1,
+              ),
             ),
             const SizedBox(height: 16),
             Text(
               'Your digital library is a blank canvas. Start importing your collection to define your rhythm.',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.white.withOpacity(0.5),
-                    height: 1.5,
-                  ),
+                color: Colors.white.withOpacity(0.5),
+                height: 1.5,
+              ),
             ),
             const SizedBox(height: 40),
             // Premium Button
             GestureDetector(
               onTap: onImportPressed,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(100),
                   border: Border.all(
@@ -104,10 +104,10 @@ class EmptyLibraryView extends StatelessWidget {
                     Text(
                       'IMPORT COLLECTION',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: AppTheme.kPrimaryColor,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.5,
-                          ),
+                        color: AppTheme.kPrimaryColor,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
+                      ),
                     ),
                   ],
                 ),

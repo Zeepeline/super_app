@@ -7,10 +7,13 @@ abstract class MusicRepository {
   Future<Either<Failure, TrackEntity>> getCurrentTrack();
 
   Future<Either<Failure, PlaylistEntity>> getCurrentPlaylist();
-  
+
   Future<void> initializePlayer();
 
-  Future<Either<Failure, TrackEntity>> playTrack(String trackId, {TrackEntity? track});
+  Future<Either<Failure, TrackEntity>> playTrack(
+    String trackId, {
+    TrackEntity? track,
+  });
 
   Future<Either<Failure, TrackEntity>> pauseTrack();
 

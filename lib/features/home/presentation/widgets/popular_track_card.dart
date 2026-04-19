@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/entities/track_entity.dart';
-import 'package:super_app/features/music_player/domain/entities/track_entity.dart' as player;
+import 'package:super_app/features/music_player/domain/entities/track_entity.dart'
+    as player;
 import 'package:super_app/features/music_player/presentation/cubit/player_cubit.dart';
 import 'package:super_app/features/music_player/presentation/pages/music_player_page.dart';
 
@@ -19,7 +20,10 @@ class PopularTrackCard extends StatelessWidget {
       artist: track.artist,
       albumArtUrl: track.albumArtUrl,
       audioUrl: track.audioUrl,
-      duration: const Duration(minutes: 3, seconds: 45), // Mock duration for now
+      duration: const Duration(
+        minutes: 3,
+        seconds: 45,
+      ), // Mock duration for now
       localPath: track.localPath,
     );
 
@@ -29,13 +33,20 @@ class PopularTrackCard extends StatelessWidget {
     // Navigate with slide-up transition
     Navigator.of(context).push(
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => const MusicPlayerPage(),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const MusicPlayerPage(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           const begin = Offset(0.0, 1.0);
           const end = Offset.zero;
           const curve = Curves.easeInOutCubic;
-          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-          return SlideTransition(position: animation.drive(tween), child: child);
+          var tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: curve));
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
         },
       ),
     );
@@ -64,7 +75,10 @@ class PopularTrackCard extends StatelessWidget {
                   width: 52,
                   height: 52,
                   color: AppTheme.kSurfaceContainerHighestColor,
-                  child: const Icon(Icons.music_note, color: AppTheme.kPrimaryColor),
+                  child: const Icon(
+                    Icons.music_note,
+                    color: AppTheme.kPrimaryColor,
+                  ),
                 ),
               ),
             ),
@@ -76,9 +90,9 @@ class PopularTrackCard extends StatelessWidget {
                   Text(
                     track.title.toUpperCase(),
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: -0.5,
-                        ),
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: -0.5,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -89,12 +103,13 @@ class PopularTrackCard extends StatelessWidget {
                 ],
               ),
             ),
-            Text(
-              track.duration,
-              style: Theme.of(context).textTheme.labelSmall,
-            ),
+            Text(track.duration, style: Theme.of(context).textTheme.labelSmall),
             const SizedBox(width: 8),
-            const Icon(Icons.more_horiz, color: AppTheme.kOnSurfaceVariantColor, size: 20),
+            const Icon(
+              Icons.more_horiz,
+              color: AppTheme.kOnSurfaceVariantColor,
+              size: 20,
+            ),
           ],
         ),
       ),

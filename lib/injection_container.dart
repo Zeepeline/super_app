@@ -135,10 +135,7 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   sl.registerFactory(() => AuthBloc(loginUseCase: sl()));
   sl.registerFactory(() => SearchBloc(getCategories: sl()));
   sl.registerFactory(
-    () => LibraryBloc(
-      getFavoriteTracks: sl(),
-      repository: sl(),
-    ),
+    () => LibraryBloc(getFavoriteTracks: sl(), repository: sl()),
   );
   sl.registerFactory(
     () => HomeBloc(

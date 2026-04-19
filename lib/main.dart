@@ -87,7 +87,7 @@ class AuthWrapper extends StatelessWidget {
   final RxBool _showOnboardingObs;
 
   AuthWrapper({super.key, required this.showOnboarding})
-      : _showOnboardingObs = showOnboarding.obs;
+    : _showOnboardingObs = showOnboarding.obs;
 
   void _finishOnboarding() async {
     final prefs = sl<SharedPreferences>();
@@ -142,12 +142,7 @@ class MainWrapper extends StatelessWidget {
               children: [const MiniPlayer(), _buildBottomNavigationBar()],
             ),
           ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: LiveActivityIsland(),
-          ),
+          Positioned(top: 0, left: 0, right: 0, child: LiveActivityIsland()),
         ],
       ),
     );
@@ -188,7 +183,10 @@ class MainWrapper extends StatelessWidget {
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.settings_outlined),
-                  activeIcon: Icon(Icons.settings, color: AppTheme.kPrimaryColor),
+                  activeIcon: Icon(
+                    Icons.settings,
+                    color: AppTheme.kPrimaryColor,
+                  ),
                   label: 'Settings',
                 ),
               ],

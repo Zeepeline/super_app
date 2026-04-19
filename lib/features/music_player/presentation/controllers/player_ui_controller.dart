@@ -10,14 +10,14 @@ import 'package:super_app/features/music_player/presentation/cubit/player_state.
 
 class PlayerUIController extends GetxController {
   final LyricsService _lyricsService = sl<LyricsService>();
-  
+
   // Track states mirrored from BLoC for fine-grained reactivity
   final Rxn<TrackEntity> currentTrack = Rxn<TrackEntity>();
   final RxBool isPlaying = false.obs;
   final RxBool showLyrics = false.obs;
   final RxBool isShuffle = false.obs;
   final RxBool isRepeat = false.obs;
-  
+
   // UI ONLY states
   final RxBool isAlbumArtHovered = false.obs;
   final RxBool isDragging = false.obs;
@@ -39,14 +39,14 @@ class PlayerUIController extends GetxController {
         showLyrics.value = state.showLyrics;
         isShuffle.value = state.isShuffle;
         isRepeat.value = state.isRepeat;
-        
+
         // Update lyrics if changed
         if (state.track.syncedLyrics != rawLyrics.value) {
           updateLyrics(state.track.syncedLyrics);
         }
       }
     });
-    
+
     // Initial state sync
     if (cubit.state is PlayerLoaded) {
       final state = cubit.state as PlayerLoaded;
@@ -86,9 +86,9 @@ class PlayerUIController extends GetxController {
       if (rawLyrics.value.isNotEmpty) rawLyrics.value = '';
       return;
     }
-    
+
     if (rawLyrics.value == lrc) return;
-    
+
     rawLyrics.value = lrc;
     lyrics.value = _lyricsService.parseLrc(lrc);
   }

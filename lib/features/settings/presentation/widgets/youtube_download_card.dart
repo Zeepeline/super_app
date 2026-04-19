@@ -37,9 +37,9 @@ class _YoutubeDownloadCardState extends State<YoutubeDownloadCard> {
         color: AppTheme.kSurfaceContainerColor,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: widget.isDownloading 
-            ? AppTheme.kPrimaryColor.withOpacity(0.5) 
-            : Colors.white.withOpacity(0.05),
+          color: widget.isDownloading
+              ? AppTheme.kPrimaryColor.withOpacity(0.5)
+              : Colors.white.withOpacity(0.05),
           width: 1,
         ),
       ),
@@ -54,7 +54,11 @@ class _YoutubeDownloadCardState extends State<YoutubeDownloadCard> {
                   color: Colors.red.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.download_for_offline, color: Colors.red, size: 24),
+                child: const Icon(
+                  Icons.download_for_offline,
+                  color: Colors.red,
+                  size: 24,
+                ),
               ),
               const SizedBox(width: 16),
               const Column(
@@ -70,10 +74,7 @@ class _YoutubeDownloadCardState extends State<YoutubeDownloadCard> {
                   ),
                   Text(
                     'Convert video to local MP3',
-                    style: TextStyle(
-                      color: Color(0xFFadaaaa),
-                      fontSize: 12,
-                    ),
+                    style: TextStyle(color: Color(0xFFadaaaa), fontSize: 12),
                   ),
                 ],
               ),
@@ -83,7 +84,11 @@ class _YoutubeDownloadCardState extends State<YoutubeDownloadCard> {
           if (widget.isDownloading) ...[
             Text(
               widget.stage ?? 'Processing...',
-              style: const TextStyle(color: AppTheme.kPrimaryColor, fontSize: 13, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                color: AppTheme.kPrimaryColor,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             const SizedBox(height: 12),
             ClipRRect(
@@ -102,10 +107,16 @@ class _YoutubeDownloadCardState extends State<YoutubeDownloadCard> {
               cursorColor: AppTheme.kPrimaryColor,
               decoration: InputDecoration(
                 hintText: 'Paste YouTube URL here...',
-                hintStyle: TextStyle(color: Colors.white.withOpacity(0.2), fontSize: 14),
+                hintStyle: TextStyle(
+                  color: Colors.white.withOpacity(0.2),
+                  fontSize: 14,
+                ),
                 filled: true,
                 fillColor: Colors.black.withOpacity(0.2),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
@@ -116,7 +127,9 @@ class _YoutubeDownloadCardState extends State<YoutubeDownloadCard> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: AppTheme.kPrimaryColor.withOpacity(0.5)),
+                  borderSide: BorderSide(
+                    color: AppTheme.kPrimaryColor.withOpacity(0.5),
+                  ),
                 ),
               ),
             ),
@@ -141,7 +154,10 @@ class _YoutubeDownloadCardState extends State<YoutubeDownloadCard> {
                 ),
                 child: const Text(
                   'DOWNLOAD & CONVERT',
-                  style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.5,
+                  ),
                 ),
               ),
             ),

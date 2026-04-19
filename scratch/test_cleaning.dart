@@ -1,4 +1,3 @@
-
 void main() {
   final titles = [
     "Blinding Lights [Official Music Video]",
@@ -17,7 +16,7 @@ void main() {
 
 String cleanMetadata(String text) {
   if (text.isEmpty) return text;
-  
+
   return text
       // Remove common YouTube tags in brackets/parentheses
       .replaceAll(RegExp(r'\(Official.*?\)', caseSensitive: false), '')
