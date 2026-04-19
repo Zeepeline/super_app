@@ -1,0 +1,27 @@
+Analyzing music_player...                                       
+
+warning • The value of the field '_isInitialized' isn't used • lib/features/music_player/data/datasources/music_local_datasource.dart:73:14 • unused_field
+   info • Don't invoke 'print' in production code • lib/features/music_player/data/repositories/music_repository_impl.dart:63:7 • avoid_print
+warning • The value of the local variable 'nextTrack' isn't used • lib/features/music_player/data/repositories/music_repository_impl.dart:153:13 • unused_local_variable
+warning • The value of the local variable 'prevTrack' isn't used • lib/features/music_player/data/repositories/music_repository_impl.dart:169:13 • unused_local_variable
+warning • The value of the local variable 'trackInQueue' isn't used • lib/features/music_player/data/repositories/music_repository_impl.dart:227:17 • unused_local_variable
+warning • Unused import: 'package:google_fonts/google_fonts.dart' • lib/features/music_player/presentation/pages/music_player_page.dart:4:8 • unused_import
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/pages/music_player_page.dart:55:48 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/pages/music_player_page.dart:57:57 • deprecated_member_use
+   info • 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead • lib/features/music_player/presentation/widgets/album_art_card.dart:22:15 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/album_art_card.dart:38:55 • deprecated_member_use
+warning • Unused import: 'package:super_app/features/music_player/domain/models/lyric_line.dart' • lib/features/music_player/presentation/widgets/lyrics_view.dart:4:8 • unused_import
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/lyrics_view.dart:76:42 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/lyrics_view.dart:96:35 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/lyrics_view.dart:111:35 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/lyrics_view.dart:119:37 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/playback_controls.dart:67:58 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/player_background.dart:24:44 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/player_background.dart:26:53 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/player_background.dart:54:47 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/player_background.dart:55:47 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/seek_bar.dart:48:71 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/seek_bar.dart:52:56 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/track_info.dart:68:61 • deprecated_member_use
+
+23 issues found. (ran in 2.2s)

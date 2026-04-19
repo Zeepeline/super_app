@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-dim": "#63ef82",
+                        "inverse-surface": "#fcf9f8",
+                        "secondary": "#7cfbb5",
+                        "secondary-fixed-dim": "#6deca8",
+                        "on-error-container": "#ffd2c8",
+                        "tertiary-fixed-dim": "#00d4ee",
+                        "on-secondary-fixed-variant": "#006940",
+                        "surface-bright": "#2c2c2c",
+                        "on-surface": "#ffffff",
+                        "inverse-primary": "#006e2d",
+                        "tertiary-dim": "#00d4ee",
+                        "tertiary-fixed": "#0fe3ff",
+                        "on-primary-fixed": "#004a1c",
+                        "tertiary-container": "#0fe3ff",
+                        "primary": "#72fe8f",
+                        "on-surface-variant": "#adaaaa",
+                        "on-tertiary": "#005762",
+                        "surface-dim": "#0e0e0e",
+                        "on-background": "#ffffff",
+                        "on-secondary": "#005e39",
+                        "on-tertiary-fixed": "#003840",
+                        "surface": "#0e0e0e",
+                        "secondary-fixed": "#7cfbb5",
+                        "outline": "#767575",
+                        "surface-container-highest": "#262626",
+                        "on-primary": "#005f26",
+                        "inverse-on-surface": "#565555",
+                        "on-tertiary-container": "#004d58",
+                        "surface-variant": "#262626",
+                        "primary-fixed-dim": "#63ef82",
+                        "background": "#0e0e0e",
+                        "surface-container": "#1a1a1a",
+                        "error-dim": "#d53d18",
+                        "secondary-container": "#006d42",
+                        "primary-fixed": "#72fe8f",
+                        "surface-container-low": "#131313",
+                        "surface-container-high": "#20201f",
+                        "on-primary-fixed-variant": "#006a2b",
+                        "surface-tint": "#72fe8f",
+                        "outline-variant": "#484847",
+                        "on-secondary-container": "#e2ffe9",
+                        "secondary-dim": "#6deca8",
+                        "on-primary-container": "#002a0c",
+                        "on-tertiary-fixed-variant": "#005763",
+                        "on-error": "#450900",
+                        "error": "#ff7351",
+                        "surface-container-lowest": "#000000",
+                        "tertiary": "#88ebff",
+                        "on-secondary-fixed": "#00492b",
+                        "error-container": "#b92902",
+                        "primary-container": "#1cb853"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #0e0e0e;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+        }
+        .editorial-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .glass-card {
+            background: rgba(38, 38, 38, 0.4);
+            backdrop-filter: blur(20px);
+        }
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#0e0e0e]/60 backdrop-blur-xl flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#72fe8f] cursor-pointer scale-95 active:opacity-80 transition-all">arrow_back</span>
+<h1 class="font-['Plus_Jakarta_Sans'] font-bold tracking-tight text-white text-xl">Settings</h1>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-headline font-extrabold tracking-tighter opacity-40">OBSIDIAN RHYTHM</span>
+</div>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-lg mx-auto space-y-8">
+<!-- Section 1: Compact User Profile -->
+<section class="">
+<div class="glass-card rounded-2xl p-4 flex items-center gap-4 border border-white/5">
+<div class="relative">
+<div class="absolute -inset-1 bg-primary/20 rounded-full blur-sm"></div>
+<img class="relative h-14 w-14 rounded-full object-cover border border-primary/30" data-alt="close-up portrait of a stylish young man" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIT6hbv4-EID8wL8_EszMQOsesWAS-KGBMsTqqMV8X9OQItULU-Rgzmb6VKahaFO9zq1jK8No2aREE8Mpwuanc9xmOOHkW8baCR1KYTOp-CgbHIjT5HxnYJuAu2fXpRwRd1Gf0vNe6w05VAkFdcyXWYhF5WL0Pt9K1Cc32g2bNTUefHo_R0LZ2-6yg3lS-t0SkH6IEKv0ZaB0FqroUU2E12AM51SpeQa0xIx7zI6Sh8wQJpArxynk8Sr-4Qxo06FIZWy6M39jsEo0"/>
+</div>
+<div class="flex-grow">
+<h2 class="editorial-title text-lg font-bold tracking-tight">Alex Rivera</h2>
+<p class="text-on-surface-variant font-body text-xs">alex.rivera@modern-rhythm.io</p>
+</div>
+<button class="p-2 rounded-full bg-surface-container-highest text-primary transition-all active:scale-95">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</div>
+</section>
+<!-- Section 2: Download Settings -->
+<section class="space-y-4">
+<h3 class="label-sm font-headline font-bold text-xs uppercase tracking-[0.2em] text-on-surface-variant px-2">Download Settings</h3>
+<div class="space-y-2">
+<p class="text-[10px] uppercase font-bold text-on-surface-variant px-2">Quality</p>
+<div class="bg-surface-container-low rounded-2xl p-1.5 flex gap-1">
+<button class="flex-1 py-3 px-2 rounded-xl text-xs font-bold transition-all text-on-surface-variant hover:bg-white/5">
+                        Standard
+                    </button>
+<button class="flex-1 py-3 px-2 rounded-xl text-xs font-bold transition-all bg-surface-container-highest text-on-surface border border-white/5">
+                        High
+                    </button>
+<button class="flex-1 py-3 px-2 rounded-xl text-xs font-bold transition-all text-primary bg-primary/10 border border-primary/20 ring-1 ring-primary/20">
+                        Lossless
+                    </button>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-2xl flex items-center justify-between p-4 border border-white/5">
+<div class="leading-tight">
+<p class="font-semibold text-sm">Download over cellular</p>
+<p class="text-[11px] text-on-surface-variant">May increase data usage</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</section>
+<!-- Section 3: Import Library -->
+<section class="space-y-3">
+<h3 class="label-sm font-headline font-bold text-xs uppercase tracking-[0.2em] text-on-surface-variant px-2">Import Library</h3>
+<div class="space-y-2">
+<button class="w-full bg-surface-container-low hover:bg-surface-container-high transition-colors rounded-2xl flex items-center justify-between p-4 border border-white/5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">folder_open</span>
+</div>
+<div class="text-left">
+<p class="font-semibold text-sm">Scan local folders</p>
+<p class="text-[11px] text-on-surface-variant">Find music on this device</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+<button class="w-full bg-surface-container-low hover:bg-surface-container-high transition-colors rounded-2xl flex items-center justify-between p-4 border border-white/5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">cloud_download</span>
+</div>
+<div class="text-left">
+<p class="font-semibold text-sm">Cloud import</p>
+<p class="text-[11px] text-on-surface-variant">Sync from Drive or Dropbox</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+</div>
+</section>
+<!-- Section 4: Notifications Toggle -->
+<section class="space-y-3">
+<h3 class="label-sm font-headline font-bold text-xs uppercase tracking-[0.2em] text-on-surface-variant px-2">Notifications</h3>
+<div class="bg-surface-container-low rounded-2xl flex items-center justify-between p-5 border border-white/5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant">notifications_active</span>
+</div>
+<div class="leading-tight">
+<p class="font-semibold text-sm">Push notifications</p>
+<p class="text-[11px] text-on-surface-variant">New releases &amp; alerts</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</section>
+<!-- Section 5: Logout & Footer -->
+<section class="pt-6">
+<button class="w-full flex items-center justify-center gap-3 py-4 rounded-2xl bg-error/5 text-error font-bold border border-error/20 hover:bg-error hover:text-on-error transition-all duration-300">
+<span class="material-symbols-outlined text-lg">logout</span>
+                Logout
+            </button>
+<div class="text-center mt-10 space-y-1">
+<p class="text-[10px] text-on-surface-variant uppercase tracking-[0.4em] font-headline font-black">
+                    Obsidian Rhythm
+                </p>
+<p class="text-[8px] text-on-surface-variant/40 font-mono">v4.12.0 • EST 2021</p>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full h-20 flex justify-around items-center px-4 pb-safe bg-[#262626]/60 backdrop-blur-xl rounded-t-2xl z-50 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+<div class="flex flex-col items-center justify-center text-[#adaaaa] hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined">home</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#adaaaa] hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined">search</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Search</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#adaaaa] hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined">library_music</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Library</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#adaaaa] hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined">workspace_premium</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Premium</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#72fe8f] drop-shadow-[0_0_8px_rgba(114,254,143,0.5)] scale-110 duration-300 ease-out">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest mt-1">Settings</span>
+</div>
+</nav>
+</body></html>
