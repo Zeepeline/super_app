@@ -21,11 +21,11 @@ class PlaylistModel extends PlaylistEntity {
     required this.descriptionField,
     required this.imageUrlField,
   }) : super(
-          id: idField,
-          title: titleField,
-          description: descriptionField,
-          imageUrl: imageUrlField,
-        );
+         id: idField,
+         title: titleField,
+         description: descriptionField,
+         imageUrl: imageUrlField,
+       );
 
   factory PlaylistModel.fromJson(Map<String, dynamic> json) {
     return PlaylistModel(

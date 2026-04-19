@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 
 class InvidiousService {
   final Dio _dio = Dio();
-  
+
   // List of public Invidious instances
   final List<String> _instances = [
     'https://yewtu.be/',
@@ -27,12 +27,14 @@ class InvidiousService {
         if (response.statusCode == 200) {
           final data = response.data;
           final adaptiveFormats = data['adaptiveFormats'] as List;
-          
+
           // Find audio-only streams
           final audioStreams = adaptiveFormats.where((f) {
-             final type = f['type']?.toString() ?? '';
-             final container = f['container']?.toString() ?? '';
-             return type.contains('audio') || container == 'm4a' || container == 'webm';
+            final type = f['type']?.toString() ?? '';
+            final container = f['container']?.toString() ?? '';
+            return type.contains('audio') ||
+                container == 'm4a' ||
+                container == 'webm';
           }).toList();
 
           if (audioStreams.isNotEmpty) {
@@ -42,7 +44,7 @@ class InvidiousService {
               final brB = int.tryParse(b['bitrate']?.toString() ?? '0') ?? 0;
               return brB.compareTo(brA);
             });
-            
+
             final streamUrl = audioStreams.first['url'] as String;
             print("InvidiousService: Successfully found audio stream");
             return streamUrl;

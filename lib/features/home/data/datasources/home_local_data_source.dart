@@ -148,7 +148,9 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
   Future<void> updateTrackDuration(String path, String duration) async {
     try {
       final box = await _getTracksBox();
-      final trackIndex = box.values.toList().indexWhere((t) => t.localPath == path);
+      final trackIndex = box.values.toList().indexWhere(
+        (t) => t.localPath == path,
+      );
 
       if (trackIndex != -1) {
         final track = box.getAt(trackIndex);

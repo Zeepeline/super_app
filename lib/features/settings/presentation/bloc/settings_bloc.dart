@@ -60,8 +60,10 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     ScanLocalFoldersEvent event,
     Emitter<SettingsState> emit,
   ) async {
-    print("SettingsBloc: ScanLocalFoldersEvent received. _isImporting=$_isImporting, state=${state.runtimeType}");
-    
+    print(
+      "SettingsBloc: ScanLocalFoldersEvent received. _isImporting=$_isImporting, state=${state.runtimeType}",
+    );
+
     // Prevent multiple concurrent import operations
     if (_isImporting) {
       print("SettingsBloc: Already importing, ignoring event.");
@@ -71,18 +73,25 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     final currentState = state;
     if (currentState is SettingsLoaded) {
       _isImporting = true;
-      emit(SettingsImporting(settings: currentState.settings, user: currentState.user));
+      emit(
+        SettingsImporting(
+          settings: currentState.settings,
+          user: currentState.user,
+        ),
+      );
       print("SettingsBloc: Starting import via MediaImportService...");
       try {
         final tracks = await importService.importLocalTracks();
         print("SettingsBloc: Import returned ${tracks.length} tracks.");
         if (tracks.isNotEmpty) {
           await homeLocalDataSource.addImportedTracks(tracks);
-          emit(SettingsImportSuccess(
-            settings: currentState.settings,
-            user: currentState.user,
-            count: tracks.length,
-          ));
+          emit(
+            SettingsImportSuccess(
+              settings: currentState.settings,
+              user: currentState.user,
+              count: tracks.length,
+            ),
+          );
           // Refresh settings UI
           add(const LoadSettingsEvent());
         } else {
@@ -98,7 +107,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         _isImporting = false;
       }
     } else {
-      print("SettingsBloc: State is not SettingsLoaded (${state.runtimeType}), ignoring.");
+      print(
+        "SettingsBloc: State is not SettingsLoaded (${state.runtimeType}), ignoring.",
+      );
     }
   }
 
@@ -196,11 +207,13 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         final tracks = await importService.loadBundledAssets();
         if (tracks.isNotEmpty) {
           await homeLocalDataSource.addImportedTracks(tracks);
-          emit(SettingsImportSuccess(
-            settings: currentState.settings,
-            user: currentState.user,
-            count: tracks.length,
-          ));
+          emit(
+            SettingsImportSuccess(
+              settings: currentState.settings,
+              user: currentState.user,
+              count: tracks.length,
+            ),
+          );
           add(const LoadSettingsEvent());
         } else {
           emit(currentState);
@@ -222,22 +235,26 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         final track = await youtubeDownloadService.downloadAndConvert(
           url: event.url,
           onProgress: (stage, progress) {
-            emit(SettingsDownloadingYoutube(
-            settings: currentState.settings,
-            user: currentState.user,
-            stage: stage,
-            progress: progress,
-          ));
+            emit(
+              SettingsDownloadingYoutube(
+                settings: currentState.settings,
+                user: currentState.user,
+                stage: stage,
+                progress: progress,
+              ),
+            );
           },
         );
 
         if (track != null) {
           await homeLocalDataSource.addImportedTracks([track]);
-          emit(SettingsDownloadSuccess(
-            settings: currentState.settings,
-            user: currentState.user,
-            title: track.title,
-          ));
+          emit(
+            SettingsDownloadSuccess(
+              settings: currentState.settings,
+              user: currentState.user,
+              title: track.title,
+            ),
+          );
           // Refresh settings UI
           add(const LoadSettingsEvent());
         } else {
@@ -258,16 +275,23 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     final currentState = state;
     if (currentState is SettingsLoaded) {
       _isImporting = true;
-      emit(SettingsImporting(settings: currentState.settings, user: currentState.user));
+      emit(
+        SettingsImporting(
+          settings: currentState.settings,
+          user: currentState.user,
+        ),
+      );
       try {
         final tracks = await importService.scanDownloadedMusic();
         if (tracks.isNotEmpty) {
           await homeLocalDataSource.addImportedTracks(tracks);
-          emit(SettingsImportSuccess(
-            settings: currentState.settings,
-            user: currentState.user,
-            count: tracks.length,
-          ));
+          emit(
+            SettingsImportSuccess(
+              settings: currentState.settings,
+              user: currentState.user,
+              count: tracks.length,
+            ),
+          );
           add(const LoadSettingsEvent());
         } else {
           emit(currentState);

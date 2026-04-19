@@ -43,7 +43,7 @@ class PlaybackControls extends StatelessWidget {
                       Shadow(
                         color: AppTheme.kPrimaryColor.withOpacity(0.4),
                         blurRadius: 10,
-                      )
+                      ),
                     ]
                   : null,
             ),
@@ -52,10 +52,7 @@ class PlaybackControls extends StatelessWidget {
           // Previous button
           IconButton(
             onPressed: onSkipPrevious,
-            icon: const Icon(
-              Icons.skip_previous,
-              color: Colors.white,
-            ),
+            icon: const Icon(Icons.skip_previous, color: Colors.white),
             iconSize: 40,
           ),
           // Play/Pause button with pulse gradient
@@ -67,7 +64,10 @@ class PlaybackControls extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: const LinearGradient(
-                  colors: [AppTheme.kPrimaryColor, AppTheme.kPrimaryContainerColor],
+                  colors: [
+                    AppTheme.kPrimaryColor,
+                    AppTheme.kPrimaryContainerColor,
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -107,7 +107,7 @@ class PlaybackControls extends StatelessWidget {
                       Shadow(
                         color: AppTheme.kPrimaryColor.withOpacity(0.4),
                         blurRadius: 10,
-                      )
+                      ),
                     ]
                   : null,
             ),

@@ -14,7 +14,7 @@ class DownloadService {
     try {
       final appDir = await getApplicationDocumentsDirectory();
       final musicDir = Directory(p.join(appDir.path, 'music'));
-      
+
       if (!await musicDir.exists()) {
         await musicDir.create(recursive: true);
       }
@@ -22,11 +22,7 @@ class DownloadService {
       final extension = p.extension(url).isEmpty ? '.mp3' : p.extension(url);
       final savePath = p.join(musicDir.path, '$trackId$extension');
 
-      await _dio.download(
-        url,
-        savePath,
-        onReceiveProgress: onProgress,
-      );
+      await _dio.download(url, savePath, onReceiveProgress: onProgress);
 
       return savePath;
     } catch (e) {

@@ -139,21 +139,23 @@ class MusicPlayerPage extends StatelessWidget {
                         children: [
                           Text(
                             "PLAYING FROM PLAYLIST",
-                            style: AppTheme.darkTheme.textTheme.labelSmall?.copyWith(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 2.2, // 0.2em
-                              color: AppTheme.kOnSurfaceVariantColor,
-                            ),
+                            style: AppTheme.darkTheme.textTheme.labelSmall
+                                ?.copyWith(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 2.2, // 0.2em
+                                  color: AppTheme.kOnSurfaceVariantColor,
+                                ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             "Midnight Sessions", // Could be dynamic if available
-                            style: AppTheme.darkTheme.textTheme.bodyMedium?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: -0.2,
-                            ),
+                            style: AppTheme.darkTheme.textTheme.bodyMedium
+                                ?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: -0.2,
+                                ),
                           ),
                         ],
                       ),

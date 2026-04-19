@@ -10,11 +10,7 @@ class LyricsView extends StatelessWidget {
   final PlayerUIController controller = Get.find<PlayerUIController>();
   final ScrollController _scrollController = ScrollController();
 
-  LyricsView({
-    super.key,
-    this.syncedLyrics,
-    this.plainLyrics,
-  });
+  LyricsView({super.key, this.syncedLyrics, this.plainLyrics});
 
   void _scrollToCurrent(int index) {
     if (_scrollController.hasClients && index >= 0) {
@@ -39,7 +35,7 @@ class LyricsView extends StatelessWidget {
           stream: controller.positionStream,
           builder: (context, snapshot) {
             final position = snapshot.data ?? Duration.zero;
-            
+
             // Find active index
             int activeIndex = -1;
             for (int i = 0; i < controller.lyrics.length; i++) {
@@ -65,7 +61,10 @@ class LyricsView extends StatelessWidget {
 
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 24,
+                  ),
                   child: Text(
                     lyric.text,
                     style: GoogleFonts.plusJakartaSans(

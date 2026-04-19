@@ -16,9 +16,9 @@ import 'package:just_audio/just_audio.dart';
 class MediaImportService {
   final LyricsService _lyricsService;
   final _uuid = const Uuid();
-  
+
   MediaImportService(this._lyricsService);
-  
+
   /// Static flag to prevent concurrent calls across any instance or hot-restart
   static bool _isPickerActive = false;
 
@@ -154,7 +154,10 @@ class MediaImportService {
 
         // Attempt to fetch lyrics and duration
         final title = p.basenameWithoutExtension(fileName);
-        final lyrics = await _lyricsService.fetchLyrics('Unknown Artist', title);
+        final lyrics = await _lyricsService.fetchLyrics(
+          'Unknown Artist',
+          title,
+        );
         final durationText = await getAudioDurationText(newPath);
 
         importedTracks.add(
@@ -174,7 +177,9 @@ class MediaImportService {
       }
     }
 
-    print("MediaImportService: Successfully imported ${importedTracks.length} tracks");
+    print(
+      "MediaImportService: Successfully imported ${importedTracks.length} tracks",
+    );
     return importedTracks;
   }
 
@@ -211,11 +216,18 @@ class MediaImportService {
           print("MediaImportService: Already exists: $fileName");
         }
 
-        final title = p.basenameWithoutExtension(fileName)
-                .replaceAll('-', ' ')
-                .replaceAll('_', ' ');
-        final lyrics = await _lyricsService.fetchLyrics('Unknown Artist', title);
-        final durationText = await getAudioDurationText('assets/music/$fileName', isAsset: true);
+        final title = p
+            .basenameWithoutExtension(fileName)
+            .replaceAll('-', ' ')
+            .replaceAll('_', ' ');
+        final lyrics = await _lyricsService.fetchLyrics(
+          'Unknown Artist',
+          title,
+        );
+        final durationText = await getAudioDurationText(
+          'assets/music/$fileName',
+          isAsset: true,
+        );
 
         importedTracks.add(
           TrackModel(
@@ -233,7 +245,9 @@ class MediaImportService {
         );
       }
 
-      print("MediaImportService: Loaded ${importedTracks.length} bundled tracks");
+      print(
+        "MediaImportService: Loaded ${importedTracks.length} bundled tracks",
+      );
       return importedTracks;
     } catch (e) {
       print("MediaImportService: Error loading bundled assets: $e");
@@ -250,7 +264,7 @@ class MediaImportService {
     try {
       final appDir = await getApplicationDocumentsDirectory();
       final musicDir = Directory(p.join(appDir.path, 'music'));
-      
+
       if (!await musicDir.exists()) {
         print("MediaImportService: Internal /music folder does not exist yet.");
         return [];
@@ -280,18 +294,21 @@ class MediaImportService {
         if (supportedExtensions.contains(ext)) {
           final fileName = p.basename(path);
           var title = p.basenameWithoutExtension(fileName);
-          
+
           // Regex to match "Title [VideoID]" and extract "Title"
           final ytPattern = RegExp(r"^(.*)\s\[[a-zA-Z0-9_-]{11}\]$");
           final match = ytPattern.firstMatch(title);
           if (match != null) {
             title = match.group(1)!;
           }
-          
+
           // Replace underscores/hyphens with spaces if they look like they were sanitized
           title = title.replaceAll('_', ' ').replaceAll('-', ' ');
-          
-          final lyrics = await _lyricsService.fetchLyrics('Unknown Artist', title);
+
+          final lyrics = await _lyricsService.fetchLyrics(
+            'Unknown Artist',
+            title,
+          );
           final durationText = await getAudioDurationText(path);
 
           discoveredTracks.add(
@@ -311,7 +328,9 @@ class MediaImportService {
         }
       }
 
-      print("MediaImportService: Discovered ${discoveredTracks.length} tracks in downloads folder.");
+      print(
+        "MediaImportService: Discovered ${discoveredTracks.length} tracks in downloads folder.",
+      );
       return discoveredTracks;
     } catch (e) {
       print("MediaImportService: Error scanning downloads: $e");
@@ -320,7 +339,10 @@ class MediaImportService {
   }
 
   /// Helper to get formatted duration (m:ss) from a file or asset.
-  Future<String> getAudioDurationText(String path, {bool isAsset = false}) async {
+  Future<String> getAudioDurationText(
+    String path, {
+    bool isAsset = false,
+  }) async {
     final player = AudioPlayer();
     try {
       Duration? duration;

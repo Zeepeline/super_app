@@ -31,8 +31,8 @@ class SeekBar extends StatelessWidget {
           double progress = controller.isDragging.value
               ? controller.dragValue.value
               : (duration.inMilliseconds > 0
-                  ? position.inMilliseconds / duration.inMilliseconds
-                  : 0.0);
+                    ? position.inMilliseconds / duration.inMilliseconds
+                    : 0.0);
 
           return Column(
             children: [
@@ -40,12 +40,21 @@ class SeekBar extends StatelessWidget {
               SliderTheme(
                 data: SliderThemeData(
                   trackHeight: 4,
-                  thumbShape: (controller.isDragging.value || controller.isAlbumArtHovered.value)
-                      ? const RoundSliderThumbShape(enabledThumbRadius: 6, elevation: 4)
+                  thumbShape:
+                      (controller.isDragging.value ||
+                          controller.isAlbumArtHovered.value)
+                      ? const RoundSliderThumbShape(
+                          enabledThumbRadius: 6,
+                          elevation: 4,
+                        )
                       : const RoundSliderThumbShape(enabledThumbRadius: 0),
-                  overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+                  overlayShape: const RoundSliderOverlayShape(
+                    overlayRadius: 12,
+                  ),
                   activeTrackColor: AppTheme.kPrimaryColor,
-                  inactiveTrackColor: AppTheme.kOutlineVariantColor.withOpacity(0.3),
+                  inactiveTrackColor: AppTheme.kOutlineVariantColor.withOpacity(
+                    0.3,
+                  ),
                   thumbColor: Colors.white,
                   overlayColor: AppTheme.kPrimaryColor.withOpacity(0.2),
                   trackShape: const RectangularSliderTrackShape(),

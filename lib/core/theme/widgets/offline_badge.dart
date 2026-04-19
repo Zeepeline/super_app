@@ -28,11 +28,11 @@ class OfflineBadge extends StatelessWidget {
           Text(
             'CURATING OFFLINE',
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2.0,
-                  fontSize: 10,
-                ),
+              color: Colors.red,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2.0,
+              fontSize: 10,
+            ),
           ),
         ],
       ),

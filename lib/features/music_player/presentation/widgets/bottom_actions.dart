@@ -8,10 +8,7 @@ class BottomActions extends StatelessWidget {
   final Function(String) onActionTap;
   final PlayerUIController controller = Get.find<PlayerUIController>();
 
-  BottomActions({
-    super.key,
-    required this.onActionTap,
-  });
+  BottomActions({super.key, required this.onActionTap});
 
   @override
   Widget build(BuildContext context) {

@@ -46,11 +46,8 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
   final HomeRepository repository;
   StreamSubscription? _tracksSubscription;
 
-  LibraryBloc({
-    required this.getFavoriteTracks,
-    required this.repository,
-  }) : super(LibraryInitial()) {
-    
+  LibraryBloc({required this.getFavoriteTracks, required this.repository})
+    : super(LibraryInitial()) {
     // Listen to repository changes and refresh
     _tracksSubscription = repository.watchTracks().listen((_) {
       add(LoadFavorites());
@@ -59,7 +56,7 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
     on<LoadFavorites>((event, emit) async {
       // Don't show loading on every partial update to avoid flickers
       if (state is LibraryInitial) emit(LibraryLoading());
-      
+
       final result = await getFavoriteTracks(NoParams());
       result.fold(
         (failure) => emit(const LibraryError('Failed to fetch favorites')),

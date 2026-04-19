@@ -1,5 +1,5 @@
 import 'dart:convert';
- 
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:super_app/core/services/download_service.dart';
@@ -59,15 +59,18 @@ class YouTubeWebViewController extends GetxController {
     if (url != null && url.contains('watch?v=')) {
       final watchId = url.split('v=')[1].split('&')[0];
       final title = await controller.getTitle() ?? 'YouTube Download';
-      
+
       final downloadService = sl<DownloadService>();
       final localDataSource = sl<HomeLocalDataSource>();
 
-      Get.snackbar('Download', 'Starting download for: $title',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: AppTheme.kPrimaryColor,
-          colorText: Colors.black);
-      
+      Get.snackbar(
+        'Download',
+        'Starting download for: $title',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: AppTheme.kPrimaryColor,
+        colorText: Colors.black,
+      );
+
       try {
         final result = await downloadService.downloadTrack(
           url: url,
@@ -85,21 +88,30 @@ class YouTubeWebViewController extends GetxController {
             isFavoriteField: false,
           );
           await sl<HomeLocalDataSource>().addImportedTracks([track]);
-          Get.snackbar('Success', 'Download complete: $title',
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: AppTheme.kPrimaryColor,
-              colorText: Colors.black);
+          Get.snackbar(
+            'Success',
+            'Download complete: $title',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: AppTheme.kPrimaryColor,
+            colorText: Colors.black,
+          );
         }
       } catch (e) {
-        Get.snackbar('Error', 'Download failed: $e',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.redAccent,
-            colorText: Colors.white);
+        Get.snackbar(
+          'Error',
+          'Download failed: $e',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
       }
     } else {
-      Get.snackbar('Alert', 'Please navigate to a YouTube video first',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.orangeAccent);
+      Get.snackbar(
+        'Alert',
+        'Please navigate to a YouTube video first',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orangeAccent,
+      );
     }
   }
 }
@@ -109,8 +121,9 @@ class YouTubeWebViewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final YouTubeWebViewController x = Get.isRegistered<YouTubeWebViewController>() 
-        ? Get.find<YouTubeWebViewController>() 
+    final YouTubeWebViewController x =
+        Get.isRegistered<YouTubeWebViewController>()
+        ? Get.find<YouTubeWebViewController>()
         : Get.put(YouTubeWebViewController());
 
     return Scaffold(
@@ -118,7 +131,11 @@ class YouTubeWebViewPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'Web Downloader',
-          style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: 0.5, color: Colors.white),
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+            color: Colors.white,
+          ),
         ),
         backgroundColor: Colors.black,
         elevation: 0,

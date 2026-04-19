@@ -18,10 +18,14 @@ class LibraryPage extends StatelessWidget {
           const begin = Offset(0.0, 1.0);
           const end = Offset.zero;
           const curve = Curves.easeInOutCubic;
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          var tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: curve));
           return SlideTransition(
-              position: animation.drive(tween), child: child);
+            position: animation.drive(tween),
+            child: child,
+          );
         },
       ),
     );
@@ -62,7 +66,11 @@ class LibraryPage extends StatelessWidget {
                   child: BlocBuilder<LibraryBloc, LibraryState>(
                     builder: (context, state) {
                       if (state is LibraryLoading) {
-                        return const Center(child: CircularProgressIndicator(color: AppTheme.kPrimaryColor));
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: AppTheme.kPrimaryColor,
+                          ),
+                        );
                       } else if (state is LibraryLoaded) {
                         final tracks = state.favoriteTracks;
                         if (tracks.isEmpty) {
@@ -73,10 +81,7 @@ class LibraryPage extends StatelessWidget {
                           itemCount: tracks.length,
                           itemBuilder: (context, index) {
                             final track = tracks[index];
-                            return _buildLibraryItem(
-                              context,
-                              track,
-                            );
+                            return _buildLibraryItem(context, track);
                           },
                         );
                       } else if (state is LibraryError) {
@@ -99,11 +104,17 @@ class LibraryPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.favorite_border, size: 64, color: AppTheme.kOnSurfaceVariantColor),
+          const Icon(
+            Icons.favorite_border,
+            size: 64,
+            color: AppTheme.kOnSurfaceVariantColor,
+          ),
           const SizedBox(height: 16),
           Text(
             'No Liked Songs Yet',
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: AppTheme.kOnSurfaceVariantColor),
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: AppTheme.kOnSurfaceVariantColor,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
@@ -129,20 +140,26 @@ class LibraryPage extends StatelessWidget {
     );
   }
 
-  Widget _filterChip(BuildContext context, String label, {bool isSelected = false}) {
+  Widget _filterChip(
+    BuildContext context,
+    String label, {
+    bool isSelected = false,
+  }) {
     return Container(
       margin: const EdgeInsets.only(right: 12),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: isSelected ? AppTheme.kPrimaryColor : AppTheme.kSurfaceContainerHighestColor,
+        color: isSelected
+            ? AppTheme.kPrimaryColor
+            : AppTheme.kSurfaceContainerHighestColor,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: isSelected ? Colors.black : AppTheme.kOnSurfaceVariantColor,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            ),
+          color: isSelected ? Colors.black : AppTheme.kOnSurfaceVariantColor,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+        ),
       ),
     );
   }
@@ -165,7 +182,10 @@ class LibraryPage extends StatelessWidget {
                   width: 64,
                   height: 64,
                   color: AppTheme.kSurfaceContainerHighestColor,
-                  child: const Icon(Icons.music_note, color: AppTheme.kPrimaryColor),
+                  child: const Icon(
+                    Icons.music_note,
+                    color: AppTheme.kPrimaryColor,
+                  ),
                 ),
               ),
             ),
@@ -177,21 +197,27 @@ class LibraryPage extends StatelessWidget {
                   Text(
                     track.title,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: -0.5,
-                        ),
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: -0.5,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.push_pin, size: 14, color: AppTheme.kPrimaryColor),
+                      const Icon(
+                        Icons.push_pin,
+                        size: 14,
+                        color: AppTheme.kPrimaryColor,
+                      ),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           "${track.artist} • ${track.duration}".toUpperCase(),
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 10),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.labelSmall?.copyWith(fontSize: 10),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),

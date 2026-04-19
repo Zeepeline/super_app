@@ -8,10 +8,7 @@ class TrackInfo extends StatelessWidget {
   final VoidCallback onFavoriteToggle;
   final PlayerUIController controller = Get.find<PlayerUIController>();
 
-  TrackInfo({
-    super.key,
-    required this.onFavoriteToggle,
-  });
+  TrackInfo({super.key, required this.onFavoriteToggle});
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +30,14 @@ class TrackInfo extends StatelessWidget {
                     // Track title - Editorial Headline
                     Text(
                       track.title,
-                      style: AppTheme.darkTheme.textTheme.displayLarge?.copyWith(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                        letterSpacing: -0.64, // -2% of 32
-                        height: 1.1,
-                      ),
+                      style: AppTheme.darkTheme.textTheme.displayLarge
+                          ?.copyWith(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                            letterSpacing: -0.64, // -2% of 32
+                            height: 1.1,
+                          ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),

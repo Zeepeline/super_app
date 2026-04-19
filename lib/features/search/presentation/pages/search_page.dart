@@ -21,10 +21,7 @@ class SearchPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 24),
-                Text(
-                  'SEARCH',
-                  style: Theme.of(context).textTheme.displayLarge,
-                ),
+                Text('SEARCH', style: Theme.of(context).textTheme.displayLarge),
                 const SizedBox(height: 32),
                 _buildSearchBar(context),
                 const SizedBox(height: 48),
@@ -40,12 +37,13 @@ class SearchPage extends StatelessWidget {
                         return const Center(child: CircularProgressIndicator());
                       } else if (state is SearchLoaded) {
                         return GridView.builder(
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 16,
-                            mainAxisSpacing: 16,
-                            childAspectRatio: 1.6,
-                          ),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 16,
+                                mainAxisSpacing: 16,
+                                childAspectRatio: 1.6,
+                              ),
                           itemCount: state.categories.length,
                           itemBuilder: (context, index) {
                             final category = state.categories[index];
@@ -76,8 +74,14 @@ class SearchPage extends StatelessWidget {
       child: TextField(
         decoration: InputDecoration(
           hintText: 'ARTISTS, SONGS, OR PODCASTS',
-          hintStyle: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 12),
-          prefixIcon: const Icon(Icons.search, color: AppTheme.kOnSurfaceVariantColor, size: 20),
+          hintStyle: Theme.of(
+            context,
+          ).textTheme.labelSmall?.copyWith(fontSize: 12),
+          prefixIcon: const Icon(
+            Icons.search,
+            color: AppTheme.kOnSurfaceVariantColor,
+            size: 20,
+          ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(vertical: 18),
         ),
@@ -115,11 +119,11 @@ class SearchPage extends StatelessWidget {
             child: Text(
               category.title.toUpperCase(),
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 14,
-                    letterSpacing: -0.5,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: 14,
+                letterSpacing: -0.5,
+              ),
             ),
           ),
         ],
