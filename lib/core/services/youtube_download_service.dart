@@ -13,6 +13,9 @@ class YoutubeDownloadService {
   final YoutubeExplode _yt = YoutubeExplode();
   final ytd.YtDownloader _ytDownloader = ytd.YtDownloader();
 
+  static final _illegalCharsRegex = RegExp(r'[<>:"/\\|?*]');
+  static final _controlCharsRegex = RegExp(r'[\x00-\x1F\x7F]');
+
   YoutubeDownloadService(this._lyricsService);
 
   Future<TrackModel?> downloadAndConvert({
@@ -141,11 +144,10 @@ class YoutubeDownloadService {
 
   String _sanitizeFilename(String name) {
     // Character that are illegal in Windows/macOS/Linux filenames
-    final illegalChars = RegExp(r'[<>:"/\\|?*]');
     // Replace with underscores
-    String sanitized = name.replaceAll(illegalChars, '_');
+    String sanitized = name.replaceAll(_illegalCharsRegex, '_');
     // Remove control characters
-    sanitized = sanitized.replaceAll(RegExp(r'[\x00-\x1F\x7F]'), '');
+    sanitized = sanitized.replaceAll(_controlCharsRegex, '');
     // Trim and handle extremely long names (max 200 chars to be safe)
     sanitized = sanitized.trim();
     if (sanitized.length > 200) {

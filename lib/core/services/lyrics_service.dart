@@ -8,6 +8,41 @@ class LyricsService {
   final Dio _dio;
   final yt_exp.YoutubeExplode _yt = yt_exp.YoutubeExplode();
 
+  static final _officialParenthesesRegex =
+      RegExp(r'\(Official.*?\)', caseSensitive: false);
+  static final _officialBracketsRegex =
+      RegExp(r'\[Official.*?\]', caseSensitive: false);
+  static final _lyricVideoParenthesesRegex =
+      RegExp(r'\(Lyric.*?Video\)', caseSensitive: false);
+  static final _lyricVideoBracketsRegex =
+      RegExp(r'\[Lyric.*?Video\]', caseSensitive: false);
+  static final _musicVideoParenthesesRegex =
+      RegExp(r'\(Music.*?Video\)', caseSensitive: false);
+  static final _musicVideoBracketsRegex =
+      RegExp(r'\[Music.*?Video\]', caseSensitive: false);
+  static final _videoParenthesesRegex =
+      RegExp(r'\(Video\)', caseSensitive: false);
+  static final _videoBracketsRegex = RegExp(r'\[Video\]', caseSensitive: false);
+  static final _audioParenthesesRegex =
+      RegExp(r'\(Audio\)', caseSensitive: false);
+  static final _audioBracketsRegex = RegExp(r'\[Audio\]', caseSensitive: false);
+  static final _visualizerParenthesesRegex =
+      RegExp(r'\(Visualizer\)', caseSensitive: false);
+  static final _visualizerBracketsRegex =
+      RegExp(r'\[Visualizer\]', caseSensitive: false);
+  static final _explicitParenthesesRegex =
+      RegExp(r'\(Explicit\)', caseSensitive: false);
+  static final _explicitBracketsRegex =
+      RegExp(r'\[Explicit\]', caseSensitive: false);
+  static final _featParenthesesRegex =
+      RegExp(r'\(feat\..*?\)', caseSensitive: false);
+  static final _ftParenthesesRegex =
+      RegExp(r'\(ft\..*?\)', caseSensitive: false);
+  static final _featEndRegex = RegExp(r'feat\..*$', caseSensitive: false);
+  static final _anyBracketsRegex = RegExp(r'\[.*?\]');
+  static final _whitespaceRegex = RegExp(r'\s+');
+  static final _tagRegex = RegExp(r'\[(\d+):(\d+)\.(\d+)\]');
+
   LyricsService(this._dio);
 
   Future<Map<String, String?>> fetchLyrics(
@@ -191,28 +226,28 @@ class LyricsService {
 
     return text
         // Remove common YouTube tags in brackets/parentheses
-        .replaceAll(RegExp(r'\(Official.*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Official.*?\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Lyric.*?Video\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Lyric.*?Video\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Music.*?Video\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Music.*?Video\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Video\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Video\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Audio\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Audio\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Visualizer\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Visualizer\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Explicit\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Explicit\]', caseSensitive: false), '')
+        .replaceAll(_officialParenthesesRegex, '')
+        .replaceAll(_officialBracketsRegex, '')
+        .replaceAll(_lyricVideoParenthesesRegex, '')
+        .replaceAll(_lyricVideoBracketsRegex, '')
+        .replaceAll(_musicVideoParenthesesRegex, '')
+        .replaceAll(_musicVideoBracketsRegex, '')
+        .replaceAll(_videoParenthesesRegex, '')
+        .replaceAll(_videoBracketsRegex, '')
+        .replaceAll(_audioParenthesesRegex, '')
+        .replaceAll(_audioBracketsRegex, '')
+        .replaceAll(_visualizerParenthesesRegex, '')
+        .replaceAll(_visualizerBracketsRegex, '')
+        .replaceAll(_explicitParenthesesRegex, '')
+        .replaceAll(_explicitBracketsRegex, '')
         // Remove features
-        .replaceAll(RegExp(r'\(feat\..*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(ft\..*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'feat\..*$', caseSensitive: false), '')
+        .replaceAll(_featParenthesesRegex, '')
+        .replaceAll(_ftParenthesesRegex, '')
+        .replaceAll(_featEndRegex, '')
         // Remove anything else in brackets (often junk)
-        .replaceAll(RegExp(r'\[.*?\]'), '')
+        .replaceAll(_anyBracketsRegex, '')
         // Clean up whitespace
-        .replaceAll(RegExp(r'\s+'), ' ')
+        .replaceAll(_whitespaceRegex, ' ')
         .trim();
   }
 
@@ -222,16 +257,13 @@ class LyricsService {
     final lines = lrc.split('\n');
     final lyricLines = <LyricLine>[];
 
-    // Regular expression to match all [mm:ss.xx] or [mm:ss.xxx] in a line
-    final tagRegex = RegExp(r'\[(\d+):(\d+)\.(\d+)\]');
-
     for (var line in lines) {
       // Find all timestamp matches in the line
-      final matches = tagRegex.allMatches(line);
+      final matches = _tagRegex.allMatches(line);
       if (matches.isEmpty) continue;
 
       // Extract text: everything that is not a tag
-      final text = line.replaceAll(RegExp(r'\[.*?\]'), '').trim();
+      final text = line.replaceAll(_anyBracketsRegex, '').trim();
       if (text.isEmpty) continue;
 
       for (var match in matches) {
