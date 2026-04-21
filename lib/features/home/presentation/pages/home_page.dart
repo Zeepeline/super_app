@@ -57,7 +57,7 @@ class HomePage extends StatelessWidget {
                         slivers: [
                           _buildHeader(context),
                           _buildAsymmetricalHero(context, state),
-                          // _buildFeaturedPlaylists(context, state),
+                          _buildFeaturedPlaylists(context, state),
                           _buildPopularTracksHeader(context),
                           _buildPopularTracksList(context, state),
                           const SliverPadding(

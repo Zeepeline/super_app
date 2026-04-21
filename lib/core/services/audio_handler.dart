@@ -165,8 +165,6 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
         return AudioProcessingState.ready;
       case ProcessingState.completed:
         return AudioProcessingState.completed;
-      default:
-        return AudioProcessingState.idle;
     }
   }
 

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../app_theme.dart';
 
 class OfflineBadge extends StatelessWidget {
   const OfflineBadge({super.key});

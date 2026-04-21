@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:super_app/core/services/download_service.dart';
@@ -61,7 +59,6 @@ class YouTubeWebViewController extends GetxController {
       final title = await controller.getTitle() ?? 'YouTube Download';
 
       final downloadService = sl<DownloadService>();
-      final localDataSource = sl<HomeLocalDataSource>();
 
       Get.snackbar(
         'Download',

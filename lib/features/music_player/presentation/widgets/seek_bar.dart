@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:super_app/core/theme/app_theme.dart';
 import 'package:super_app/features/music_player/domain/entities/track_entity.dart';
 import '../controllers/player_ui_controller.dart';
