@@ -8,36 +8,64 @@ class LyricsService {
   final Dio _dio;
   final yt_exp.YoutubeExplode _yt = yt_exp.YoutubeExplode();
 
-  static final _officialParenthesesRegex =
-      RegExp(r'\(Official.*?\)', caseSensitive: false);
-  static final _officialBracketsRegex =
-      RegExp(r'\[Official.*?\]', caseSensitive: false);
-  static final _lyricVideoParenthesesRegex =
-      RegExp(r'\(Lyric.*?Video\)', caseSensitive: false);
-  static final _lyricVideoBracketsRegex =
-      RegExp(r'\[Lyric.*?Video\]', caseSensitive: false);
-  static final _musicVideoParenthesesRegex =
-      RegExp(r'\(Music.*?Video\)', caseSensitive: false);
-  static final _musicVideoBracketsRegex =
-      RegExp(r'\[Music.*?Video\]', caseSensitive: false);
-  static final _videoParenthesesRegex =
-      RegExp(r'\(Video\)', caseSensitive: false);
+  static final _officialParenthesesRegex = RegExp(
+    r'\(Official.*?\)',
+    caseSensitive: false,
+  );
+  static final _officialBracketsRegex = RegExp(
+    r'\[Official.*?\]',
+    caseSensitive: false,
+  );
+  static final _lyricVideoParenthesesRegex = RegExp(
+    r'\(Lyric.*?Video\)',
+    caseSensitive: false,
+  );
+  static final _lyricVideoBracketsRegex = RegExp(
+    r'\[Lyric.*?Video\]',
+    caseSensitive: false,
+  );
+  static final _musicVideoParenthesesRegex = RegExp(
+    r'\(Music.*?Video\)',
+    caseSensitive: false,
+  );
+  static final _musicVideoBracketsRegex = RegExp(
+    r'\[Music.*?Video\]',
+    caseSensitive: false,
+  );
+  static final _videoParenthesesRegex = RegExp(
+    r'\(Video\)',
+    caseSensitive: false,
+  );
   static final _videoBracketsRegex = RegExp(r'\[Video\]', caseSensitive: false);
-  static final _audioParenthesesRegex =
-      RegExp(r'\(Audio\)', caseSensitive: false);
+  static final _audioParenthesesRegex = RegExp(
+    r'\(Audio\)',
+    caseSensitive: false,
+  );
   static final _audioBracketsRegex = RegExp(r'\[Audio\]', caseSensitive: false);
-  static final _visualizerParenthesesRegex =
-      RegExp(r'\(Visualizer\)', caseSensitive: false);
-  static final _visualizerBracketsRegex =
-      RegExp(r'\[Visualizer\]', caseSensitive: false);
-  static final _explicitParenthesesRegex =
-      RegExp(r'\(Explicit\)', caseSensitive: false);
-  static final _explicitBracketsRegex =
-      RegExp(r'\[Explicit\]', caseSensitive: false);
-  static final _featParenthesesRegex =
-      RegExp(r'\(feat\..*?\)', caseSensitive: false);
-  static final _ftParenthesesRegex =
-      RegExp(r'\(ft\..*?\)', caseSensitive: false);
+  static final _visualizerParenthesesRegex = RegExp(
+    r'\(Visualizer\)',
+    caseSensitive: false,
+  );
+  static final _visualizerBracketsRegex = RegExp(
+    r'\[Visualizer\]',
+    caseSensitive: false,
+  );
+  static final _explicitParenthesesRegex = RegExp(
+    r'\(Explicit\)',
+    caseSensitive: false,
+  );
+  static final _explicitBracketsRegex = RegExp(
+    r'\[Explicit\]',
+    caseSensitive: false,
+  );
+  static final _featParenthesesRegex = RegExp(
+    r'\(feat\..*?\)',
+    caseSensitive: false,
+  );
+  static final _ftParenthesesRegex = RegExp(
+    r'\(ft\..*?\)',
+    caseSensitive: false,
+  );
   static final _featEndRegex = RegExp(r'feat\..*$', caseSensitive: false);
   static final _anyBracketsRegex = RegExp(r'\[.*?\]');
   static final _whitespaceRegex = RegExp(r'\s+');
