@@ -1,0 +1,186 @@
+Analyzing app...
+
+   info • Don't invoke 'print' in production code • lib/core/services/audio_handler.dart:129:7 • avoid_print
+warning • This default clause is covered by the previous cases • lib/core/services/audio_handler.dart:168:7 • unreachable_switch_default
+   info • The imported package 'path' isn't a dependency of the importing package • lib/core/services/download_service.dart:4:8 • depend_on_referenced_packages
+   info • Don't invoke 'print' in production code • lib/core/services/download_service.dart:29:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/invidious_service.dart:18:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/invidious_service.dart:49:13 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/invidious_service.dart:54:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/invidious_service.dart:57:5 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/lyrics_service.dart:36:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/lyrics_service.dart:49:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/lyrics_service.dart:56:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/lyrics_service.dart:73:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/lyrics_service.dart:77:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/lyrics_service.dart:110:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/lyrics_service.dart:125:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/lyrics_service.dart:155:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/lyrics_service.dart:165:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/lyrics_service.dart:173:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/lyrics_service.dart:181:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/lyrics_service.dart:184:7 • avoid_print
+warning • Unused import: 'dart:convert' • lib/core/services/media_import_service.dart:1:8 • unused_import
+   info • The imported package 'path' isn't a dependency of the importing package • lib/core/services/media_import_service.dart:6:8 • depend_on_referenced_packages
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:54:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:58:5 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:63:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:76:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:82:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:86:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:93:5 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:102:11 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:105:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:108:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:111:11 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:121:5 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:124:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:128:5 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:180:5 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:188:5 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:210:13 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:212:13 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:216:11 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:248:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:253:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:263:5 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:269:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:282:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:331:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:336:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:361:7 • avoid_print
+   info • The imported package 'path' isn't a dependency of the importing package • lib/core/services/youtube_download_service.dart:3:8 • depend_on_referenced_packages
+   info • Don't invoke 'print' in production code • lib/core/services/youtube_download_service.dart:31:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/youtube_download_service.dart:41:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/youtube_download_service.dart:43:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/youtube_download_service.dart:49:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/youtube_download_service.dart:67:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/youtube_download_service.dart:107:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/youtube_download_service.dart:110:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/youtube_download_service.dart:113:7 • avoid_print
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/core/theme/app_theme.dart:24:35 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/core/theme/app_theme.dart:25:35 • deprecated_member_use
+warning • Unused import: '../app_theme.dart' • lib/core/theme/widgets/offline_badge.dart:2:8 • unused_import
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/core/theme/widgets/offline_badge.dart:12:27 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/core/theme/widgets/offline_badge.dart:14:46 • deprecated_member_use
+   info • The type parameter name 'Type' matches a visible type name • lib/core/usecases/usecase.dart:5:24 • avoid_types_as_parameter_names
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/core/widgets/live_activity_island.dart:45:47 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/core/widgets/live_activity_island.dart:51:61 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/core/widgets/live_activity_island.dart:57:49 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/core/widgets/live_activity_island.dart:181:43 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/core/widgets/live_activity_island.dart:205:43 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/core/widgets/live_activity_island.dart:254:37 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/core/widgets/live_activity_island.dart:269:53 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/auth/presentation/pages/login_page.dart:54:53 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/auth/presentation/pages/login_page.dart:71:53 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/auth/presentation/pages/login_page.dart:119:47 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/auth/presentation/pages/login_page.dart:152:29 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/auth/presentation/pages/login_page.dart:154:48 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/auth/presentation/pages/login_page.dart:256:52 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/auth/presentation/pages/login_page.dart:302:49 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/auth/presentation/pages/login_page.dart:339:53 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/auth/presentation/pages/login_page.dart:345:54 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/auth/presentation/pages/login_page.dart:352:53 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/auth/presentation/pages/login_page.dart:389:29 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/auth/presentation/pages/login_page.dart:391:48 • deprecated_member_use
+   info • Don't invoke 'print' in production code • lib/features/home/data/datasources/home_local_data_source.dart:67:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/home/data/datasources/home_local_data_source.dart:72:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/home/data/datasources/home_local_data_source.dart:80:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/home/data/datasources/home_local_data_source.dart:93:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/home/data/datasources/home_local_data_source.dart:107:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/home/data/datasources/home_local_data_source.dart:108:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/home/data/datasources/home_local_data_source.dart:117:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/home/data/datasources/home_local_data_source.dart:137:11 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/home/data/datasources/home_local_data_source.dart:143:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/home/data/datasources/home_local_data_source.dart:163:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/home/presentation/bloc/home_bloc.dart:47:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/home/presentation/bloc/home_bloc.dart:75:17 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/home/presentation/bloc/home_bloc.dart:80:15 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/home/presentation/bloc/home_bloc.dart:106:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/home/presentation/bloc/home_bloc.dart:108:9 • avoid_print
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/home/presentation/pages/home_page.dart:178:43 • deprecated_member_use
+warning • The declaration '_buildFeaturedPlaylists' isn't referenced • lib/features/home/presentation/pages/home_page.dart:207:10 • unused_element
+   info • The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' • lib/features/home/presentation/widgets/empty_library_view.dart:1:8 • unnecessary_import
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/home/presentation/widgets/empty_library_view.dart:26:44 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/home/presentation/widgets/empty_library_view.dart:39:51 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/home/presentation/widgets/empty_library_view.dart:75:37 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/home/presentation/widgets/empty_library_view.dart:91:51 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/home/presentation/widgets/empty_library_view.dart:93:49 • deprecated_member_use
+warning • Unused import: '../../../../core/theme/app_theme.dart' • lib/features/home/presentation/widgets/featured_playlist_card.dart:2:8 • unused_import
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/home/presentation/widgets/mini_player.dart:51:54 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/home/presentation/widgets/mini_player.dart:163:63 • deprecated_member_use
+   info • The imported package 'bloc' isn't a dependency of the importing package • lib/features/library/presentation/bloc/library_bloc.dart:2:8 • depend_on_referenced_packages
+warning • The value of the field '_isInitialized' isn't used • lib/features/music_player/data/datasources/music_local_datasource.dart:73:14 • unused_field
+   info • Don't invoke 'print' in production code • lib/features/music_player/data/repositories/music_repository_impl.dart:90:7 • avoid_print
+warning • The value of the local variable 'nextTrack' isn't used • lib/features/music_player/data/repositories/music_repository_impl.dart:183:13 • unused_local_variable
+warning • The value of the local variable 'prevTrack' isn't used • lib/features/music_player/data/repositories/music_repository_impl.dart:199:13 • unused_local_variable
+warning • The value of the local variable 'trackInQueue' isn't used • lib/features/music_player/data/repositories/music_repository_impl.dart:258:13 • unused_local_variable
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/pages/music_player_page.dart:58:59 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/pages/music_player_page.dart:72:50 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/pages/music_player_page.dart:86:51 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/pages/music_player_page.dart:112:53 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/pages/music_player_page.dart:113:53 • deprecated_member_use
+   info • 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead • lib/features/music_player/presentation/widgets/album_art_card.dart:23:15 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/album_art_card.dart:29:37 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/album_art_card.dart:36:49 • deprecated_member_use
+warning • Unused import: 'package:google_fonts/google_fonts.dart' • lib/features/music_player/presentation/widgets/bottom_actions.dart:3:8 • unused_import
+warning • Unused import: 'package:super_app/features/music_player/domain/models/lyric_line.dart' • lib/features/music_player/presentation/widgets/lyrics_view.dart:4:8 • unused_import
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/lyrics_view.dart:75:42 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/lyrics_view.dart:95:35 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/lyrics_view.dart:110:35 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/lyrics_view.dart:118:37 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/playback_controls.dart:44:55 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/playback_controls.dart:76:60 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/playback_controls.dart:108:55 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/player_background.dart:24:44 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/player_background.dart:26:53 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/player_background.dart:54:47 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/player_background.dart:55:47 • deprecated_member_use
+warning • Unused import: 'package:google_fonts/google_fonts.dart' • lib/features/music_player/presentation/widgets/seek_bar.dart:3:8 • unused_import
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/seek_bar.dart:55:69 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/seek_bar.dart:59:56 • deprecated_member_use
+warning • Unused import: 'package:google_fonts/google_fonts.dart' • lib/features/music_player/presentation/widgets/track_info.dart:3:8 • unused_import
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/track_info.dart:69:61 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/onboarding/presentation/pages/onboarding_page.dart:42:53 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/onboarding/presentation/pages/onboarding_page.dart:146:39 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/onboarding/presentation/pages/onboarding_page.dart:148:58 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/onboarding/presentation/pages/onboarding_page.dart:236:49 • deprecated_member_use
+   info • 'value' is deprecated and shouldn't be used. Use component accessors like .r or .g, or toARGB32 for an explicit conversion • lib/features/search/data/models/category_model.dart:25:22 • deprecated_member_use
+   info • Don't invoke 'print' in production code • lib/features/settings/presentation/bloc/settings_bloc.dart:63:5 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/settings/presentation/bloc/settings_bloc.dart:69:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/settings/presentation/bloc/settings_bloc.dart:82:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/settings/presentation/bloc/settings_bloc.dart:85:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/settings/presentation/bloc/settings_bloc.dart:102:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/settings/presentation/bloc/settings_bloc.dart:110:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/settings/presentation/bloc/settings_bloc.dart:222:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/features/settings/presentation/bloc/settings_bloc.dart:300:9 • avoid_print
+warning • Unused import: 'dart:convert' • lib/features/settings/presentation/pages/youtube_webview_page.dart:1:8 • unused_import
+warning • The value of the local variable 'localDataSource' isn't used • lib/features/settings/presentation/pages/youtube_webview_page.dart:64:13 • unused_local_variable
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/settings/presentation/widgets/audio_quality_selector.dart:23:48 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/settings/presentation/widgets/audio_quality_selector.dart:83:61 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/settings/presentation/widgets/audio_quality_selector.dart:88:54 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/settings/presentation/widgets/import_library_button.dart:29:50 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/settings/presentation/widgets/logout_button.dart:21:48 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/settings/presentation/widgets/logout_button.dart:24:50 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/settings/presentation/widgets/logout_button.dart:61:50 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/settings/presentation/widgets/settings_toggle_widget.dart:25:48 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/settings/presentation/widgets/settings_toggle_widget.dart:75:57 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/settings/presentation/widgets/user_profile_card.dart:15:40 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/settings/presentation/widgets/user_profile_card.dart:17:48 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/settings/presentation/widgets/user_profile_card.dart:29:54 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/settings/presentation/widgets/youtube_download_card.dart:41:40 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/settings/presentation/widgets/youtube_download_card.dart:42:30 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/settings/presentation/widgets/youtube_download_card.dart:54:37 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/settings/presentation/widgets/youtube_download_card.dart:98:47 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/settings/presentation/widgets/youtube_download_card.dart:111:39 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/settings/presentation/widgets/youtube_download_card.dart:115:41 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/settings/presentation/widgets/youtube_download_card.dart:126:62 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/settings/presentation/widgets/youtube_download_card.dart:131:51 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/main.dart:155:42 • deprecated_member_use
+   info • Don't invoke 'print' in production code • scratch/test_cleaning.dart:11:5 • avoid_print
+   info • Don't invoke 'print' in production code • scratch/test_cleaning.dart:12:5 • avoid_print
+   info • Don't invoke 'print' in production code • scratch/test_cleaning.dart:13:5 • avoid_print
+   info • Use 'const' for final variables initialized to a constant value • scratch/yt_cc_test.dart:5:3 • prefer_const_declarations
+   info • Don't invoke 'print' in production code • scratch/yt_cc_test.dart:8:5 • avoid_print
+   info • Don't invoke 'print' in production code • scratch/yt_cc_test.dart:10:7 • avoid_print
+   info • Don't invoke 'print' in production code • scratch/yt_cc_test.dart:13:5 • avoid_print
