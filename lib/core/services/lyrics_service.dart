@@ -8,29 +8,47 @@ class LyricsService {
   final Dio _dio;
   final yt_exp.YoutubeExplode _yt = yt_exp.YoutubeExplode();
 
-  static final _officialRegex =
-      RegExp(r'\(Official.*?\)', caseSensitive: false);
-  static final _officialSquareRegex =
-      RegExp(r'\[Official.*?\]', caseSensitive: false);
-  static final _lyricVideoRegex =
-      RegExp(r'\(Lyric.*?Video\)', caseSensitive: false);
-  static final _lyricVideoSquareRegex =
-      RegExp(r'\[Lyric.*?Video\]', caseSensitive: false);
-  static final _musicVideoRegex =
-      RegExp(r'\(Music.*?Video\)', caseSensitive: false);
-  static final _musicVideoSquareRegex =
-      RegExp(r'\[Music.*?Video\]', caseSensitive: false);
+  static final _officialRegex = RegExp(
+    r'\(Official.*?\)',
+    caseSensitive: false,
+  );
+  static final _officialSquareRegex = RegExp(
+    r'\[Official.*?\]',
+    caseSensitive: false,
+  );
+  static final _lyricVideoRegex = RegExp(
+    r'\(Lyric.*?Video\)',
+    caseSensitive: false,
+  );
+  static final _lyricVideoSquareRegex = RegExp(
+    r'\[Lyric.*?Video\]',
+    caseSensitive: false,
+  );
+  static final _musicVideoRegex = RegExp(
+    r'\(Music.*?Video\)',
+    caseSensitive: false,
+  );
+  static final _musicVideoSquareRegex = RegExp(
+    r'\[Music.*?Video\]',
+    caseSensitive: false,
+  );
   static final _videoRegex = RegExp(r'\(Video\)', caseSensitive: false);
   static final _videoSquareRegex = RegExp(r'\[Video\]', caseSensitive: false);
   static final _audioRegex = RegExp(r'\(Audio\)', caseSensitive: false);
   static final _audioSquareRegex = RegExp(r'\[Audio\]', caseSensitive: false);
-  static final _visualizerRegex =
-      RegExp(r'\(Visualizer\)', caseSensitive: false);
-  static final _visualizerSquareRegex =
-      RegExp(r'\[Visualizer\]', caseSensitive: false);
+  static final _visualizerRegex = RegExp(
+    r'\(Visualizer\)',
+    caseSensitive: false,
+  );
+  static final _visualizerSquareRegex = RegExp(
+    r'\[Visualizer\]',
+    caseSensitive: false,
+  );
   static final _explicitRegex = RegExp(r'\(Explicit\)', caseSensitive: false);
-  static final _explicitSquareRegex =
-      RegExp(r'\[Explicit\]', caseSensitive: false);
+  static final _explicitSquareRegex = RegExp(
+    r'\[Explicit\]',
+    caseSensitive: false,
+  );
   static final _featRegex = RegExp(r'\(feat\..*?\)', caseSensitive: false);
   static final _ftRegex = RegExp(r'\(ft\..*?\)', caseSensitive: false);
   static final _featEndRegex = RegExp(r'feat\..*$', caseSensitive: false);
