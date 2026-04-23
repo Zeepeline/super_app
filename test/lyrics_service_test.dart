@@ -15,7 +15,7 @@ void main() {
 
   group('LyricsService - parseLrc', () {
     test('should parse LRC correctly', () {
-      final lrc = '[00:12.34] Line 1\n[00:15.00] Line 2';
+      const lrc = '[00:12.34] Line 1\n[00:15.00] Line 2';
       final result = lyricsService.parseLrc(lrc);
       expect(result.length, 2);
       expect(result[0].text, 'Line 1');
@@ -25,7 +25,7 @@ void main() {
     });
 
     test('should handle multiple timestamps on same line', () {
-      final lrc = '[00:12.34][00:20.00] Multiple';
+      const lrc = '[00:12.34][00:20.00] Multiple';
       final result = lyricsService.parseLrc(lrc);
       expect(result.length, 2);
       expect(result[0].startTime.inMilliseconds, 12340);
