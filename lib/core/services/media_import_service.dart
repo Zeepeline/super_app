@@ -17,6 +17,9 @@ class MediaImportService {
   final LyricsService _lyricsService;
   final _uuid = const Uuid();
 
+  // Pre-compiled RegExp for YouTube title pattern
+  static final _ytPatternRegExp = RegExp(r"^(.*)\s\[[a-zA-Z0-9_-]{11}\]$");
+
   MediaImportService(this._lyricsService);
 
   /// Static flag to prevent concurrent calls across any instance or hot-restart
@@ -295,9 +298,8 @@ class MediaImportService {
           final fileName = p.basename(path);
           var title = p.basenameWithoutExtension(fileName);
 
-          // Regex to match "Title [VideoID]" and extract "Title"
-          final ytPattern = RegExp(r"^(.*)\s\[[a-zA-Z0-9_-]{11}\]$");
-          final match = ytPattern.firstMatch(title);
+          // Use pre-compiled regex to match "Title [VideoID]" and extract "Title"
+          final match = _ytPatternRegExp.firstMatch(title);
           if (match != null) {
             title = match.group(1)!;
           }
