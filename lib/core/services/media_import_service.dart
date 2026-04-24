@@ -14,6 +14,8 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:just_audio/just_audio.dart';
 
 class MediaImportService {
+  static final _ytPattern = RegExp(r"^(.*)\s\[[a-zA-Z0-9_-]{11}\]$");
+
   final LyricsService _lyricsService;
   final _uuid = const Uuid();
 
@@ -296,8 +298,7 @@ class MediaImportService {
           var title = p.basenameWithoutExtension(fileName);
 
           // Regex to match "Title [VideoID]" and extract "Title"
-          final ytPattern = RegExp(r"^(.*)\s\[[a-zA-Z0-9_-]{11}\]$");
-          final match = ytPattern.firstMatch(title);
+          final match = _ytPattern.firstMatch(title);
           if (match != null) {
             title = match.group(1)!;
           }
