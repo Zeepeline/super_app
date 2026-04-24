@@ -61,6 +61,8 @@ dependencies:
   uuid: ^3.0.7
   get: ^4.6.6
 
+  path: any
+  bloc: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:super_app/features/music_player/domain/models/lyric_line.dart';
 import 'package:super_app/features/music_player/presentation/controllers/player_ui_controller.dart';
 
 class LyricsView extends StatelessWidget {
