@@ -5,9 +5,14 @@ import '../../features/music_player/domain/models/lyric_line.dart';
 
 @lazySingleton
 class LyricsService {
-  static final _officialRegex = RegExp(r'\(Official.*?\)', caseSensitive: false);
-  static final _officialBracketRegex =
-      RegExp(r'\[Official.*?\]', caseSensitive: false);
+  static final _officialRegex = RegExp(
+    r'\(Official.*?\)',
+    caseSensitive: false,
+  );
+  static final _officialBracketRegex = RegExp(
+    r'\[Official.*?\]',
+    caseSensitive: false,
+  );
   static final _lyricVideoRegex = RegExp(
     r'\(Lyric.*?Video\)',
     caseSensitive: false,
@@ -28,12 +33,19 @@ class LyricsService {
   static final _videoBracketRegex = RegExp(r'\[Video\]', caseSensitive: false);
   static final _audioRegex = RegExp(r'\(Audio\)', caseSensitive: false);
   static final _audioBracketRegex = RegExp(r'\[Audio\]', caseSensitive: false);
-  static final _visualizerRegex = RegExp(r'\(Visualizer\)', caseSensitive: false);
-  static final _visualizerBracketRegex =
-      RegExp(r'\[Visualizer\]', caseSensitive: false);
+  static final _visualizerRegex = RegExp(
+    r'\(Visualizer\)',
+    caseSensitive: false,
+  );
+  static final _visualizerBracketRegex = RegExp(
+    r'\[Visualizer\]',
+    caseSensitive: false,
+  );
   static final _explicitRegex = RegExp(r'\(Explicit\)', caseSensitive: false);
-  static final _explicitBracketRegex =
-      RegExp(r'\[Explicit\]', caseSensitive: false);
+  static final _explicitBracketRegex = RegExp(
+    r'\[Explicit\]',
+    caseSensitive: false,
+  );
   static final _featRegex = RegExp(r'\(feat\..*?\)', caseSensitive: false);
   static final _ftRegex = RegExp(r'\(ft\..*?\)', caseSensitive: false);
   static final _featEndRegex = RegExp(r'feat\..*$', caseSensitive: false);
