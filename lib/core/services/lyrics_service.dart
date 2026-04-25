@@ -10,7 +10,7 @@ class LyricsService {
 
   // Pre-compiled regular expressions for better performance
   static final _metadataCleanupRegex = RegExp(
-    r'[(\[](Official|Lyric|Music|Video|Audio|Visualizer|Explicit).*?[)\]]',
+    r'[(\[](?:Official.*?|Lyric.*?Video|Music.*?Video|Video|Audio|Visualizer|Explicit)[)\]]',
     caseSensitive: false,
   );
   static final _featureCleanupRegex = RegExp(
