@@ -1,0 +1,3 @@
+## 2026-04-25 - Pre-compile Regular Expressions in services
+**Learning:** Pre-compiling `RegExp` instances by declaring them as `static final` avoids the overhead of recompiling the same pattern every time a method is called. This is particularly effective in high-frequency operations like metadata cleaning and LRC parsing. Consolidating multiple `replaceAll` calls into fewer ones with combined patterns further reduces string manipulation overhead.
+**Action:** Always check for inline `RegExp` creations in services and move them to `static final` class members. Combine related patterns where possible.
