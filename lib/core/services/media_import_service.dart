@@ -17,8 +17,9 @@ class MediaImportService {
   final LyricsService _lyricsService;
   final _uuid = const Uuid();
 
-  static final RegExp _ytPatternRegex =
-      RegExp(r"^(.*)\s\[[a-zA-Z0-9_-]{11}\]$");
+  static final RegExp _ytPatternRegex = RegExp(
+    r"^(.*)\s\[[a-zA-Z0-9_-]{11}\]$",
+  );
 
   MediaImportService(this._lyricsService);
 
