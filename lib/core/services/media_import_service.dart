@@ -78,7 +78,8 @@ class MediaImportService {
 
       if (filePaths.isEmpty) {
         debugPrint(
-            "MediaImportService: No files selected or directory is empty");
+          "MediaImportService: No files selected or directory is empty",
+        );
         return [];
       }
 
@@ -104,7 +105,9 @@ class MediaImportService {
           allowMultiple: true,
         );
         if (result != null && result.paths.isNotEmpty) {
-          debugPrint("MediaImportService: Picked ${result.paths.length} files.");
+          debugPrint(
+            "MediaImportService: Picked ${result.paths.length} files.",
+          );
           return result.paths;
         }
         debugPrint("MediaImportService: User cancelled file picker.");
@@ -214,7 +217,9 @@ class MediaImportService {
             await targetFile.writeAsBytes(data.buffer.asUint8List());
             debugPrint("MediaImportService: Copied: $fileName");
           } catch (e) {
-            debugPrint("MediaImportService: Failed to load asset: $fileName — $e");
+            debugPrint(
+              "MediaImportService: Failed to load asset: $fileName — $e",
+            );
             continue;
           }
         } else {
@@ -272,7 +277,8 @@ class MediaImportService {
 
       if (!await musicDir.exists()) {
         debugPrint(
-            "MediaImportService: Internal /music folder does not exist yet.");
+          "MediaImportService: Internal /music folder does not exist yet.",
+        );
         return [];
       }
 
