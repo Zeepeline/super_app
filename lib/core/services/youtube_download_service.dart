@@ -11,6 +11,10 @@ import './lyrics_service.dart';
 class YoutubeDownloadService {
   final LyricsService _lyricsService;
   final YoutubeExplode _yt = YoutubeExplode();
+
+  // Pre-compiled RegExps for performance optimization
+  static final RegExp _illegalChars = RegExp(r'[<>:"/\\|?*]');
+  static final RegExp _controlChars = RegExp(r'[\x00-\x1F\x7F]');
   final ytd.YtDownloader _ytDownloader = ytd.YtDownloader();
 
   YoutubeDownloadService(this._lyricsService);
@@ -141,11 +145,10 @@ class YoutubeDownloadService {
 
   String _sanitizeFilename(String name) {
     // Character that are illegal in Windows/macOS/Linux filenames
-    final illegalChars = RegExp(r'[<>:"/\\|?*]');
-    // Replace with underscores
-    String sanitized = name.replaceAll(illegalChars, '_');
-    // Remove control characters
-    sanitized = sanitized.replaceAll(RegExp(r'[\x00-\x1F\x7F]'), '');
+    // Replace with underscores using pre-compiled RegExp
+    String sanitized = name.replaceAll(_illegalChars, '_');
+    // Remove control characters using pre-compiled RegExp
+    sanitized = sanitized.replaceAll(_controlChars, '');
     // Trim and handle extremely long names (max 200 chars to be safe)
     sanitized = sanitized.trim();
     if (sanitized.length > 200) {
