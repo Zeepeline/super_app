@@ -104,7 +104,9 @@ class MediaImportService {
           allowMultiple: true,
         );
         if (result != null && result.paths.isNotEmpty) {
-          debugPrint("MediaImportService: Picked ${result.paths.length} files.");
+          debugPrint(
+            "MediaImportService: Picked ${result.paths.length} files.",
+          );
           return result.paths;
         }
         debugPrint("MediaImportService: User cancelled file picker.");
@@ -214,7 +216,9 @@ class MediaImportService {
             await targetFile.writeAsBytes(data.buffer.asUint8List());
             debugPrint("MediaImportService: Copied: $fileName");
           } catch (e) {
-            debugPrint("MediaImportService: Failed to load asset: $fileName — $e");
+            debugPrint(
+              "MediaImportService: Failed to load asset: $fileName — $e",
+            );
             continue;
           }
         } else {
