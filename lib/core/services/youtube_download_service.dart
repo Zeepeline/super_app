@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
@@ -31,7 +32,7 @@ class YoutubeDownloadService {
         final parsedId = VideoId.parseVideoId(url);
         videoId = VideoId(parsedId ?? url);
       } catch (e) {
-        print("YoutubeDownloadService: Invalid URL format: $url");
+        debugPrint("YoutubeDownloadService: Invalid URL format: $url");
         return null;
       }
 
@@ -41,15 +42,15 @@ class YoutubeDownloadService {
             .get(videoId)
             .timeout(const Duration(seconds: 10));
       } catch (e) {
-        print("YoutubeDownloadService: Metadata fetch failed: $e.");
+        debugPrint("YoutubeDownloadService: Metadata fetch failed: $e.");
       }
-      print("YoutubeDownloadService: YT Downloader 0");
+      debugPrint("YoutubeDownloadService: YT Downloader 0");
 
       final title = video?.title ?? "Unknown Title";
       final author = video?.author ?? "Unknown Artist";
       final thumbnail = video?.thumbnails.highResUrl ?? "";
       final duration = video?.duration?.toString() ?? '0:00:00';
-      print("YoutubeDownloadService: YT Downloader 1");
+      debugPrint("YoutubeDownloadService: YT Downloader 1");
 
       final appDir = await getApplicationDocumentsDirectory();
       final musicDir = Directory(p.join(appDir.path, 'music'));
@@ -67,7 +68,7 @@ class YoutubeDownloadService {
       // ANDROID: Use Extractor (yt-dlp)
 
       // IOS: Use yt_downloader
-      print("YoutubeDownloadService: YT Downloader 2");
+      debugPrint("YoutubeDownloadService: YT Downloader 2");
 
       onProgress?.call('Fetching lyrics...', 0.12);
       final lyrics = await _lyricsService.fetchLyrics(
@@ -107,13 +108,13 @@ class YoutubeDownloadService {
           plainLyrics,
         );
       } catch (e) {
-        print("YoutubeDownloadService: YT Downloader failed: $e");
+        debugPrint("YoutubeDownloadService: YT Downloader failed: $e");
       }
 
-      print("YoutubeDownloadService: All download methods failed.");
+      debugPrint("YoutubeDownloadService: All download methods failed.");
       return null;
     } catch (e) {
-      print("Youtube Download Error: $e");
+      debugPrint("Youtube Download Error: $e");
       return null;
     }
   }
