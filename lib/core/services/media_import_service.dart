@@ -1,9 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as p;
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:uuid/uuid.dart';
@@ -54,16 +54,16 @@ class MediaImportService {
   Future<List<TrackModel>> importLocalTracks() async {
     // Strict guard — static so it survives hot-restart within same isolate
     if (_isPickerActive) {
-      print("MediaImportService: Import already in progress, ignoring.");
+      debugPrint("MediaImportService: Import already in progress, ignoring.");
       return [];
     }
     _isPickerActive = true;
-    print("MediaImportService: Starting import flow...");
+    debugPrint("MediaImportService: Starting import flow...");
 
     try {
       // Check permissions first
       if (!await _checkPermissions()) {
-        print("MediaImportService: Permission Denied");
+        debugPrint("MediaImportService: Permission Denied");
         return [];
       }
 
@@ -76,24 +76,24 @@ class MediaImportService {
       }
 
       if (filePaths.isEmpty) {
-        print("MediaImportService: No files selected or directory is empty");
+        debugPrint("MediaImportService: No files selected or directory is empty");
         return [];
       }
 
       return await _processFiles(filePaths);
     } catch (e) {
-      print("MediaImportService: Error during import: $e");
+      debugPrint("MediaImportService: Error during import: $e");
       return [];
     } finally {
       _isPickerActive = false;
-      print("MediaImportService: Import flow finished.");
+      debugPrint("MediaImportService: Import flow finished.");
     }
   }
 
   /// iOS: Use multi-file picker with retry logic for the common
   /// `multiple_request` PlatformException (happens after hot restart).
   Future<List<String?>> _pickFilesIOS() async {
-    print("MediaImportService: Opening file picker on iOS...");
+    debugPrint("MediaImportService: Opening file picker on iOS...");
 
     for (int attempt = 1; attempt <= 2; attempt++) {
       try {
@@ -102,16 +102,16 @@ class MediaImportService {
           allowMultiple: true,
         );
         if (result != null && result.paths.isNotEmpty) {
-          print("MediaImportService: Picked ${result.paths.length} files.");
+          debugPrint("MediaImportService: Picked ${result.paths.length} files.");
           return result.paths;
         }
-        print("MediaImportService: User cancelled file picker.");
+        debugPrint("MediaImportService: User cancelled file picker.");
         return [];
       } on Exception catch (e) {
-        print("MediaImportService: Attempt $attempt failed: $e");
+        debugPrint("MediaImportService: Attempt $attempt failed: $e");
         if (attempt == 1) {
           // First attempt failed — wait for native picker to fully release
-          print("MediaImportService: Waiting before retry...");
+          debugPrint("MediaImportService: Waiting before retry...");
           await Future.delayed(const Duration(seconds: 1));
         }
       }
@@ -121,14 +121,14 @@ class MediaImportService {
 
   /// Desktop/Android: Scan an entire directory recursively.
   Future<List<String?>> _scanDirectoryDesktop() async {
-    print("MediaImportService: Opening folder picker...");
+    debugPrint("MediaImportService: Opening folder picker...");
     final directoryPath = await FilePicker.platform.getDirectoryPath();
     if (directoryPath == null) {
-      print("MediaImportService: No directory selected.");
+      debugPrint("MediaImportService: No directory selected.");
       return [];
     }
 
-    print("MediaImportService: Scanning directory: $directoryPath");
+    debugPrint("MediaImportService: Scanning directory: $directoryPath");
     final directory = Directory(directoryPath);
     final entities = await directory.list(recursive: true).toList();
     return entities.whereType<File>().map((e) => e.path).toList();
@@ -180,7 +180,7 @@ class MediaImportService {
       }
     }
 
-    print(
+    debugPrint(
       "MediaImportService: Successfully imported ${importedTracks.length} tracks",
     );
     return importedTracks;
@@ -188,7 +188,7 @@ class MediaImportService {
 
   /// Load music files bundled with the app (from assets/music/).
   Future<List<TrackModel>> loadBundledAssets() async {
-    print("MediaImportService: Loading bundled assets...");
+    debugPrint("MediaImportService: Loading bundled assets...");
     try {
       final appDir = await getApplicationDocumentsDirectory();
       final musicDir = Directory(p.join(appDir.path, 'imported_music'));
@@ -210,13 +210,13 @@ class MediaImportService {
           try {
             final data = await rootBundle.load('assets/music/$fileName');
             await targetFile.writeAsBytes(data.buffer.asUint8List());
-            print("MediaImportService: Copied: $fileName");
+            debugPrint("MediaImportService: Copied: $fileName");
           } catch (e) {
-            print("MediaImportService: Failed to load asset: $fileName — $e");
+            debugPrint("MediaImportService: Failed to load asset: $fileName — $e");
             continue;
           }
         } else {
-          print("MediaImportService: Already exists: $fileName");
+          debugPrint("MediaImportService: Already exists: $fileName");
         }
 
         final title = p
@@ -248,12 +248,12 @@ class MediaImportService {
         );
       }
 
-      print(
+      debugPrint(
         "MediaImportService: Loaded ${importedTracks.length} bundled tracks",
       );
       return importedTracks;
     } catch (e) {
-      print("MediaImportService: Error loading bundled assets: $e");
+      debugPrint("MediaImportService: Error loading bundled assets: $e");
       return [];
     }
   }
@@ -263,13 +263,13 @@ class MediaImportService {
   Future<List<TrackModel>> scanDownloadedMusic({
     Set<String>? existingPaths,
   }) async {
-    print("MediaImportService: Scanning internal /music folder...");
+    debugPrint("MediaImportService: Scanning internal /music folder...");
     try {
       final appDir = await getApplicationDocumentsDirectory();
       final musicDir = Directory(p.join(appDir.path, 'music'));
 
       if (!await musicDir.exists()) {
-        print("MediaImportService: Internal /music folder does not exist yet.");
+        debugPrint("MediaImportService: Internal /music folder does not exist yet.");
         return [];
       }
 
@@ -282,7 +282,7 @@ class MediaImportService {
       }
 
       if (filePaths.isEmpty) {
-        print("MediaImportService: No files found in /music folder.");
+        debugPrint("MediaImportService: No files found in /music folder.");
         return [];
       }
 
@@ -330,12 +330,12 @@ class MediaImportService {
         }
       }
 
-      print(
+      debugPrint(
         "MediaImportService: Discovered ${discoveredTracks.length} tracks in downloads folder.",
       );
       return discoveredTracks;
     } catch (e) {
-      print("MediaImportService: Error scanning downloads: $e");
+      debugPrint("MediaImportService: Error scanning downloads: $e");
       return [];
     }
   }
@@ -360,7 +360,7 @@ class MediaImportService {
       final seconds = duration.inSeconds.remainder(60);
       return "$minutes:${seconds.toString().padLeft(2, '0')}";
     } catch (e) {
-      print("MediaImportService: Error extracting duration for $path: $e");
+      debugPrint("MediaImportService: Error extracting duration for $path: $e");
       return "0:00";
     } finally {
       await player.dispose();
