@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:super_app/core/theme/app_theme.dart';
+import 'package:super_app/features/youtube/presentation/pages/youtube_page.dart';
 
 import '../../../../injection_container.dart';
 import '../bloc/settings_bloc.dart';
@@ -12,7 +13,6 @@ import '../widgets/logout_button.dart';
 import '../widgets/settings_toggle_widget.dart';
 import '../widgets/user_profile_card.dart';
 import '../widgets/youtube_download_card.dart';
-import 'youtube_webview_page.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -144,13 +144,11 @@ class SettingsView extends StatelessWidget {
         SliverToBoxAdapter(
           child: ImportLibraryButton(
             icon: Icons.public,
-            title: 'Survivor Web Downloader',
-            subtitle: 'Manual download via y2mate (Clean UI)',
+            title: 'YouTube Browser',
+            subtitle: 'Explore and download from YouTube',
             onTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const YouTubeWebViewPage(),
-                ),
+                MaterialPageRoute(builder: (context) => const YouTubePage()),
               );
             },
           ),

@@ -24,6 +24,7 @@ import 'features/music_player/presentation/cubit/player_cubit.dart';
 import 'features/onboarding/presentation/pages/onboarding_page.dart';
 import 'features/search/presentation/pages/search_page.dart';
 import 'features/settings/presentation/pages/settings_page.dart';
+import 'features/youtube/presentation/pages/youtube_page.dart';
 import 'injection_container.dart' as di;
 import 'injection_container.dart';
 
@@ -121,6 +122,7 @@ class MainWrapper extends StatelessWidget {
   static final RxInt _currentIndex = 0.obs;
 
   static final List<Widget> _pages = [
+    const YouTubePage(),
     const HomePage(),
     const SearchPage(),
     const LibraryPage(),
@@ -164,9 +166,14 @@ class MainWrapper extends StatelessWidget {
               onTap: (index) => _currentIndex.value = index,
               items: const [
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.home_outlined),
-                  activeIcon: Icon(Icons.home, color: AppTheme.kPrimaryColor),
+                  icon: Icon(Icons.music_note_outlined),
+                  activeIcon: Icon(Icons.music_note, color: AppTheme.kPrimaryColor),
                   label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.dashboard_outlined),
+                  activeIcon: Icon(Icons.dashboard, color: AppTheme.kPrimaryColor),
+                  label: 'Discover',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.search_outlined),

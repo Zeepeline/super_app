@@ -9,6 +9,7 @@ import 'package:uuid/uuid.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:super_app/injection_container.dart';
 import 'package:super_app/core/theme/app_theme.dart';
+import 'package:super_app/core/services/y2mate_service.dart';
 
 class YouTubeWebViewController extends GetxController {
   late final WebViewController controller;
@@ -62,18 +63,42 @@ class YouTubeWebViewController extends GetxController {
 
       final downloadService = sl<DownloadService>();
       final localDataSource = sl<HomeLocalDataSource>();
+      final y2mateService = sl<Y2MateService>();
 
+      // 1. Show "Converting"
       Get.snackbar(
-        'Download',
-        'Starting download for: $title',
+        'Converting',
+        'Preparing track: $title',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppTheme.kPrimaryColor,
-        colorText: Colors.black,
+        backgroundColor: Colors.blueAccent.withOpacity(0.9),
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
+        icon: const Icon(Icons.sync, color: Colors.white),
       );
 
       try {
+        // 2. Get direct download URL via y2mate
+        final downloadUrl = await y2mateService.getDownloadUrl(url);
+        
+        if (downloadUrl == null) {
+          throw Exception("Could not retrieve download link from y2mate.");
+        }
+
+        // 3. Show "Downloading"
+        Get.snackbar(
+          'Downloading',
+          'Downloading content: $title',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: AppTheme.kPrimaryColor.withOpacity(0.9),
+          colorText: Colors.black,
+          margin: const EdgeInsets.all(16),
+          borderRadius: 12,
+          icon: const Icon(Icons.download, color: Colors.black),
+        );
+
         final result = await downloadService.downloadTrack(
-          url: url,
+          url: downloadUrl,
           trackId: _uuid.v4(),
         );
         if (result != null) {
@@ -162,6 +187,15 @@ class YouTubeWebViewPage extends StatelessWidget {
             return const SizedBox.shrink();
           }),
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => x.downloadCurrent(context),
+        backgroundColor: AppTheme.kPrimaryColor,
+        icon: const Icon(Icons.download_rounded, color: Colors.black),
+        label: const Text(
+          'DOWNLOAD MP3',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }

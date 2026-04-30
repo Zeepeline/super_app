@@ -1,8 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:just_audio/just_audio.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -10,8 +11,6 @@ import 'package:uuid/uuid.dart';
 
 import '../../features/home/data/models/track_model.dart';
 import './lyrics_service.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:just_audio/just_audio.dart';
 
 class MediaImportService {
   final LyricsService _lyricsService;

@@ -5,7 +5,6 @@ import 'package:super_app/core/theme/app_theme.dart';
 import 'package:super_app/features/music_player/domain/entities/track_entity.dart';
 import 'package:super_app/features/music_player/presentation/cubit/player_cubit.dart';
 import 'package:super_app/features/music_player/presentation/widgets/album_art_card.dart';
-import 'package:super_app/features/music_player/presentation/widgets/bottom_actions.dart';
 import 'package:super_app/features/music_player/presentation/widgets/lyrics_view.dart';
 import 'package:super_app/features/music_player/presentation/widgets/playback_controls.dart';
 import 'package:super_app/features/music_player/presentation/widgets/seek_bar.dart';
@@ -93,11 +92,22 @@ class MusicPlayerPage extends StatelessWidget {
                 // Blurred album art background layer
                 Positioned.fill(
                   child: Opacity(
-                    opacity: 0.15,
+                    opacity: 0.25,
                     child: Image.network(
                       track.albumArtUrl,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                      errorBuilder: (_, __, ___) => Container(
+                        decoration: BoxDecoration(
+                          gradient: RadialGradient(
+                            center: Alignment.center,
+                            radius: 1.0,
+                            colors: [
+                              AppTheme.kPrimaryColor.withOpacity(0.2),
+                              AppTheme.kBackgroundColor,
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -161,9 +171,11 @@ class MusicPlayerPage extends StatelessWidget {
                       ),
                     ),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        context.read<PlayerCubit>().toggleLyrics();
+                      },
                       icon: const Icon(
-                        Icons.more_vert,
+                        Icons.lyrics_outlined,
                         color: AppTheme.kOnSurfaceVariantColor,
                         size: 24,
                       ),
@@ -251,16 +263,16 @@ class MusicPlayerPage extends StatelessWidget {
           onRepeat: () => context.read<PlayerCubit>().toggleRepeat(),
         ),
 
-        const SizedBox(height: 48),
+        // const SizedBox(height: 48),
 
         // Bottom Actions
-        BottomActions(
-          onActionTap: (action) {
-            if (action == 'lyrics') {
-              context.read<PlayerCubit>().toggleLyrics();
-            }
-          },
-        ),
+        // BottomActions(
+        //   onActionTap: (action) {
+        //     if (action == 'lyrics') {
+        //       context.read<PlayerCubit>().toggleLyrics();
+        //     }
+        //   },
+        // ),
         const SizedBox(height: 16),
       ],
     );
@@ -327,13 +339,13 @@ class MusicPlayerPage extends StatelessWidget {
                 onRepeat: () => context.read<PlayerCubit>().toggleRepeat(),
               ),
               const SizedBox(height: 64),
-              BottomActions(
-                onActionTap: (action) {
-                  if (action == 'lyrics') {
-                    context.read<PlayerCubit>().toggleLyrics();
-                  }
-                },
-              ),
+              // BottomActions(
+              //   onActionTap: (action) {
+              //     if (action == 'lyrics') {
+              //       context.read<PlayerCubit>().toggleLyrics();
+              //     }
+              //   },
+              // ),
             ],
           ),
         ),

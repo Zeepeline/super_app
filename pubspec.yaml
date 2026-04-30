@@ -38,6 +38,7 @@ dependencies:
   dartz: ^0.10.1
   equatable: ^2.0.5
   dio: ^5.3.3
+  http: ^1.6.0
   shared_preferences: ^2.2.1
   google_fonts: ^6.1.0
   flutter_blurhash: ^0.8.2
@@ -54,12 +55,16 @@ dependencies:
   permission_handler: ^11.3.0
   device_info_plus: ^10.1.0
   on_audio_query: ^2.9.0
-  youtube_explode_dart: ^3.0.5
+  youtube_explode_dart:
+    git:
+      url: https://github.com/Hexer10/youtube_explode_dart.git
+      ref: master
   ffmpeg_kit_flutter_new: ^4.1.0
-  yt_downloader: ^0.1.0
   webview_flutter: ^4.4.2
   uuid: ^3.0.7
   get: ^4.6.6
+  html: ^0.15.4
+  serious_python: ^0.8.2
 
 dev_dependencies:
   flutter_test:
@@ -84,6 +89,7 @@ flutter:
 
   assets:
     - assets/music/
+    - app/app.zip
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

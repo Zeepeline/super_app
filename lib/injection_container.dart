@@ -11,6 +11,7 @@ import 'core/services/download_service.dart';
 import 'core/services/media_import_service.dart';
 import 'core/services/lyrics_service.dart';
 import 'core/services/youtube_download_service.dart';
+import 'core/services/youtube_explode_service.dart';
 import 'features/auth/data/datasources/auth_remote_datasource.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
 import 'features/auth/domain/repositories/auth_repository.dart';
@@ -59,6 +60,7 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   sl.registerSingleton<DownloadService>(DownloadService());
   sl.registerSingleton<MediaImportService>(MediaImportService(sl()));
   sl.registerSingleton<YoutubeDownloadService>(YoutubeDownloadService(sl()));
+  sl.registerSingleton<YouTubeExplodeService>(YouTubeExplodeService());
 
   // ===== EXTERNAL =====
   sl.registerSingleton<Connectivity>(Connectivity());

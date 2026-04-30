@@ -49,14 +49,25 @@ class AlbumArtCard extends StatelessWidget {
                 return Container(
                   width: 420,
                   height: 420,
-                  color: AppTheme.kSurfaceContainerLowColor,
+                  decoration: BoxDecoration(
+                    color: AppTheme.kSurfaceContainerLowColor,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        AppTheme.kSurfaceContainerLowColor,
+                        AppTheme.kSurfaceContainerColor,
+                      ],
+                    ),
+                  ),
                   child: Center(
                     child: CircularProgressIndicator(
                       value: loadingProgress.expectedTotalBytes != null
                           ? loadingProgress.cumulativeBytesLoaded /
                                 loadingProgress.expectedTotalBytes!
                           : null,
-                      color: AppTheme.kPrimaryColor,
+                      color: AppTheme.kPrimaryColor.withOpacity(0.5),
+                      strokeWidth: 2,
                     ),
                   ),
                 );
@@ -66,13 +77,33 @@ class AlbumArtCard extends StatelessWidget {
                   width: 420,
                   height: 420,
                   decoration: BoxDecoration(
-                    color: AppTheme.kSurfaceContainerHighestColor,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        AppTheme.kSurfaceContainerHighestColor,
+                        AppTheme.kBackgroundColor,
+                      ],
+                    ),
                     borderRadius: BorderRadius.circular(24),
                   ),
-                  child: const Icon(
-                    Icons.music_note,
-                    size: 120,
-                    color: AppTheme.kOnSurfaceVariantColor,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.music_off_outlined,
+                        size: 80,
+                        color: AppTheme.kPrimaryColor.withOpacity(0.3),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        "Artwork Unavailable",
+                        style: AppTheme.darkTheme.textTheme.labelSmall?.copyWith(
+                          color: AppTheme.kOnSurfaceVariantColor.withOpacity(0.5),
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               },
