@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:super_app/core/services/download_service.dart';
@@ -62,7 +60,6 @@ class YouTubeWebViewController extends GetxController {
       final title = await controller.getTitle() ?? 'YouTube Download';
 
       final downloadService = sl<DownloadService>();
-      final localDataSource = sl<HomeLocalDataSource>();
       final y2mateService = sl<Y2MateService>();
 
       // 1. Show "Converting"
@@ -70,7 +67,7 @@ class YouTubeWebViewController extends GetxController {
         'Converting',
         'Preparing track: $title',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.blueAccent.withOpacity(0.9),
+        backgroundColor: Colors.blueAccent.withValues(alpha: 0.9),
         colorText: Colors.white,
         margin: const EdgeInsets.all(16),
         borderRadius: 12,
@@ -90,7 +87,7 @@ class YouTubeWebViewController extends GetxController {
           'Downloading',
           'Downloading content: $title',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: AppTheme.kPrimaryColor.withOpacity(0.9),
+          backgroundColor: AppTheme.kPrimaryColor.withValues(alpha: 0.9),
           colorText: Colors.black,
           margin: const EdgeInsets.all(16),
           borderRadius: 12,

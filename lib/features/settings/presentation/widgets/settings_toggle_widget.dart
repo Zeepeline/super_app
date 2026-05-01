@@ -22,7 +22,7 @@ class SettingsToggleWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF131313),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: Row(
         children: [
@@ -72,7 +72,7 @@ class SettingsToggleWidget extends StatelessWidget {
               value: value,
               onChanged: onChanged,
               activeThumbColor: const Color(0xFF72fe8f),
-              activeTrackColor: const Color(0xFF72fe8f).withOpacity(0.3),
+              activeTrackColor: const Color(0xFF72fe8f).withValues(alpha: 0.3),
               inactiveThumbColor: Colors.white,
               inactiveTrackColor: const Color(0xFF262626),
             ),

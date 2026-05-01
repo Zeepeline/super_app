@@ -1,8 +1,4 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 class YouTubeExplodeService {
@@ -30,11 +26,6 @@ class YouTubeExplodeService {
       debugPrint('YouTube Search Error: $e');
       throw Exception('Gagal melakukan pencarian: $e');
     }
-  }
-
-  void _resetClient() {
-    _yt.close();
-    _initClient();
   }
 
   void dispose() {

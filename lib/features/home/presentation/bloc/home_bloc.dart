@@ -1,3 +1,4 @@
+import "package:flutter/foundation.dart";
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/services/media_import_service.dart';
@@ -44,7 +45,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<SyncHomeDataEvent>((event, emit) async {
       // AUTO-SYNC: Sync local downloads folder in the background
       try {
-        print("HomeBloc: Starting background sync...");
+        debugPrint("HomeBloc: Starting background sync...");
         // Get existing paths to avoid redundant lyric fetching
         final existingTracks = await localDataSource.getPopularTracks();
         final existingPaths = existingTracks
@@ -72,12 +73,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                   newDuration,
                 );
                 migrated = true;
-                print(
+                debugPrint(
                   "HomeBloc: Fixed duration for ${track.title} -> $newDuration",
                 );
               }
             } catch (e) {
-              print(
+              debugPrint(
                 "HomeBloc: Failed to migrate duration for ${track.title}: $e",
               );
             }
@@ -103,9 +104,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             }
           });
         }
-        print("HomeBloc: Background sync completed.");
+        debugPrint("HomeBloc: Background sync completed.");
       } catch (e) {
-        print("Auto-Sync Error: $e");
+        debugPrint("Auto-Sync Error: $e");
       }
     });
   }

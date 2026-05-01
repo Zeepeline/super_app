@@ -154,7 +154,7 @@ class MainWrapper extends StatelessWidget {
     return Container(
       height: 100,
       decoration: BoxDecoration(
-        color: AppTheme.kBackgroundColor.withOpacity(0.4),
+        color: AppTheme.kBackgroundColor.withValues(alpha: 0.4),
       ),
       child: ClipRRect(
         child: BackdropFilter(

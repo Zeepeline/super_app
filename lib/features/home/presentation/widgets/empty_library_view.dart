@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 
@@ -23,7 +22,7 @@ class EmptyLibraryView extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
                   colors: [
-                    AppTheme.kPrimaryColor.withOpacity(0.2),
+                    AppTheme.kPrimaryColor.withValues(alpha: 0.2),
                     Colors.transparent,
                   ],
                   begin: Alignment.topLeft,
@@ -36,7 +35,7 @@ class EmptyLibraryView extends StatelessWidget {
                   Icon(
                     Icons.music_note_rounded,
                     size: 64,
-                    color: AppTheme.kPrimaryColor.withOpacity(0.8),
+                    color: AppTheme.kPrimaryColor.withValues(alpha: 0.8),
                   ),
                   Positioned(
                     right: 20,
@@ -72,7 +71,7 @@ class EmptyLibraryView extends StatelessWidget {
               'Your digital library is a blank canvas. Start importing your collection to define your rhythm.',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.white.withOpacity(0.5),
+                color: Colors.white.withValues(alpha: 0.5),
                 height: 1.5,
               ),
             ),
@@ -88,9 +87,9 @@ class EmptyLibraryView extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(100),
                   border: Border.all(
-                    color: AppTheme.kPrimaryColor.withOpacity(0.5),
+                    color: AppTheme.kPrimaryColor.withValues(alpha: 0.5),
                   ),
-                  color: AppTheme.kPrimaryColor.withOpacity(0.05),
+                  color: AppTheme.kPrimaryColor.withValues(alpha: 0.05),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,

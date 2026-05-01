@@ -1,3 +1,4 @@
+import "package:flutter/foundation.dart";
 import 'package:hive/hive.dart';
 
 import '../../../../core/utils/hive_box_constants.dart';
@@ -64,12 +65,12 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
           .toList();
       if (newTracks.isNotEmpty) {
         await box.addAll(newTracks);
-        print(
+        debugPrint(
           "HomeLocalDataSource: Successfully added ${newTracks.length} new tracks to library.",
         );
       }
     } catch (e) {
-      print("HomeLocalDataSource: Error adding tracks to library: $e");
+      debugPrint("HomeLocalDataSource: Error adding tracks to library: $e");
       // Fallback: try to wipe and add if really stuck
       try {
         await hive.deleteBoxFromDisk(HiveBoxConstants.tracksBox);
@@ -77,7 +78,7 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
         final box = await _getTracksBox();
         await box.addAll(tracksToAdd);
       } catch (inner) {
-        print(
+        debugPrint(
           "HomeLocalDataSource: Fatal failure in track persistence: $inner",
         );
       }
@@ -90,7 +91,7 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
       final box = await _getPlaylistsBox();
       return box.values.toList();
     } catch (e) {
-      print("HomeLocalDataSource: Corrupted box detected, clearing...");
+      debugPrint("HomeLocalDataSource: Corrupted box detected, clearing...");
       await hive.deleteBoxFromDisk(HiveBoxConstants.playlistsBox);
       _playlistsBox = null;
       final box = await _getPlaylistsBox();
@@ -104,8 +105,8 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
       final box = await _getTracksBox();
       return box.values.toList();
     } catch (e) {
-      print("HomeLocalDataSource: Critical Hive Error: $e");
-      print(
+      debugPrint("HomeLocalDataSource: Critical Hive Error: $e");
+      debugPrint(
         "HomeLocalDataSource: Attempting to clear corrupted 'tracks' box...",
       );
       try {
@@ -114,7 +115,7 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
         final box = await _getTracksBox();
         return box.values.toList();
       } catch (innerError) {
-        print(
+        debugPrint(
           "HomeLocalDataSource: Recursive failure while clearing box: $innerError",
         );
         return [];
@@ -134,13 +135,13 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
         if (track != null) {
           final updatedTrack = track.copyWith(isFavorite: isFavorite);
           await box.putAt(trackIndex, updatedTrack);
-          print(
+          debugPrint(
             "HomeLocalDataSource: Updated favorite status for $id to $isFavorite",
           );
         }
       }
     } catch (e) {
-      print("HomeLocalDataSource: Error updating favorite status: $e");
+      debugPrint("HomeLocalDataSource: Error updating favorite status: $e");
     }
   }
 
@@ -160,7 +161,7 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
         }
       }
     } catch (e) {
-      print("HomeLocalDataSource: Error updating duration: $e");
+      debugPrint("HomeLocalDataSource: Error updating duration: $e");
     }
   }
 

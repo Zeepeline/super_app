@@ -92,7 +92,7 @@ class SearchPage extends StatelessWidget {
   Widget _buildCategoryCard(BuildContext context, dynamic category) {
     return Container(
       decoration: BoxDecoration(
-        color: category.color.withOpacity(0.8),
+        color: category.color.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(16),
       ),
       clipBehavior: Clip.antiAlias,

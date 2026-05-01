@@ -1,3 +1,4 @@
+import "package:flutter/foundation.dart";
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
@@ -74,7 +75,7 @@ class Y2MateService {
       // 4. Poll progress until finished
       return await _pollProgress(progressUrl, videoId, authToken);
     } catch (e) {
-      print("Y2Mate Service Error: $e");
+      debugPrint("Y2Mate Service Error: $e");
       return null;
     }
   }

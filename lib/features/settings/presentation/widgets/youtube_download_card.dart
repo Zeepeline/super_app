@@ -38,8 +38,8 @@ class _YoutubeDownloadCardState extends State<YoutubeDownloadCard> {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: widget.isDownloading
-              ? AppTheme.kPrimaryColor.withOpacity(0.5)
-              : Colors.white.withOpacity(0.05),
+              ? AppTheme.kPrimaryColor.withValues(alpha: 0.5)
+              : Colors.white.withValues(alpha: 0.05),
           width: 1,
         ),
       ),
@@ -51,7 +51,7 @@ class _YoutubeDownloadCardState extends State<YoutubeDownloadCard> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.1),
+                  color: Colors.red.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
@@ -95,7 +95,7 @@ class _YoutubeDownloadCardState extends State<YoutubeDownloadCard> {
               borderRadius: BorderRadius.circular(10),
               child: LinearProgressIndicator(
                 value: widget.progress,
-                backgroundColor: Colors.white.withOpacity(0.05),
+                backgroundColor: Colors.white.withValues(alpha: 0.05),
                 color: AppTheme.kPrimaryColor,
                 minHeight: 6,
               ),
@@ -108,11 +108,11 @@ class _YoutubeDownloadCardState extends State<YoutubeDownloadCard> {
               decoration: InputDecoration(
                 hintText: 'Paste YouTube URL here...',
                 hintStyle: TextStyle(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   fontSize: 14,
                 ),
                 filled: true,
-                fillColor: Colors.black.withOpacity(0.2),
+                fillColor: Colors.black.withValues(alpha: 0.2),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 12,
@@ -123,12 +123,14 @@ class _YoutubeDownloadCardState extends State<YoutubeDownloadCard> {
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.white.withOpacity(0.05)),
+                  borderSide: BorderSide(
+                    color: Colors.white.withValues(alpha: 0.05),
+                  ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(
-                    color: AppTheme.kPrimaryColor.withOpacity(0.5),
+                    color: AppTheme.kPrimaryColor.withValues(alpha: 0.5),
                   ),
                 ),
               ),

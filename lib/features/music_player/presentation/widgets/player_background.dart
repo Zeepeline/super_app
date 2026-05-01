@@ -21,9 +21,9 @@ class PlayerBackground extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    AppTheme.kPrimaryColor.withOpacity(0.15),
+                    AppTheme.kPrimaryColor.withValues(alpha: 0.15),
                     AppTheme.kBackgroundColor,
-                    AppTheme.kPrimaryContainerColor.withOpacity(0.2),
+                    AppTheme.kPrimaryContainerColor.withValues(alpha: 0.2),
                   ],
                 ),
               ),
@@ -51,8 +51,8 @@ class PlayerBackground extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    AppTheme.kBackgroundColor.withOpacity(0.2),
-                    AppTheme.kBackgroundColor.withOpacity(0.4),
+                    AppTheme.kBackgroundColor.withValues(alpha: 0.2),
+                    AppTheme.kBackgroundColor.withValues(alpha: 0.4),
                     AppTheme.kBackgroundColor,
                   ],
                 ),

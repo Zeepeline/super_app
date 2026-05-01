@@ -4,7 +4,6 @@ import 'package:super_app/core/services/youtube_explode_service.dart';
 import 'package:super_app/core/services/youtube_download_service.dart';
 import 'package:super_app/core/theme/app_theme.dart';
 import 'package:super_app/features/home/data/datasources/home_local_data_source.dart';
-import 'package:super_app/features/home/data/models/track_model.dart';
 import 'package:super_app/injection_container.dart';
 import 'package:uuid/uuid.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
@@ -95,26 +94,6 @@ class YouTubeController extends GetxController {
         icon: const Icon(Icons.error_rounded, color: Colors.white),
       );
     }
-  }
-
-  String _cleanTitle(String title) {
-    return title
-        .replaceAll(' - YouTube Music', '')
-        .replaceAll(' - YouTube', '')
-        .replaceAll(RegExp(r'\[.*?\]'), '')
-        .replaceAll(RegExp(r'\(Official.*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Lyrics.*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Audio.*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Music Video.*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\s{2,}'), ' ')
-        .trim();
-  }
-
-  String _formatDuration(Duration? duration) {
-    if (duration == null) return '0:00';
-    final minutes = duration.inMinutes;
-    final seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
-    return '$minutes:$seconds';
   }
 
   void _showSnackbar(

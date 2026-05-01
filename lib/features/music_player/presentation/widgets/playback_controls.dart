@@ -41,7 +41,7 @@ class PlaybackControls extends StatelessWidget {
               shadows: isShuffle
                   ? [
                       Shadow(
-                        color: AppTheme.kPrimaryColor.withOpacity(0.4),
+                        color: AppTheme.kPrimaryColor.withValues(alpha: 0.4),
                         blurRadius: 10,
                       ),
                     ]
@@ -73,7 +73,9 @@ class PlaybackControls extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.kPrimaryContainerColor.withOpacity(0.4),
+                    color: AppTheme.kPrimaryContainerColor.withValues(
+                      alpha: 0.4,
+                    ),
                     blurRadius: 30,
                     spreadRadius: 4,
                   ),
@@ -105,7 +107,7 @@ class PlaybackControls extends StatelessWidget {
               shadows: isRepeat
                   ? [
                       Shadow(
-                        color: AppTheme.kPrimaryColor.withOpacity(0.4),
+                        color: AppTheme.kPrimaryColor.withValues(alpha: 0.4),
                         blurRadius: 10,
                       ),
                     ]

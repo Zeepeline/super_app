@@ -54,7 +54,9 @@ class MusicPlayerPage extends StatelessWidget {
                         center: Alignment.topLeft,
                         radius: 1.0,
                         colors: [
-                          AppTheme.kPrimaryContainerColor.withOpacity(0.15),
+                          AppTheme.kPrimaryContainerColor.withValues(
+                            alpha: 0.15,
+                          ),
                           Colors.transparent,
                         ],
                       ),
@@ -68,7 +70,7 @@ class MusicPlayerPage extends StatelessWidget {
                         center: Alignment.topRight,
                         radius: 1.0,
                         colors: [
-                          AppTheme.kPrimaryColor.withOpacity(0.1),
+                          AppTheme.kPrimaryColor.withValues(alpha: 0.1),
                           Colors.transparent,
                         ],
                       ),
@@ -82,7 +84,7 @@ class MusicPlayerPage extends StatelessWidget {
                         center: Alignment.bottomRight,
                         radius: 1.0,
                         colors: [
-                          const Color(0xFF006E2D).withOpacity(0.2),
+                          const Color(0xFF006E2D).withValues(alpha: 0.2),
                           Colors.transparent,
                         ],
                       ),
@@ -102,7 +104,7 @@ class MusicPlayerPage extends StatelessWidget {
                             center: Alignment.center,
                             radius: 1.0,
                             colors: [
-                              AppTheme.kPrimaryColor.withOpacity(0.2),
+                              AppTheme.kPrimaryColor.withValues(alpha: 0.2),
                               AppTheme.kBackgroundColor,
                             ],
                           ),
@@ -119,8 +121,8 @@ class MusicPlayerPage extends StatelessWidget {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          AppTheme.kBackgroundColor.withOpacity(0.2),
-                          AppTheme.kBackgroundColor.withOpacity(0.4),
+                          AppTheme.kBackgroundColor.withValues(alpha: 0.2),
+                          AppTheme.kBackgroundColor.withValues(alpha: 0.4),
                           AppTheme.kBackgroundColor,
                         ],
                       ),

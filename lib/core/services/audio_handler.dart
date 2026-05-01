@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
+import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../../features/music_player/domain/entities/track_entity.dart';
@@ -126,7 +126,7 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
       // 5. Start playback
       await play();
     } catch (e) {
-      print("Error playing track: $e");
+      debugPrint("Error playing track: $e");
     }
   }
 
@@ -165,8 +165,6 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
         return AudioProcessingState.ready;
       case ProcessingState.completed:
         return AudioProcessingState.completed;
-      default:
-        return AudioProcessingState.idle;
     }
   }
 

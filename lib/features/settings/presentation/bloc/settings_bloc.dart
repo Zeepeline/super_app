@@ -1,3 +1,4 @@
+import "package:flutter/foundation.dart";
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/services/media_import_service.dart';
@@ -60,13 +61,13 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     ScanLocalFoldersEvent event,
     Emitter<SettingsState> emit,
   ) async {
-    print(
+    debugPrint(
       "SettingsBloc: ScanLocalFoldersEvent received. _isImporting=$_isImporting, state=${state.runtimeType}",
     );
 
     // Prevent multiple concurrent import operations
     if (_isImporting) {
-      print("SettingsBloc: Already importing, ignoring event.");
+      debugPrint("SettingsBloc: Already importing, ignoring event.");
       return;
     }
 
@@ -79,10 +80,10 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           user: currentState.user,
         ),
       );
-      print("SettingsBloc: Starting import via MediaImportService...");
+      debugPrint("SettingsBloc: Starting import via MediaImportService...");
       try {
         final tracks = await importService.importLocalTracks();
-        print("SettingsBloc: Import returned ${tracks.length} tracks.");
+        debugPrint("SettingsBloc: Import returned ${tracks.length} tracks.");
         if (tracks.isNotEmpty) {
           await homeLocalDataSource.addImportedTracks(tracks);
           emit(
@@ -99,7 +100,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           emit(currentState);
         }
       } catch (e) {
-        print("SettingsBloc: Import error: $e");
+        debugPrint("SettingsBloc: Import error: $e");
         emit(SettingsError('Failed to import tracks: ${e.toString()}'));
         // Return to loaded state after error
         add(const LoadSettingsEvent());
@@ -107,7 +108,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         _isImporting = false;
       }
     } else {
-      print(
+      debugPrint(
         "SettingsBloc: State is not SettingsLoaded (${state.runtimeType}), ignoring.",
       );
     }
@@ -219,7 +220,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           emit(currentState);
         }
       } catch (e) {
-        print("SettingsBloc: Error loading bundled music: $e");
+        debugPrint("SettingsBloc: Error loading bundled music: $e");
         emit(currentState);
       }
     }
@@ -297,7 +298,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           emit(currentState);
         }
       } catch (e) {
-        print("SettingsBloc: Sync error: $e");
+        debugPrint("SettingsBloc: Sync error: $e");
         emit(SettingsError('Failed to sync downloads: ${e.toString()}'));
         add(const LoadSettingsEvent());
       } finally {

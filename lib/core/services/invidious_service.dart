@@ -1,3 +1,4 @@
+import "package:flutter/foundation.dart";
 import 'package:dio/dio.dart';
 
 class InvidiousService {
@@ -15,7 +16,7 @@ class InvidiousService {
   Future<String?> getAudioStreamUrl(String videoId) async {
     for (var instance in _instances) {
       try {
-        print("InvidiousService: Trying instance $instance for $videoId");
+        debugPrint("InvidiousService: Trying instance $instance for $videoId");
         final response = await _dio.get(
           '${instance}api/v1/videos/$videoId',
           options: Options(
@@ -46,15 +47,15 @@ class InvidiousService {
             });
 
             final streamUrl = audioStreams.first['url'] as String;
-            print("InvidiousService: Successfully found audio stream");
+            debugPrint("InvidiousService: Successfully found audio stream");
             return streamUrl;
           }
         }
       } catch (e) {
-        print("InvidiousService Warning: Instance $instance failed: $e");
+        debugPrint("InvidiousService Warning: Instance $instance failed: $e");
       }
     }
-    print("InvidiousService Error: All instances failed.");
+    debugPrint("InvidiousService Error: All instances failed.");
     return null;
   }
 }

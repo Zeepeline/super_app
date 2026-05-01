@@ -48,7 +48,7 @@ class MiniPlayer extends StatelessWidget {
             height: 64,
             margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: AppTheme.kSurfaceContainerColor.withOpacity(0.7),
+              color: AppTheme.kSurfaceContainerColor.withValues(alpha: 0.7),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Stack(
@@ -160,7 +160,9 @@ class MiniPlayer extends StatelessWidget {
                             borderRadius: BorderRadius.circular(1),
                             boxShadow: [
                               BoxShadow(
-                                color: AppTheme.kPrimaryColor.withOpacity(0.5),
+                                color: AppTheme.kPrimaryColor.withValues(
+                                  alpha: 0.5,
+                                ),
                                 blurRadius: 4,
                                 offset: const Offset(0, 1),
                               ),

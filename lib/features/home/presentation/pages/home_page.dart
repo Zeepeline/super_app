@@ -7,7 +7,6 @@ import 'package:super_app/core/theme/widgets/offline_badge.dart';
 import 'package:super_app/features/home/presentation/bloc/home_bloc.dart';
 import 'package:super_app/features/home/presentation/bloc/home_event.dart';
 import 'package:super_app/features/home/presentation/bloc/home_state.dart';
-import 'package:super_app/features/home/presentation/widgets/featured_playlist_card.dart';
 import 'package:super_app/features/home/presentation/widgets/popular_track_card.dart';
 import 'package:super_app/features/settings/presentation/pages/settings_page.dart';
 import 'package:super_app/injection_container.dart';
@@ -175,7 +174,7 @@ class HomePage extends StatelessWidget {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.9),
+                      color: Colors.black.withValues(alpha: 0.9),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -203,57 +202,27 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildFeaturedPlaylists(BuildContext context, HomeLoaded state) {
-    return SliverToBoxAdapter(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 24, top: 48, bottom: 24),
-            child: Text(
-              'YOUR ATMOSPHERE',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ),
-          SizedBox(
-            height: 260,
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              scrollDirection: Axis.horizontal,
-              itemCount: state.featuredPlaylists.length,
-              itemBuilder: (context, index) {
-                return FeaturedPlaylistCard(
-                  playlist: state.featuredPlaylists[index],
-                );
-              },
-            ),
-          ),
-        ],
+Widget _buildPopularTracksHeader(BuildContext context) {
+  return SliverToBoxAdapter(
+    child: Padding(
+      padding: const EdgeInsets.only(left: 24, top: 48, bottom: 24),
+      child: Text(
+        'ON THE RISE',
+        style: Theme.of(context).textTheme.headlineMedium,
       ),
-    );
-  }
+    ),
+  );
+}
 
-  Widget _buildPopularTracksHeader(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 24, top: 48, bottom: 24),
-        child: Text(
-          'ON THE RISE',
-          style: Theme.of(context).textTheme.headlineMedium,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPopularTracksList(BuildContext context, HomeLoaded state) {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate((context, index) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-          child: PopularTrackCard(track: state.popularTracks[index]),
-        );
-      }, childCount: state.popularTracks.length),
-    );
-  }
+Widget _buildPopularTracksList(BuildContext context, HomeLoaded state) {
+  return SliverList(
+    delegate: SliverChildBuilderDelegate((context, index) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+        child: PopularTrackCard(track: state.popularTracks[index]),
+      );
+    }, childCount: state.popularTracks.length),
+  );
 }

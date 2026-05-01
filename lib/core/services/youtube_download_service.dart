@@ -1,3 +1,4 @@
+import "package:flutter/foundation.dart";
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -43,7 +44,7 @@ class YoutubeDownloadService {
             .get(videoId)
             .timeout(const Duration(seconds: 10));
       } catch (e) {
-        print(
+        debugPrint(
           "YoutubeDownloadService: Metadata fetch failed, using generic: $e",
         );
       }
@@ -112,7 +113,7 @@ class YoutubeDownloadService {
                 }
               }
             } catch (e) {
-              print("YoutubeDownloadService: JSON error: $e");
+              debugPrint("YoutubeDownloadService: JSON error: $e");
             }
             request.response.statusCode = HttpStatus.ok;
             await request.response.close();
@@ -121,7 +122,7 @@ class YoutubeDownloadService {
 
         if (!_isWorkerStarted) {
           onProgress?.call('Initializing Python Worker...', 0.12);
-          print(
+          debugPrint(
             "YoutubeDownloadService: Launching Python Worker via SeriousPython...",
           );
 
@@ -139,7 +140,9 @@ class YoutubeDownloadService {
           if (_workerPort == null)
             throw Exception("Python Worker failed to start.");
           _isWorkerStarted = true;
-          print("YoutubeDownloadService: Worker is ready on port $_workerPort");
+          debugPrint(
+            "YoutubeDownloadService: Worker is ready on port $_workerPort",
+          );
         }
 
         onProgress?.call('Starting download...', 0.15);
@@ -184,7 +187,7 @@ class YoutubeDownloadService {
         _activeDownloadCompleters.remove(videoId);
       }
     } catch (e) {
-      print("YoutubeDownloadService Error: $e");
+      debugPrint("YoutubeDownloadService Error: $e");
       rethrow;
     }
   }

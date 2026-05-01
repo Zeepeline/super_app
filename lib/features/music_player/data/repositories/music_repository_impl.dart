@@ -1,3 +1,4 @@
+import "package:flutter/foundation.dart";
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failures.dart';
@@ -87,7 +88,9 @@ class MusicRepositoryImpl implements MusicRepository {
         );
       }
     } catch (e) {
-      print("MusicRepositoryImpl: Error initializing player from library: $e");
+      debugPrint(
+        "MusicRepositoryImpl: Error initializing player from library: $e",
+      );
     }
   }
 
@@ -180,7 +183,7 @@ class MusicRepositoryImpl implements MusicRepository {
   @override
   Future<Either<Failure, TrackEntity>> skipToNext() async {
     try {
-      final nextTrack = localDataSource.getNextTrack();
+      localDataSource.getNextTrack();
       // Ensure we set it as playing in our local state
       final updatedTrack = localDataSource.updateTrackState(
         isPlaying: true,
@@ -196,7 +199,7 @@ class MusicRepositoryImpl implements MusicRepository {
   @override
   Future<Either<Failure, TrackEntity>> skipToPrevious() async {
     try {
-      final prevTrack = localDataSource.getPreviousTrack();
+      localDataSource.getPreviousTrack();
       // Ensure we set it as playing in our local state
       final updatedTrack = localDataSource.updateTrackState(
         isPlaying: true,
@@ -255,7 +258,6 @@ class MusicRepositoryImpl implements MusicRepository {
     final currentTrack = localDataSource.getCurrentTrack();
     if (currentTrack.id != item.id) {
       // This allows navigation from system controls to update our local state
-      final trackInQueue = localDataSource.getCurrentTrack(); // Default
       // Find in queue and set
       // (Actually, set current track will handle the index update)
       // We assume the track exists or we just create a temp one

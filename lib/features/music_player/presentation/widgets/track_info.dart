@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:super_app/core/theme/app_theme.dart';
 import '../controllers/player_ui_controller.dart';
 
@@ -66,7 +65,9 @@ class TrackInfo extends StatelessWidget {
                     boxShadow: track.isFavorite
                         ? [
                             BoxShadow(
-                              color: AppTheme.kPrimaryColor.withOpacity(0.4),
+                              color: AppTheme.kPrimaryColor.withValues(
+                                alpha: 0.4,
+                              ),
                               blurRadius: 12,
                               spreadRadius: 2,
                             ),

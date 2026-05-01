@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../app_theme.dart';
 
 class OfflineBadge extends StatelessWidget {
   const OfflineBadge({super.key});
@@ -9,9 +8,9 @@ class OfflineBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.1),
+        color: Colors.red.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.red.withOpacity(0.2)),
+        border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
