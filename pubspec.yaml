@@ -66,6 +66,7 @@ dependencies:
   html: ^0.15.4
   serious_python: ^0.8.2
   path: ^1.9.1
+  bloc: ^8.1.4
 
 dev_dependencies:
   flutter_test:

@@ -24,8 +24,9 @@ class Y2MateService {
 
       final html = response.data.toString();
       final jsonArray = _extractJsonArray(html);
-      if (jsonArray == null)
+      if (jsonArray == null) {
         throw Exception("Could not find auth data on y2mate");
+      }
 
       // Update backend domain and auth key if found
       _updateBackendConfig(html, jsonArray);

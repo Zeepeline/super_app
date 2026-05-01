@@ -60,7 +60,7 @@ class YoutubeDownloadService {
       final lyrics = await _lyricsService.fetchLyrics(
         author,
         title,
-        youtubeId: videoId,
+        youtubeId: videoId.value,
       );
       final syncedLyrics = lyrics['synced'];
       final plainLyrics = lyrics['plain'];
@@ -79,7 +79,7 @@ class YoutubeDownloadService {
         final progressPort = progressServer.port;
 
         final currentDownloadCompleter = Completer<void>();
-        final videoIdStr = videoId;
+        final videoIdStr = videoId.value;
         _activeDownloadCompleters[videoIdStr] = currentDownloadCompleter;
 
         progressServer.listen((HttpRequest request) async {
@@ -98,11 +98,13 @@ class YoutubeDownloadService {
                 if (status == 'error') {
                   _downloadErrors[videoIdStr] =
                       data['error']?.toString() ?? 'Unknown error';
-                  if (!currentDownloadCompleter.isCompleted)
+                  if (!currentDownloadCompleter.isCompleted) {
                     currentDownloadCompleter.complete();
+                  }
                 } else if (status == 'done') {
-                  if (!currentDownloadCompleter.isCompleted)
+                  if (!currentDownloadCompleter.isCompleted) {
                     currentDownloadCompleter.complete();
+                  }
                 } else if (status == 'processing') {
                   onProgress?.call('Finalizing file...', 0.95);
                 } else {
@@ -137,8 +139,9 @@ class YoutubeDownloadService {
             await Future.delayed(const Duration(milliseconds: 500));
             wait++;
           }
-          if (_workerPort == null)
+          if (_workerPort == null) {
             throw Exception("Python Worker failed to start.");
+          }
           _isWorkerStarted = true;
           debugPrint(
             "YoutubeDownloadService: Worker is ready on port $_workerPort",
@@ -184,7 +187,7 @@ class YoutubeDownloadService {
         );
       } finally {
         await progressServer?.close();
-        _activeDownloadCompleters.remove(videoId);
+        _activeDownloadCompleters.remove(videoId.value);
       }
     } catch (e) {
       debugPrint("YoutubeDownloadService Error: $e");
