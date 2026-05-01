@@ -51,8 +51,8 @@ class SeekBar extends StatelessWidget {
                     overlayRadius: 12,
                   ),
                   activeTrackColor: AppTheme.kPrimaryColor,
-                  inactiveTrackColor: AppTheme.kOutlineVariantColor.withValues(alpha:
-                    0.3,
+                  inactiveTrackColor: AppTheme.kOutlineVariantColor.withValues(
+                    alpha: 0.3,
                   ),
                   thumbColor: Colors.white,
                   overlayColor: AppTheme.kPrimaryColor.withValues(alpha: 0.2),

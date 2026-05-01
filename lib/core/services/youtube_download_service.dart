@@ -33,15 +33,17 @@ class YoutubeDownloadService {
     Function(String stage, double progress)? onProgress,
   }) async {
     try {
-      final videoId = VideoId.parseVideoId(url);
-      if (videoId == null) throw Exception('URL YouTube tidak valid');
+      final videoIdObj = VideoId.parseVideoId(url);
+      if (videoIdObj == null) throw Exception('URL YouTube tidak valid');
+
+      final videoId = videoIdObj;
 
       onProgress?.call('Fetching metadata...', 0.05);
 
       Video? video;
       try {
         video = await _yt.videos
-            .get(videoId)
+            .get(videoIdObj)
             .timeout(const Duration(seconds: 10));
       } catch (e) {
         debugPrint(
@@ -60,7 +62,7 @@ class YoutubeDownloadService {
       final lyrics = await _lyricsService.fetchLyrics(
         author,
         title,
-        youtubeId: videoId.value,
+        youtubeId: videoId,
       );
       final syncedLyrics = lyrics['synced'];
       final plainLyrics = lyrics['plain'];
@@ -79,7 +81,7 @@ class YoutubeDownloadService {
         final progressPort = progressServer.port;
 
         final currentDownloadCompleter = Completer<void>();
-        final videoIdStr = videoId.value;
+        final videoIdStr = videoId;
         _activeDownloadCompleters[videoIdStr] = currentDownloadCompleter;
 
         progressServer.listen((HttpRequest request) async {
@@ -187,7 +189,7 @@ class YoutubeDownloadService {
         );
       } finally {
         await progressServer?.close();
-        _activeDownloadCompleters.remove(videoId.value);
+        _activeDownloadCompleters.remove(videoId);
       }
     } catch (e) {
       debugPrint("YoutubeDownloadService Error: $e");
