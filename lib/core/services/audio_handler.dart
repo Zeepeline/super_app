@@ -109,12 +109,10 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
           final relativePath = parts.last;
           final newPath = p.join(appDir.path, relativePath);
           if (await File(newPath).exists()) {
-            print("AudioHandler: Resolved rotated path: $newPath");
             return newPath;
           }
         }
       } catch (e) {
-        print("AudioHandler: Error resolving path: $e");
       }
     }
     
@@ -169,7 +167,6 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
       // 6. Start playback
       await play();
     } catch (e) {
-      print("Error playing track: $e");
       // If error occurs, maybe try to skip to next if it was an auto-play?
       // For now just log.
     }

@@ -38,11 +38,6 @@ class YouTubeExplodeService {
     }
   }
 
-  void _resetClient() {
-    _yt.close();
-    _initClient();
-  }
-
   void dispose() {
     _yt.close();
   }

@@ -1,0 +1,70 @@
+Analyzing super_app...                                          
+
+   info • Empty catch block • lib/core/services/audio_handler.dart:115:19 • empty_catches
+warning • This default clause is covered by the previous cases • lib/core/services/audio_handler.dart:210:7 • unreachable_switch_default
+   info • Empty catch block • lib/core/services/lyrics_service.dart:52:17 • empty_catches
+   info • Empty catch block • lib/core/services/lyrics_service.dart:164:17 • empty_catches
+warning • Unused import: './lyrics_service.dart' • lib/core/services/media_import_service.dart:13:8 • unused_import
+warning • The exception variable 'e' isn't used, so the 'catch' clause can be removed • lib/core/services/media_import_service.dart:105:29 • unused_catch_clause
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:174:5 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:239:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/services/media_import_service.dart:328:7 • avoid_print
+   info • Empty catch block • lib/core/services/youtube_download_service.dart:128:25 • empty_catches
+  error • Undefined name '_isInitializing' • lib/core/services/youtube_download_service.dart:250:5 • undefined_identifier
+  error • Undefined name '_isInitializing' • lib/core/services/youtube_download_service.dart:295:7 • undefined_identifier
+   info • Empty catch block • lib/core/services/youtube_download_service.dart:340:23 • empty_catches
+   info • Empty catch block • lib/core/services/youtube_download_service.dart:354:17 • empty_catches
+   info • Empty catch block • lib/core/services/youtube_download_service.dart:374:23 • empty_catches
+warning • The declaration '_resetClient' isn't referenced • lib/core/services/youtube_explode_service.dart:41:8 • unused_element
+warning • Unused import: '../app_theme.dart' • lib/core/theme/widgets/offline_badge.dart:2:8 • unused_import
+   info • The type parameter name 'Type' matches a visible type name • lib/core/usecases/usecase.dart:5:24 • avoid_types_as_parameter_names
+warning • The value of the local variable 'existingKey' isn't used • lib/features/home/data/datasources/home_local_data_source.dart:73:17 • unused_local_variable
+   info • Empty catch block • lib/features/home/data/datasources/home_local_data_source.dart:89:17 • empty_catches
+   info • Empty catch block • lib/features/home/data/datasources/home_local_data_source.dart:151:17 • empty_catches
+   info • Empty catch block • lib/features/home/data/datasources/home_local_data_source.dart:170:17 • empty_catches
+   info • Empty catch block • lib/features/home/data/datasources/home_local_data_source.dart:196:17 • empty_catches
+warning • The value of the local variable 'existingTracks' isn't used • lib/features/home/presentation/bloc/home_bloc.dart:60:15 • unused_local_variable
+   info • Don't invoke 'print' in production code • lib/features/home/presentation/bloc/home_bloc.dart:124:15 • avoid_print
+   info • Empty catch block • lib/features/home/presentation/bloc/home_bloc.dart:147:19 • empty_catches
+   info • The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' • lib/features/home/presentation/widgets/empty_library_view.dart:1:8 • unnecessary_import
+warning • Unused import: '../../../../core/theme/app_theme.dart' • lib/features/home/presentation/widgets/featured_playlist_card.dart:2:8 • unused_import
+   info • The imported package 'bloc' isn't a dependency of the importing package • lib/features/library/presentation/bloc/library_bloc.dart:2:8 • depend_on_referenced_packages
+warning • The value of the field '_isInitialized' isn't used • lib/features/music_player/data/datasources/music_local_datasource.dart:73:14 • unused_field
+   info • Empty catch block • lib/features/music_player/data/repositories/music_repository_impl.dart:69:19 • empty_catches
+   info • Empty catch block • lib/features/music_player/data/repositories/music_repository_impl.dart:111:17 • empty_catches
+   info • Use 'const' with the constructor to improve performance • lib/features/music_player/presentation/pages/music_player_page.dart:181:17 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/features/music_player/presentation/pages/music_player_page.dart:182:26 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/features/music_player/presentation/pages/music_player_page.dart:183:33 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/features/music_player/presentation/pages/music_player_page.dart:184:33 • prefer_const_constructors
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes • lib/features/music_player/presentation/pages/music_player_page.dart:187:33 • prefer_const_literals_to_create_immutables
+   info • 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead • lib/features/music_player/presentation/widgets/album_art_card.dart:23:15 • deprecated_member_use
+   info • Use 'const' with the constructor to improve performance • lib/features/music_player/presentation/widgets/album_art_card.dart:52:31 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/features/music_player/presentation/widgets/album_art_card.dart:54:31 • prefer_const_constructors
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes • lib/features/music_player/presentation/widgets/album_art_card.dart:57:31 • prefer_const_literals_to_create_immutables
+   info • Use 'const' with the constructor to improve performance • lib/features/music_player/presentation/widgets/album_art_card.dart:80:31 • prefer_const_constructors
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes • lib/features/music_player/presentation/widgets/album_art_card.dart:83:31 • prefer_const_literals_to_create_immutables
+warning • Unused import: 'package:google_fonts/google_fonts.dart' • lib/features/music_player/presentation/widgets/bottom_actions.dart:3:8 • unused_import
+warning • Unused import: 'package:super_app/features/music_player/domain/models/lyric_line.dart' • lib/features/music_player/presentation/widgets/lyrics_view.dart:4:8 • unused_import
+warning • Unused import: 'package:google_fonts/google_fonts.dart' • lib/features/music_player/presentation/widgets/seek_bar.dart:3:8 • unused_import
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/seek_bar.dart:55:69 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/music_player/presentation/widgets/vinyl_record.dart:70:59 • deprecated_member_use
+   info • 'value' is deprecated and shouldn't be used. Use component accessors like .r or .g, or toARGB32 for an explicit conversion • lib/features/search/data/models/category_model.dart:25:22 • deprecated_member_use
+warning • The value of the field '_fadeAnimation' isn't used • lib/features/splash/presentation/pages/splash_page.dart:21:26 • unused_field
+warning • The receiver can't be null, so the null-aware operator '?.' is unnecessary • lib/features/youtube/presentation/controllers/youtube_controller.dart:76:21 • invalid_null_aware_operator
+warning • The receiver can't be null, so the null-aware operator '?.' is unnecessary • lib/features/youtube/presentation/controllers/youtube_controller.dart:77:22 • invalid_null_aware_operator
+warning • The receiver can't be null, so the null-aware operator '?.' is unnecessary • lib/features/youtube/presentation/controllers/youtube_controller.dart:78:27 • invalid_null_aware_operator
+warning • The receiver can't be null, so the null-aware operator '?.' is unnecessary • lib/features/youtube/presentation/controllers/youtube_controller.dart:79:24 • invalid_null_aware_operator
+warning • The declaration '_cleanTitle' isn't referenced • lib/features/youtube/presentation/controllers/youtube_controller.dart:208:10 • unused_element
+warning • The declaration '_formatDuration' isn't referenced • lib/features/youtube/presentation/controllers/youtube_controller.dart:221:10 • unused_element
+   info • Invalid use of a private type in a public API • lib/features/youtube/presentation/controllers/youtube_controller.dart:263:9 • library_private_types_in_public_api
+   info • The imported package 'webview_flutter_wkwebview' isn't a dependency of the importing package • lib/features/youtube/presentation/pages/youtube_page.dart:11:8 • depend_on_referenced_packages
+warning • Unused import: 'core/services/youtube_download_service.dart' • lib/main.dart:29:8 • unused_import
+   info • Don't invoke 'print' in production code • scratch/test_cleaning.dart:11:5 • avoid_print
+   info • Don't invoke 'print' in production code • scratch/test_cleaning.dart:12:5 • avoid_print
+   info • Don't invoke 'print' in production code • scratch/test_cleaning.dart:13:5 • avoid_print
+   info • Use 'const' for final variables initialized to a constant value • scratch/yt_cc_test.dart:5:3 • prefer_const_declarations
+   info • Don't invoke 'print' in production code • scratch/yt_cc_test.dart:8:5 • avoid_print
+   info • Don't invoke 'print' in production code • scratch/yt_cc_test.dart:10:7 • avoid_print
+   info • Don't invoke 'print' in production code • scratch/yt_cc_test.dart:13:5 • avoid_print
+
+66 issues found. (ran in 10.1s)

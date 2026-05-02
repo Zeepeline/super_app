@@ -73,10 +73,10 @@ class YouTubeController extends GetxController {
       // 3. Create TrackEntity
       final track = TrackEntity(
         id: videoId,
-        title: video?.title ?? 'YouTube Audio',
-        artist: video?.author ?? 'Unknown Artist',
-        albumArtUrl: video?.thumbnails.highResUrl ?? '',
-        duration: video?.duration ?? Duration.zero,
+        title: video.title,
+        artist: video.author,
+        albumArtUrl: video.thumbnails.highResUrl,
+        duration: video.duration ?? Duration.zero,
         audioUrl: streamUrl,
         isFavorite: false,
         isPlaying: true,
@@ -203,26 +203,6 @@ class YouTubeController extends GetxController {
         icon: const Icon(Icons.error_rounded, color: Colors.white),
       );
     }
-  }
-
-  String _cleanTitle(String title) {
-    return title
-        .replaceAll(' - YouTube Music', '')
-        .replaceAll(' - YouTube', '')
-        .replaceAll(RegExp(r'\[.*?\]'), '')
-        .replaceAll(RegExp(r'\(Official.*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Lyrics.*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Audio.*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Music Video.*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\s{2,}'), ' ')
-        .trim();
-  }
-
-  String _formatDuration(Duration? duration) {
-    if (duration == null) return '0:00';
-    final minutes = duration.inMinutes;
-    final seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
-    return '$minutes:$seconds';
   }
 
   void _showSnackbar(

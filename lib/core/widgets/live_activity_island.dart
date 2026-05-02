@@ -42,19 +42,19 @@ class LiveActivityIsland extends StatelessWidget {
                         width: _isExpanded.value ? 340 : 200,
                         height: _isExpanded.value ? 84 : 40,
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.8),
+                          color: Colors.black.withValues(alpha: 0.8),
                           borderRadius: BorderRadius.circular(
                             _isExpanded.value ? 28 : 20,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: AppTheme.kPrimaryColor.withOpacity(0.15),
+                              color: AppTheme.kPrimaryColor.withValues(alpha: 0.15),
                               blurRadius: 20,
                               spreadRadius: -5,
                             ),
                           ],
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.05),
+                            color: Colors.white.withValues(alpha: 0.05),
                             width: 0.5,
                           ),
                         ),
@@ -178,7 +178,7 @@ class LiveActivityIsland extends StatelessWidget {
                   : Container(
                       width: 52,
                       height: 52,
-                      color: Colors.white.withOpacity(0.05),
+                      color: Colors.white.withValues(alpha: 0.05),
                       child: const Icon(
                         Icons.music_note,
                         color: AppTheme.kPrimaryColor,
@@ -202,7 +202,7 @@ class LiveActivityIsland extends StatelessWidget {
                   Text(
                     mediaItem.artist ?? 'Unknown Artist',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withValues(alpha: 0.5),
                       fontSize: 13,
                     ),
                     maxLines: 1,
@@ -251,7 +251,7 @@ class LiveActivityIsland extends StatelessWidget {
               height: 4,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -266,7 +266,7 @@ class LiveActivityIsland extends StatelessWidget {
                   borderRadius: BorderRadius.circular(2),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.kPrimaryColor.withOpacity(0.3),
+                      color: AppTheme.kPrimaryColor.withValues(alpha: 0.3),
                       blurRadius: 4,
                       offset: const Offset(0, 1),
                     ),

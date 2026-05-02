@@ -140,7 +140,7 @@ class MusicPlayerPage extends StatelessWidget {
                         center: Alignment.topLeft,
                         radius: 0.8,
                         colors: [
-                          const Color(0xFF1CB853).withOpacity(0.15),
+                          const Color(0xFF1CB853).withValues(alpha: 0.15),
                           Colors.transparent,
                         ],
                       ),
@@ -155,7 +155,7 @@ class MusicPlayerPage extends StatelessWidget {
                         center: Alignment.topRight,
                         radius: 0.8,
                         colors: [
-                          const Color(0xFF72FE8F).withOpacity(0.10),
+                          const Color(0xFF72FE8F).withValues(alpha: 0.10),
                           Colors.transparent,
                         ],
                       ),
@@ -170,7 +170,7 @@ class MusicPlayerPage extends StatelessWidget {
                         center: Alignment.bottomRight,
                         radius: 0.8,
                         colors: [
-                          const Color(0xFF006E2D).withOpacity(0.20),
+                          const Color(0xFF006E2D).withValues(alpha: 0.20),
                           Colors.transparent,
                         ],
                       ),
@@ -178,16 +178,13 @@ class MusicPlayerPage extends StatelessWidget {
                   ),
                 ),
                 // Bottom-left: surface variant
-                Positioned.fill(
+                const Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: RadialGradient(
                         center: Alignment.bottomLeft,
                         radius: 0.8,
-                        colors: [
-                          const Color(0xFF262626),
-                          Colors.transparent,
-                        ],
+                        colors: [Color(0xFF262626), Colors.transparent],
                       ),
                     ),
                   ),
@@ -230,8 +227,8 @@ class MusicPlayerPage extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 stops: const [0.0, 0.5, 1.0],
                 colors: [
-                  const Color(0xFF0E0E0E).withOpacity(0.20),
-                  const Color(0xFF0E0E0E).withOpacity(0.40),
+                  const Color(0xFF0E0E0E).withValues(alpha: 0.20),
+                  const Color(0xFF0E0E0E).withValues(alpha: 0.40),
                   const Color(0xFF0E0E0E),
                 ],
               ),
@@ -241,7 +238,6 @@ class MusicPlayerPage extends StatelessWidget {
       ],
     );
   }
-
 
   Widget _buildPortraitLayout(
     TrackEntity track,

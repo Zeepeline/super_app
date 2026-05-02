@@ -67,11 +67,11 @@ class _SplashPageState extends State<SplashPage>
               height: 300,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppTheme.kPrimaryColor.withOpacity(0.05),
+                color: AppTheme.kPrimaryColor.withValues(alpha: 0.05),
               ),
               child: BackdropFilter(
                 filter: ColorFilter.mode(
-                  AppTheme.kPrimaryColor.withOpacity(0.05),
+                  AppTheme.kPrimaryColor.withValues(alpha: 0.05),
                   BlendMode.srcATop,
                 ),
                 child: const SizedBox(),
@@ -86,98 +86,101 @@ class _SplashPageState extends State<SplashPage>
               height: 300,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppTheme.kPrimaryContainerColor.withOpacity(0.05),
+                color: AppTheme.kPrimaryContainerColor.withValues(alpha: 0.05),
               ),
             ),
           ),
 
           // Central Content
           Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Logo with Neon Glow
-                ScaleTransition(
-                  scale: _pulseAnimation,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // Outer Glow
-                      Container(
-                        width: 180,
-                        height: 180,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppTheme.kPrimaryColor.withOpacity(0.2),
-                              blurRadius: 50,
-                              spreadRadius: 10,
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Main Icon
-                      Container(
-                        width: 200,
-                        height: 200,
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              AppTheme.kPrimaryColor.withOpacity(0.3),
-                              Colors.transparent,
+            child: FadeTransition(
+              opacity: _fadeAnimation,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Logo with Neon Glow
+                  ScaleTransition(
+                    scale: _pulseAnimation,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Outer Glow
+                        Container(
+                          width: 180,
+                          height: 180,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppTheme.kPrimaryColor.withValues(alpha: 0.2),
+                                blurRadius: 50,
+                                spreadRadius: 10,
+                              ),
                             ],
                           ),
                         ),
-                        child: ClipOval(
-                          child: Container(
-                            color: AppTheme.kSurfaceContainerHighestColor,
-                            child: Image.network(
-                              'https://lh3.googleusercontent.com/aida-public/AB6AXuClOfx-j1s8OMCuVfnppzYVjJgjDks9rzuLZ9hM-TC-Q0MnIF0wh9THq8V93K8Zdc5JdXiTMXEe7q42s09qRE4o9Dik21dsTozbvC461AEtsH8uf4V6yBh4lAP4hyV_ufPbMsXFFh2CjXJ5oF1fnM6LFWDPAG95BLm1Q2WIXEJruYCTSJlDL7Q5Jd1Npizm4eemidBPPPUPd3VvFcRaoYB-AEA4r-FV2qHpq8lWymOa0wNDY97KnwRPkCwMTCPa9yr7Tti3lBinn7Y',
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(
-                                  Icons.music_note,
-                                  color: AppTheme.kPrimaryColor,
-                                  size: 80,
-                                );
-                              },
+                        // Main Icon
+                        Container(
+                          width: 200,
+                          height: 200,
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                AppTheme.kPrimaryColor.withValues(alpha: 0.3),
+                                Colors.transparent,
+                              ],
+                            ),
+                          ),
+                          child: ClipOval(
+                            child: Container(
+                              color: AppTheme.kSurfaceContainerHighestColor,
+                              child: Image.network(
+                                'https://lh3.googleusercontent.com/aida-public/AB6AXuClOfx-j1s8OMCuVfnppzYVjJgjDks9rzuLZ9hM-TC-Q0MnIF0wh9THq8V93K8Zdc5JdXiTMXEe7q42s09qRE4o9Dik21dsTozbvC461AEtsH8uf4V6yBh4lAP4hyV_ufPbMsXFFh2CjXJ5oF1fnM6LFWDPAG95BLm1Q2WIXEJruYCTSJlDL7Q5Jd1Npizm4eemidBPPPUPd3VvFcRaoYB-AEA4r-FV2qHpq8lWymOa0wNDY97KnwRPkCwMTCPa9yr7Tti3lBinn7Y',
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Icon(
+                                    Icons.music_note,
+                                    color: AppTheme.kPrimaryColor,
+                                    size: 80,
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 48),
-                // Brand Typography
-                Center(
-                  child: Text(
-                    'OBSIDIAN RHYTHM',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w800,
-                      color: AppTheme.kOnBackgroundColor,
-                      letterSpacing: 8.0,
+                      ],
                     ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'THE DIGITAL CURATOR',
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.kOnSurfaceVariantColor,
-                    letterSpacing: 4.0,
+                  const SizedBox(height: 48),
+                  // Brand Typography
+                  Center(
+                    child: Text(
+                      'OBSIDIAN RHYTHM',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 32,
+                        fontWeight: FontWeight.w800,
+                        color: AppTheme.kOnBackgroundColor,
+                        letterSpacing: 8.0,
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 12),
+                  Text(
+                    'THE DIGITAL CURATOR',
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.kOnSurfaceVariantColor,
+                      letterSpacing: 4.0,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
 
@@ -197,7 +200,7 @@ class _SplashPageState extends State<SplashPage>
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          AppTheme.kPrimaryColor.withOpacity(0.3),
+                          AppTheme.kPrimaryColor.withValues(alpha: 0.3),
                           Colors.transparent,
                         ],
                       ),
@@ -208,7 +211,7 @@ class _SplashPageState extends State<SplashPage>
                     'v1.0.0',
                     style: GoogleFonts.inter(
                       fontSize: 10,
-                      color: AppTheme.kOnSurfaceVariantColor.withOpacity(0.5),
+                      color: AppTheme.kOnSurfaceVariantColor.withValues(alpha: 0.5),
                       letterSpacing: 2.0,
                     ),
                   ),

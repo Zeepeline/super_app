@@ -62,13 +62,11 @@ class MusicRepositoryImpl implements MusicRepository {
     // If it looks like a YouTube ID (11 chars) and has no local path, refresh it
     if (track.id.length == 11) {
       try {
-        print("MusicRepository: Refreshing stream URL for ${track.id}...");
         final newUrl = await youtubeDownloadService.getStreamUrl(track.id);
         if (newUrl != null && newUrl.isNotEmpty) {
           return track.copyWith(audioUrl: newUrl);
         }
       } catch (e) {
-        print("MusicRepository: Failed to refresh URL: $e");
       }
     }
     return track;
@@ -111,7 +109,6 @@ class MusicRepositoryImpl implements MusicRepository {
         );
       }
     } catch (e) {
-      print("MusicRepositoryImpl: Error initializing player from library: $e");
     }
   }
 

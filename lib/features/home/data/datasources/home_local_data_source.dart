@@ -70,7 +70,6 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
         );
 
         if (existingWithSamePath != -1) {
-          final existingKey = box.keyAt(existingWithSamePath);
           final existingTrack = box.getAt(existingWithSamePath);
 
           // If the track already exists physically in the database, we SKIP it
@@ -86,9 +85,7 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
         await box.put(track.id, track);
       }
 
-      print("HomeLocalDataSource: Library synced successfully.");
     } catch (e) {
-      print("HomeLocalDataSource: Error adding tracks to library: $e");
     }
   }
 
@@ -98,7 +95,6 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
       final box = await _getPlaylistsBox();
       return box.values.toList();
     } catch (e) {
-      print("HomeLocalDataSource: Corrupted box detected, clearing...");
       await hive.deleteBoxFromDisk(HiveBoxConstants.playlistsBox);
       _playlistsBox = null;
       final box = await _getPlaylistsBox();
@@ -126,19 +122,12 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
 
       return uniqueTracks;
     } catch (e) {
-      print("HomeLocalDataSource: Critical Hive Error: $e");
-      print(
-        "HomeLocalDataSource: Attempting to clear corrupted 'tracks' box...",
-      );
       try {
         await hive.deleteBoxFromDisk(HiveBoxConstants.tracksBox);
         _tracksBox = null;
         final box = await _getTracksBox();
         return box.values.toList();
       } catch (innerError) {
-        print(
-          "HomeLocalDataSource: Recursive failure while clearing box: $innerError",
-        );
         return [];
       }
     }
@@ -156,13 +145,9 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
         if (track != null) {
           final updatedTrack = track.copyWith(isFavorite: isFavorite);
           await box.putAt(trackIndex, updatedTrack);
-          print(
-            "HomeLocalDataSource: Updated favorite status for $id to $isFavorite",
-          );
         }
       }
     } catch (e) {
-      print("HomeLocalDataSource: Error updating favorite status: $e");
     }
   }
 
@@ -182,7 +167,6 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
         }
       }
     } catch (e) {
-      print("HomeLocalDataSource: Error updating duration: $e");
     }
   }
 
@@ -206,11 +190,9 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
             plainLyrics: plain,
           );
           await box.putAt(trackIndex, updatedTrack);
-          print("HomeLocalDataSource: Lyrics cached successfully.");
         }
       }
     } catch (e) {
-      print("HomeLocalDataSource: Error caching lyrics: $e");
     }
   }
 
@@ -226,16 +208,13 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
           final file = File(track.localPath!);
           if (await file.exists()) {
             await file.delete();
-            print("HomeLocalDataSource: Deleted file at ${track.localPath}");
           }
         }
 
         // 2. Remove from Hive
         await box.delete(id);
-        print("HomeLocalDataSource: Removed track $id from database.");
       }
     } catch (e) {
-      print("HomeLocalDataSource: Error deleting track $id: $e");
       rethrow;
     }
   }

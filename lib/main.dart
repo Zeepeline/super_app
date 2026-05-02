@@ -26,7 +26,6 @@ import 'features/search/presentation/pages/search_page.dart';
 import 'features/settings/presentation/pages/settings_page.dart';
 import 'features/youtube/presentation/pages/youtube_page.dart';
 import 'features/youtube/presentation/controllers/youtube_controller.dart';
-import 'core/services/youtube_download_service.dart';
 import 'injection_container.dart' as di;
 import 'injection_container.dart';
 import 'features/splash/presentation/pages/splash_page.dart';
@@ -177,7 +176,7 @@ class MainWrapper extends StatelessWidget {
     return Container(
       height: 100,
       decoration: BoxDecoration(
-        color: AppTheme.kBackgroundColor.withOpacity(0.4),
+        color: AppTheme.kBackgroundColor.withValues(alpha: 0.4),
       ),
       child: ClipRRect(
         child: BackdropFilter(

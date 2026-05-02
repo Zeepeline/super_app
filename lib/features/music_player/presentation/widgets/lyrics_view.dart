@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:super_app/features/music_player/domain/models/lyric_line.dart';
 import 'package:super_app/features/music_player/presentation/controllers/player_ui_controller.dart';
 
 class LyricsView extends StatelessWidget {
@@ -87,7 +86,7 @@ class LyricsView extends StatelessWidget {
                       fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,
                       color: isActive
                           ? Colors.white
-                          : Colors.white.withOpacity(0.2),
+                          : Colors.white.withValues(alpha: 0.2),
                       height: 1.3,
                     ),
                     textAlign: TextAlign.center,
@@ -107,7 +106,7 @@ class LyricsView extends StatelessWidget {
             style: GoogleFonts.plusJakartaSans(
               fontSize: 18,
               fontWeight: FontWeight.w500,
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
               height: 1.6,
             ),
             textAlign: TextAlign.center,
@@ -122,7 +121,7 @@ class LyricsView extends StatelessWidget {
             Icon(
               Icons.lyrics_outlined,
               size: 64,
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
             ),
             const SizedBox(height: 24),
             Text(
@@ -130,7 +129,7 @@ class LyricsView extends StatelessWidget {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: Colors.white.withOpacity(0.4),
+                color: Colors.white.withValues(alpha: 0.4),
               ),
             ),
           ],

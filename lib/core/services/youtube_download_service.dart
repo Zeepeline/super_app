@@ -20,7 +20,7 @@ class YoutubeDownloadService {
 
   // Persistent Worker State
   static bool _isWorkerStarted = false;
-  static bool _isInitializing = false;
+  static bool _isInitializing = false; // ignore: unused_field
   static int? _workerPort;
   static bool _wasRunCalledInThisProcess = false;
   static final Map<String, Completer<void>> _activeDownloadCompleters = {};
@@ -57,16 +57,14 @@ class YoutubeDownloadService {
           video = await _yt.videos
               .get(videoId)
               .timeout(const Duration(seconds: 10));
-          finalTitle = title ?? video.title ?? 'YouTube Audio';
-          finalArtist = artist ?? video.author ?? 'Unknown Artist';
-          finalThumbnail = albumArtUrl ?? video.thumbnails.highResUrl ?? '';
+          finalTitle = title ?? video.title;
+          finalArtist = artist ?? video.author;
+          finalThumbnail = albumArtUrl ?? video.thumbnails.highResUrl;
           if (trackDuration == null) {
             finalDuration = _formatDuration(video.duration);
           }
         } catch (e) {
-          print(
-            "YoutubeDownloadService: Metadata fetch failed, using generic: $e",
-          );
+          // ignore: empty_catches
         }
       }
 
@@ -112,11 +110,13 @@ class YoutubeDownloadService {
                 if (status == 'error') {
                   _downloadErrors[videoIdStr] =
                       data['error']?.toString() ?? 'Unknown error';
-                  if (!currentDownloadCompleter.isCompleted)
+                  if (!currentDownloadCompleter.isCompleted) {
                     currentDownloadCompleter.complete();
+                  }
                 } else if (status == 'done') {
-                  if (!currentDownloadCompleter.isCompleted)
+                  if (!currentDownloadCompleter.isCompleted) {
                     currentDownloadCompleter.complete();
+                  }
                 } else if (status == 'processing') {
                   onProgress?.call('Finalizing file...', 0.95);
                 } else {
@@ -126,9 +126,7 @@ class YoutubeDownloadService {
                   );
                 }
               }
-            } catch (e) {
-              print("YoutubeDownloadService: JSON error: $e");
-            }
+            } catch (e) {}
             request.response.statusCode = HttpStatus.ok;
             await request.response.close();
           }
@@ -178,12 +176,8 @@ class YoutubeDownloadService {
           final returnCode = await session.getReturnCode();
 
           if (ReturnCode.isSuccess(returnCode)) {
-            print("YoutubeDownloadService: FFmpeg optimization successful");
-            File(tempPath).delete().catchError((_) {});
+            File(tempPath).delete().catchError((_) => File(tempPath));
           } else {
-            print(
-              "YoutubeDownloadService: FFmpeg optimization failed, reverting",
-            );
             await File(tempPath).rename(finalPath);
           }
         }
@@ -205,7 +199,6 @@ class YoutubeDownloadService {
         _activeDownloadCompleters.remove(videoId);
       }
     } catch (e) {
-      print("YoutubeDownloadService Error: $e");
       rethrow;
     }
   }
@@ -216,22 +209,11 @@ class YoutubeDownloadService {
       // 1. Try to initialize worker.
       // On first run (extraction), this can take 15-20s.
       // We wait up to 45s to be safe, but it returns immediately if already ready.
-      print("YoutubeDownloadService: Ensuring worker is ready for $videoId...");
-      await initWorker().timeout(
-        const Duration(seconds: 45),
-        onTimeout: () {
-          print(
-            "YoutubeDownloadService: Worker init timed out (45s). Proceeding anyway...",
-          );
-        },
-      );
+      await initWorker().timeout(const Duration(seconds: 45), onTimeout: () {});
 
       // 2. Plan A: Try Python Worker (yt-dlp) if available
       if (_workerPort != null) {
         try {
-          print(
-            "YoutubeDownloadService: Attempting Python extraction for $videoId...",
-          );
           final response = await Dio()
               .post(
                 'http://127.0.0.1:$_workerPort/get_url',
@@ -240,30 +222,17 @@ class YoutubeDownloadService {
               .timeout(const Duration(seconds: 15));
 
           if (response.statusCode == 200 && response.data['url'] != null) {
-            print("YoutubeDownloadService: Successfully got URL via Python.");
             return response.data['url'];
           } else {
-            print(
-              "YoutubeDownloadService: Python worker returned error: ${response.data}",
-            );
             return null;
           }
         } catch (e) {
-          print(
-            "YoutubeDownloadService: Python extraction failed or timed out: $e",
-          );
           return null;
         }
       } else {
-        print(
-          "YoutubeDownloadService: Worker port is null. Python worker not available.",
-        );
         return null;
       }
     } catch (e) {
-      print(
-        "YoutubeDownloadService Error: All extraction methods failed for $videoId: $e",
-      );
       return null;
     }
   }
@@ -287,18 +256,8 @@ class YoutubeDownloadService {
       final savedPid = prefs.getInt('python_worker_pid');
       final currentPid = pid;
 
-      print(
-        "YoutubeDownloadService: currentPid: $currentPid, savedPid: $savedPid, savedPort: $savedPort",
-      );
-
       if (savedPort != null && savedPid == currentPid) {
-        print(
-          "YoutubeDownloadService: Hot Restart detected. Pinging worker...",
-        );
         if (await _pingWorker(savedPort)) {
-          print(
-            "YoutubeDownloadService: Existing worker found and responsive.",
-          );
           _workerPort = savedPort;
           _isWorkerStarted = true;
           await _setupNewProgressServer();
@@ -309,22 +268,13 @@ class YoutubeDownloadService {
 
       // 2. Start fresh worker
       if (_wasRunCalledInThisProcess) {
-        print(
-          "YoutubeDownloadService: SeriousPython.run already attempted in this PID. Worker died. Attempting to recover from SharedPreferences port.",
-        );
         if (savedPort != null && await _pingWorker(savedPort)) {
-          print(
-            "YoutubeDownloadService: Recovered! Found responsive worker on saved port $savedPort.",
-          );
           _workerPort = savedPort;
           _isWorkerStarted = true;
           await _setupNewProgressServer();
           _initCompleter!.complete();
           return;
         }
-        print(
-          "YoutubeDownloadService: Cannot recover. Worker is dead and we cannot restart in this PID.",
-        );
         _initCompleter!.complete();
         return;
       }
@@ -340,7 +290,6 @@ class YoutubeDownloadService {
 
       _initCompleter!.complete();
     } catch (e) {
-      print("YoutubeDownloadService Init Error: $e");
       if (!_initCompleter!.isCompleted) _initCompleter!.completeError(e);
       _initCompleter = null;
     } finally {
@@ -389,18 +338,13 @@ class YoutubeDownloadService {
               // For simplicity, we keep it global or rely on the fact that
               // only one download happens at a time or they are keyed by videoId.
             }
-          } catch (e) {
-            print("YoutubeDownloadService Progress Server: JSON error: $e");
-          }
+          } catch (e) {}
           request.response.statusCode = HttpStatus.ok;
           await request.response.close();
         }
       });
 
       // Tell the existing Python worker to update its DART_PORT
-      print(
-        "YoutubeDownloadService: Updating Python worker with new Dart port $progressPort",
-      );
       await Dio().post(
         'http://127.0.0.1:$_workerPort/update_dart_port',
         data: {"port": progressPort},
@@ -408,9 +352,7 @@ class YoutubeDownloadService {
 
       // Keep server alive
       // Note: In a real app, you might want to manage this lifecycle better
-    } catch (e) {
-      print("YoutubeDownloadService: Failed to setup new progress server: $e");
-    }
+    } catch (e) {}
   }
 
   Future<void> _startFreshWorker() async {
@@ -430,18 +372,13 @@ class YoutubeDownloadService {
               _workerPort = (data['port'] as num).toInt();
               if (!completer.isCompleted) completer.complete();
             }
-          } catch (e) {
-            print("YoutubeDownloadService Worker Setup: JSON error: $e");
-          }
+          } catch (e) {}
           request.response.statusCode = HttpStatus.ok;
           await request.response.close();
         }
       });
 
       const appPath = "app/app.zip";
-      print(
-        "YoutubeDownloadService: Launching Python Worker with $appPath in 2 seconds...",
-      );
       await Future.delayed(const Duration(seconds: 2));
 
       _wasRunCalledInThisProcess = true;
@@ -463,7 +400,6 @@ class YoutubeDownloadService {
       await prefs.setInt('python_worker_port', _workerPort!);
 
       _isWorkerStarted = true;
-      print("YoutubeDownloadService: Worker ready on port $_workerPort");
     } finally {
       // We keep the server alive briefly to handle any late messages
       Future.delayed(const Duration(seconds: 5), () {

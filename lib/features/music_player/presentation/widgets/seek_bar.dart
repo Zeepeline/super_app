@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:super_app/core/theme/app_theme.dart';
 import 'package:super_app/features/music_player/domain/entities/track_entity.dart';
 import '../controllers/player_ui_controller.dart';
@@ -52,11 +51,9 @@ class SeekBar extends StatelessWidget {
                     overlayRadius: 12,
                   ),
                   activeTrackColor: AppTheme.kPrimaryColor,
-                  inactiveTrackColor: AppTheme.kOutlineVariantColor.withOpacity(
-                    0.3,
-                  ),
+                  inactiveTrackColor: AppTheme.kOutlineVariantColor.withValues(alpha: 0.3,),
                   thumbColor: Colors.white,
-                  overlayColor: AppTheme.kPrimaryColor.withOpacity(0.2),
+                  overlayColor: AppTheme.kPrimaryColor.withValues(alpha: 0.2),
                   trackShape: const RectangularSliderTrackShape(),
                 ),
                 child: Slider(

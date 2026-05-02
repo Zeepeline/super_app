@@ -67,12 +67,10 @@ class _VinylRecordState extends State<VinylRecord>
                   boxShadow: widget.isPlaying
                       ? [
                           BoxShadow(
-                            color: AppTheme.kPrimaryColor.withOpacity(
-                              0.15 +
+                            color: AppTheme.kPrimaryColor.withValues(alpha: 0.15 +
                                   0.15 *
                                       math.sin(
-                                        _rotationController.value * 2 * math.pi,
-                                      ),
+                                        _rotationController.value * 2 * math.pi,),
                             ),
                             blurRadius:
                                 30 +
@@ -106,7 +104,7 @@ class _VinylRecordState extends State<VinylRecord>
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.6),
+                      color: Colors.black.withValues(alpha: 0.6),
                       blurRadius: 40,
                       offset: const Offset(0, 10),
                     ),
@@ -127,7 +125,7 @@ class _VinylRecordState extends State<VinylRecord>
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.5),
+                              color: Colors.black.withValues(alpha: 0.5),
                               blurRadius: 10,
                               spreadRadius: -3,
                             ),
@@ -152,7 +150,7 @@ class _VinylRecordState extends State<VinylRecord>
                             child: Center(
                               child: Icon(
                                 Icons.music_note,
-                                color: AppTheme.kPrimaryColor.withOpacity(0.3),
+                                color: AppTheme.kPrimaryColor.withValues(alpha: 0.3),
                                 size: 32,
                               ),
                             ),
@@ -172,7 +170,7 @@ class _VinylRecordState extends State<VinylRecord>
                             child: Center(
                               child: Icon(
                                 Icons.music_note,
-                                color: AppTheme.kPrimaryColor.withOpacity(0.4),
+                                color: AppTheme.kPrimaryColor.withValues(alpha: 0.4),
                                 size: 32,
                               ),
                             ),
@@ -194,12 +192,12 @@ class _VinylRecordState extends State<VinylRecord>
               shape: BoxShape.circle,
               color: AppTheme.kBackgroundColor,
               border: Border.all(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 width: 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   blurRadius: 4,
                   spreadRadius: -1,
                 ),
@@ -246,7 +244,7 @@ class _VinylPainter extends CustomPainter {
 
     // Subtle light reflections on the grooves
     final highlightPaint = Paint()
-      ..color = Colors.white.withOpacity(0.03)
+      ..color = Colors.white.withValues(alpha: 0.03)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.5;
 
@@ -259,9 +257,9 @@ class _VinylPainter extends CustomPainter {
       ..shader = RadialGradient(
         colors: [
           Colors.transparent,
-          Colors.white.withOpacity(0.02),
+          Colors.white.withValues(alpha: 0.02),
           Colors.transparent,
-          Colors.white.withOpacity(0.02),
+          Colors.white.withValues(alpha: 0.02),
           Colors.transparent,
         ],
         stops: const [0.0, 0.35, 0.45, 0.55, 0.65],

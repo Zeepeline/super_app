@@ -54,12 +54,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<SyncHomeDataEvent>((event, emit) async {
       // AUTO-SYNC: Sync local downloads folder in the background
       try {
-        print("HomeBloc: Starting background sync...");
-
-        // 1. Get all currently cached tracks to check for duplicates or missing durations
-        final existingTracks = await localDataSource.getPopularTracks();
-
-        // 2. Scan for actual files on disk (this gets new correct paths on iOS)
+        // 1. Scan for actual files on disk (this gets new correct paths on iOS)
         // Pass existing paths to skip re-processing files we already have
         // But wait, if paths changed, scanDownloadedMusic will find them as "new".
         // That's fine because addImportedTracks will update them by ID.
@@ -143,9 +138,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             }
           });
         }
-        print("HomeBloc: Background sync completed.");
+
       } catch (e) {
-        print("Auto-Sync Error: $e");
+
       }
     });
     on<DeleteTrackEvent>((event, emit) async {

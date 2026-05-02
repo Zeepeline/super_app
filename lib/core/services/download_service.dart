@@ -27,7 +27,6 @@ class DownloadService {
 
       return savePath;
     } catch (e) {
-      print("Download error: $e");
       return null;
     }
   }
@@ -41,7 +40,6 @@ class DownloadService {
   }) async {
     HttpClient? client;
     try {
-      print("DownloadService: Starting download from $url");
       final appDir = await getApplicationDocumentsDirectory();
       final musicDir = Directory(p.join(appDir.path, 'music'));
 
@@ -65,9 +63,6 @@ class DownloadService {
 
       final response = await request.close();
       if (response.statusCode != 200) {
-        print(
-          "DownloadService: Server returned status code ${response.statusCode}",
-        );
         return null;
       }
 
@@ -75,7 +70,6 @@ class DownloadService {
       final actualSize = totalSize ?? response.contentLength;
       int received = 0;
 
-      print("DownloadService: Receiving data (size: $actualSize bytes)...");
 
       await for (final data in response) {
         received += data.length;
@@ -88,11 +82,9 @@ class DownloadService {
 
       await ios.flush();
       await ios.close();
-      print("DownloadService: Download finished. Saved to $savePath");
 
       return savePath;
     } catch (e) {
-      print("DownloadService Error: $e");
       return null;
     } finally {
       client?.close();

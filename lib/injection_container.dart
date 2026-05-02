@@ -59,7 +59,7 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   sl.registerSingleton<custom_audio.AudioHandler>(customHandler);
   sl.registerSingleton<LyricsService>(LyricsService(Dio()));
   sl.registerSingleton<DownloadService>(DownloadService());
-  sl.registerSingleton<MediaImportService>(MediaImportService(sl()));
+  sl.registerSingleton<MediaImportService>(MediaImportService());
   sl.registerSingleton<YoutubeDownloadService>(YoutubeDownloadService(sl()));
   sl.registerSingleton<YouTubeExplodeService>(YouTubeExplodeService());
 

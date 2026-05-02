@@ -70,7 +70,6 @@ class MusicLocalDataSourceImpl implements MusicLocalDataSource {
   int _currentIndex = 0;
   bool _isShuffle = false;
   bool _isRepeat = false;
-  final bool _isInitialized = false;
 
   @override
   TrackModel getCurrentTrack() {

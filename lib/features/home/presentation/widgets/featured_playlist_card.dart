@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../domain/entities/playlist_entity.dart';
 
 class FeaturedPlaylistCard extends StatelessWidget {
