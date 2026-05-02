@@ -167,18 +167,12 @@ class MainWrapper extends StatelessWidget {
               items: const [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.music_note_outlined),
-                  activeIcon: Icon(
-                    Icons.music_note,
-                    color: AppTheme.kPrimaryColor,
-                  ),
+                  activeIcon: Icon(Icons.music_note, color: AppTheme.kPrimaryColor),
                   label: 'Home',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.dashboard_outlined),
-                  activeIcon: Icon(
-                    Icons.dashboard,
-                    color: AppTheme.kPrimaryColor,
-                  ),
+                  activeIcon: Icon(Icons.dashboard, color: AppTheme.kPrimaryColor),
                   label: 'Discover',
                 ),
                 BottomNavigationBarItem(
