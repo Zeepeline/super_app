@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:just_audio/just_audio.dart';
+// ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -76,7 +77,9 @@ class MediaImportService {
       }
 
       if (filePaths.isEmpty) {
-        debugPrint("MediaImportService: No files selected or directory is empty");
+        debugPrint(
+          "MediaImportService: No files selected or directory is empty",
+        );
         return [];
       }
 
@@ -102,7 +105,9 @@ class MediaImportService {
           allowMultiple: true,
         );
         if (result != null && result.paths.isNotEmpty) {
-          debugPrint("MediaImportService: Picked ${result.paths.length} files.");
+          debugPrint(
+            "MediaImportService: Picked ${result.paths.length} files.",
+          );
           return result.paths;
         }
         debugPrint("MediaImportService: User cancelled file picker.");
@@ -212,7 +217,9 @@ class MediaImportService {
             await targetFile.writeAsBytes(data.buffer.asUint8List());
             debugPrint("MediaImportService: Copied: $fileName");
           } catch (e) {
-            debugPrint("MediaImportService: Failed to load asset: $fileName — $e");
+            debugPrint(
+              "MediaImportService: Failed to load asset: $fileName — $e",
+            );
             continue;
           }
         } else {
@@ -269,7 +276,9 @@ class MediaImportService {
       final musicDir = Directory(p.join(appDir.path, 'music'));
 
       if (!await musicDir.exists()) {
-        debugPrint("MediaImportService: Internal /music folder does not exist yet.");
+        debugPrint(
+          "MediaImportService: Internal /music folder does not exist yet.",
+        );
         return [];
       }
 
