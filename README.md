@@ -16,11 +16,14 @@ SoundWave is a modern, feature-rich music player application built with Flutter.
 - **Background Worker Recovery:** Dynamic port allocation and recovery mechanism to ensure the background Python worker survives hot restarts and deep sleeps.
 
 ### 💾 Local Library & Storage
+- **Hierarchical Library Navigation:** Organize and browse your music by Artists, Albums, and Tracks. Seamlessly navigate from an Artist to their Albums, and from an Album to its tracks.
+- **Rich Metadata Support:** Automatic extraction and storage of album names, high-resolution album art, and artist information.
 - **Offline Support:** Full offline library management powered by `Hive`, a fast NoSQL local database.
 - **Smart Importer:** Scans device directories to automatically import local `.mp3`, `.m4a`, `.wav`, and `.flac` files into the app.
-- **Data De-duplication:** Prevents duplicate files and preserves rich metadata even if the system rescans the directories.
+- **Data De-duplication:** Intelligent grouping by album and artist to prevent duplicate entries and maintain a clean library.
 
 ### 🎨 Design & UI/UX
+- **Interactive Detail Pages:** Dedicated pages for Artists and Albums with dynamic headers and shuffle-play capabilities.
 - **Dynamic Glassmorphism:** Beautiful frosted glass UI elements with fluid blurring effects.
 - **Hero Animations:** Seamless and buttery smooth page transitions between the Home library and the Music Player view.
 - **Dark Mode Optimization:** Deep blacks and high-contrast text perfect for OLED displays and nighttime listening.
