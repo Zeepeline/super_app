@@ -21,16 +21,22 @@ class SettingsLoading extends SettingsState {
 class SettingsLoaded extends SettingsState {
   final SettingsEntity settings;
   final UserEntity? user;
+  final String? geminiApiKey;
 
-  const SettingsLoaded({required this.settings, this.user});
+  const SettingsLoaded({required this.settings, this.user, this.geminiApiKey});
 
   @override
-  List<Object?> get props => [settings, user];
+  List<Object?> get props => [settings, user, geminiApiKey];
 
-  SettingsLoaded copyWith({SettingsEntity? settings, UserEntity? user}) {
+  SettingsLoaded copyWith({
+    SettingsEntity? settings,
+    UserEntity? user,
+    String? geminiApiKey,
+  }) {
     return SettingsLoaded(
       settings: settings ?? this.settings,
       user: user ?? this.user,
+      geminiApiKey: geminiApiKey ?? this.geminiApiKey,
     );
   }
 }

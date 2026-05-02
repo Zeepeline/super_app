@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:super_app/features/ai_assistant/presentation/pages/ai_chat_page.dart';
 import 'package:super_app/features/youtube/presentation/controllers/youtube_controller.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
@@ -127,7 +128,9 @@ class _SearchBar extends StatelessWidget {
                 onSubmitted: controller.search,
                 decoration: InputDecoration(
                   hintText: 'Cari lagu, artis, atau album...',
-                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.35)),
+                  hintStyle: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.35),
+                  ),
                   prefixIcon: Icon(
                     Icons.search_rounded,
                     color: Colors.white.withValues(alpha: 0.4),
@@ -217,11 +220,18 @@ class _SearchResults extends StatelessWidget {
       }
 
       if (controller.searchResults.isEmpty && !controller.isSearching.value) {
-        return const _EmptyState(
-          icon: Icons.music_note_rounded,
-          title: 'Temukan Musikmu',
-          subtitle:
-              'Ketik judul lagu, nama artis, atau album di kolom pencarian',
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              const _EmptyState(
+                icon: Icons.music_note_rounded,
+                title: 'Temukan Musikmu',
+                subtitle:
+                    'Ketik judul lagu, nama artis, atau album di kolom pencarian',
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         );
       }
 
@@ -234,6 +244,82 @@ class _SearchResults extends StatelessWidget {
         },
       );
     });
+  }
+
+  Widget _buildAiCard(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AiChatPage()),
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppTheme.kPrimaryColor.withValues(alpha: 0.15),
+                Colors.blueAccent.withValues(alpha: 0.05),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: AppTheme.kPrimaryColor.withValues(alpha: 0.2),
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppTheme.kPrimaryColor.withValues(alpha: 0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.psychology,
+                  color: AppTheme.kPrimaryColor,
+                  size: 32,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Tanya AI SoundWave',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Dapatkan rekomendasi lagu personal berdasarkan mood kamu.',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.5),
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.white24,
+                size: 16,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

@@ -10,6 +10,8 @@ import 'core/services/audio_handler.dart' as custom_audio;
 import 'core/services/download_service.dart';
 import 'core/services/media_import_service.dart';
 import 'core/services/lyrics_service.dart';
+import 'core/services/secure_storage_service.dart';
+import 'core/services/gemini_service.dart';
 import 'core/services/youtube_download_service.dart';
 import 'core/services/youtube_explode_service.dart';
 import 'features/auth/data/datasources/auth_remote_datasource.dart';
@@ -32,6 +34,7 @@ import 'features/music_player/data/repositories/music_repository_impl.dart';
 import 'features/music_player/domain/repositories/music_repository.dart';
 import 'features/music_player/domain/usecases/get_current_track.dart';
 import 'features/music_player/domain/usecases/player_usecases.dart';
+import 'features/ai_assistant/presentation/cubit/ai_chat_cubit.dart';
 import 'features/music_player/presentation/cubit/player_cubit.dart';
 import 'features/search/data/datasources/search_remote_datasource.dart';
 import 'features/search/data/repositories/search_repository_impl.dart';
@@ -62,6 +65,8 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   sl.registerSingleton<MediaImportService>(MediaImportService());
   sl.registerSingleton<YoutubeDownloadService>(YoutubeDownloadService(sl()));
   sl.registerSingleton<YouTubeExplodeService>(YouTubeExplodeService());
+  sl.registerSingleton<SecureStorageService>(SecureStorageService());
+  sl.registerSingleton<GeminiService>(GeminiService(sl()));
 
   // ===== EXTERNAL =====
   sl.registerSingleton<Connectivity>(Connectivity());
@@ -160,8 +165,10 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
       importService: sl(),
       homeLocalDataSource: sl(),
       youtubeDownloadService: sl(),
+      secureStorageService: sl(),
     ),
   );
+  sl.registerFactory(() => AiChatCubit(sl()));
 
   // Music Player - register as singleton (needs repository already registered)
   sl.registerSingleton<PlayerCubit>(

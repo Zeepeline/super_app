@@ -71,3 +71,11 @@ class DownloadYoutubeTrackEvent extends SettingsEvent {
 class SyncDownloadedMusicEvent extends SettingsEvent {
   const SyncDownloadedMusicEvent();
 }
+
+class UpdateGeminiApiKey extends SettingsEvent {
+  final String apiKey;
+  const UpdateGeminiApiKey(this.apiKey);
+
+  @override
+  List<Object?> get props => [apiKey];
+}

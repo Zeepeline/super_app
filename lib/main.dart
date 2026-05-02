@@ -8,6 +8,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:super_app/core/services/audio_handler.dart' as custom;
+import 'package:super_app/features/ai_assistant/presentation/pages/ai_chat_page.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/widgets/live_activity_island.dart';
@@ -24,11 +25,11 @@ import 'features/music_player/presentation/cubit/player_cubit.dart';
 import 'features/onboarding/presentation/pages/onboarding_page.dart';
 import 'features/search/presentation/pages/search_page.dart';
 import 'features/settings/presentation/pages/settings_page.dart';
-import 'features/youtube/presentation/pages/youtube_page.dart';
+import 'features/splash/presentation/pages/splash_page.dart';
 import 'features/youtube/presentation/controllers/youtube_controller.dart';
+import 'features/youtube/presentation/pages/youtube_page.dart';
 import 'injection_container.dart' as di;
 import 'injection_container.dart';
-import 'features/splash/presentation/pages/splash_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,14 +54,12 @@ void main() async {
   );
 
   await di.init(audioHandler);
-  
+
   // Get SharedPreferences from GetIt
   final prefs = sl<SharedPreferences>();
   final showOnboarding = prefs.getBool('show_onboarding') ?? true;
   runApp(SoundWaveApp(showOnboarding: showOnboarding));
 }
-
-
 
 class SoundWaveApp extends StatefulWidget {
   final bool showOnboarding;
@@ -154,6 +153,23 @@ class MainWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 70),
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AiChatPage()),
+            );
+          },
+          backgroundColor: AppTheme.kPrimaryColor,
+          elevation: 8,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: const Icon(Icons.chat, color: Colors.black, size: 30),
+        ),
+      ),
       body: Stack(
         children: [
           Obx(() => IndexedStack(index: _currentIndex.value, children: _pages)),
@@ -189,12 +205,18 @@ class MainWrapper extends StatelessWidget {
               items: const [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.music_note_outlined),
-                  activeIcon: Icon(Icons.music_note, color: AppTheme.kPrimaryColor),
+                  activeIcon: Icon(
+                    Icons.music_note,
+                    color: AppTheme.kPrimaryColor,
+                  ),
                   label: 'Home',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.dashboard_outlined),
-                  activeIcon: Icon(Icons.dashboard, color: AppTheme.kPrimaryColor),
+                  activeIcon: Icon(
+                    Icons.dashboard,
+                    color: AppTheme.kPrimaryColor,
+                  ),
                   label: 'Discover',
                 ),
                 BottomNavigationBarItem(

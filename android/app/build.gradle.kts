@@ -15,7 +15,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+        jvmTarget = "17"
     }
 
     defaultConfig {
@@ -45,19 +45,19 @@ android {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
             buildConfigField("String", "ENV_NAME", "\"development\"")
-            buildConfigField("String", "API_BASE_URL", "\"https://dev-api.example.com\""")
+            buildConfigField("String", "API_BASE_URL", "\"https://dev-api.example.com\"")
         }
         create("staging") {
             dimension = "environment"
             applicationIdSuffix = ".staging"
             versionNameSuffix = "-staging"
             buildConfigField("String", "ENV_NAME", "\"staging\"")
-            buildConfigField("String", "API_BASE_URL", "\"https://staging-api.example.com\""")
+            buildConfigField("String", "API_BASE_URL", "\"https://staging-api.example.com\"")
         }
         create("production") {
             dimension = "environment"
             buildConfigField("String", "ENV_NAME", "\"production\"")
-            buildConfigField("String", "API_BASE_URL", "\"https://api.example.com\""")
+            buildConfigField("String", "API_BASE_URL", "\"https://api.example.com\"")
         }
     }
 }

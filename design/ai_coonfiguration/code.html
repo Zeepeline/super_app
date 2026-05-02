@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sonic Assistant - API Configuration</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error": "#450900",
+                    "inverse-surface": "#fcf9f8",
+                    "tertiary": "#88ebff",
+                    "surface-container": "#1a1a1a",
+                    "secondary": "#7cfbb5",
+                    "on-primary": "#005f26",
+                    "background": "#0e0e0e",
+                    "inverse-primary": "#006e2d",
+                    "secondary-dim": "#6deca8",
+                    "primary-dim": "#63ef82",
+                    "tertiary-fixed-dim": "#00d4ee",
+                    "on-secondary-fixed": "#00492b",
+                    "surface-container-high": "#20201f",
+                    "surface-container-lowest": "#000000",
+                    "outline": "#767575",
+                    "surface-dim": "#0e0e0e",
+                    "on-secondary-container": "#e2ffe9",
+                    "secondary-fixed-dim": "#6deca8",
+                    "on-tertiary-fixed": "#003840",
+                    "on-tertiary": "#005762",
+                    "error-container": "#b92902",
+                    "surface-container-highest": "#262626",
+                    "error": "#ff7351",
+                    "secondary-fixed": "#7cfbb5",
+                    "tertiary-fixed": "#0fe3ff",
+                    "on-surface-variant": "#adaaaa",
+                    "surface-bright": "#2c2c2c",
+                    "surface-variant": "#262626",
+                    "primary-container": "#1cb853",
+                    "on-error-container": "#ffd2c8",
+                    "error-dim": "#d53d18",
+                    "tertiary-dim": "#00d4ee",
+                    "on-surface": "#ffffff",
+                    "on-tertiary-container": "#004d58",
+                    "primary-fixed": "#72fe8f",
+                    "on-primary-fixed-variant": "#006a2b",
+                    "on-primary-container": "#002a0c",
+                    "surface-tint": "#72fe8f",
+                    "primary-fixed-dim": "#63ef82",
+                    "on-secondary-fixed-variant": "#006940",
+                    "surface-container-low": "#131313",
+                    "outline-variant": "#484847",
+                    "surface": "#0e0e0e",
+                    "tertiary-container": "#0fe3ff",
+                    "on-primary-fixed": "#004a1c",
+                    "secondary-container": "#006d42",
+                    "on-tertiary-fixed-variant": "#005763",
+                    "on-background": "#ffffff",
+                    "on-secondary": "#005e39",
+                    "inverse-on-surface": "#565555",
+                    "primary": "#72fe8f"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Plus Jakarta Sans"],
+                    "display": ["Plus Jakarta Sans"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(38, 38, 38, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .neon-glow {
+            box-shadow: 0 0 15px rgba(114, 254, 143, 0.3);
+        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0e0e0e; }
+        ::-webkit-scrollbar-thumb { background: #262626; border-radius: 10px; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body selection:bg-primary/30">
+<!-- TopAppBar -->
+<header class="bg-[#0e0e0e]/80 backdrop-blur-lg flex items-center justify-between px-6 py-4 w-full fixed top-0 z-50 no-border bg-zinc-900/50">
+<div class="flex items-center gap-4">
+<button class="text-zinc-500 hover:text-emerald-300 transition-colors scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="text-xl font-black text-white tracking-tighter font-['Plus_Jakarta_Sans'] tracking-tight font-bold">SONIC ASSISTANT</h1>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden md:flex gap-8 items-center">
+<a class="text-zinc-500 hover:text-emerald-300 transition-colors font-label text-sm uppercase tracking-widest font-semibold" href="#">Music</a>
+<a class="text-zinc-500 hover:text-emerald-300 transition-colors font-label text-sm uppercase tracking-widest font-semibold" href="#">Reader</a>
+<a class="text-zinc-500 hover:text-emerald-300 transition-colors font-label text-sm uppercase tracking-widest font-semibold" href="#">Assistant</a>
+<a class="text-emerald-400 font-label text-sm uppercase tracking-widest font-semibold" href="#">Keys</a>
+</nav>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest border border-outline-variant/20 overflow-hidden">
+<img alt="User Profile" data-alt="A high-quality close-up portrait of a digital creator with subtle cyan and lime green ambient lighting reflecting off their skin. The background is a dark, sophisticated studio setting with soft bokeh effects. The overall aesthetic is ultra-modern and tech-focused, aligning with a premium dark-mode interface design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuWI6B8sON0OhxxgTafyktwWLxdNnYmZi-fEdBB-ot7-_AjjZvtRVFLlRZpjF9GfLwQLG2fzFQGb3SSmrdDxIyam62sdagIURAABMTZsCJpYxztnf9At9VpVODrnD1sS0DfBI1v0xA-Q85bwNqUQ4v-QQi8LyA27LewKf17Fbvj5eSBmvc9NuSv3B6SEa7BPcpySPJjFo8j_t4aoNEx8UcoyGP2E1Pz2FfJCCliWOdyMZx65QAuC0llOsgikbDI34kDl7qxKCuRdc"/>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-7xl mx-auto min-h-screen">
+<!-- Page Header & Global Controls -->
+<div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-8">
+<div class="space-y-2">
+<span class="text-primary font-label text-xs tracking-[0.3em] uppercase font-bold">Configuration</span>
+<h2 class="text-5xl font-display font-extrabold tracking-tighter leading-none">API ENGINES</h2>
+<p class="text-on-surface-variant max-w-md">Manage your neural connections and orchestration fallbacks for the Sonic Assistant environment.</p>
+</div>
+<!-- Auto-Switch Engine Toggle -->
+<div class="glass-panel p-6 rounded-3xl border border-outline-variant/10 flex items-center justify-between min-w-[320px]">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="alt_route">alt_route</span>
+</div>
+<div>
+<h4 class="font-bold text-sm tracking-tight">Auto-Switch Engine</h4>
+<p class="text-xs text-on-surface-variant">Enable smart fallback logic</p>
+</div>
+</div>
+<button aria-checked="true" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out bg-primary focus:outline-none" role="switch">
+<span class="translate-x-5 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-on-primary shadow ring-0 transition duration-200 ease-in-out"></span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Add New Connection Section -->
+<section class="lg:col-span-5 space-y-6">
+<div class="bg-surface-container-low rounded-[2.5rem] p-8 border border-outline-variant/5">
+<h3 class="text-2xl font-display font-bold mb-8 tracking-tight">Add New Connection</h3>
+<form class="space-y-6">
+<div class="space-y-2">
+<label class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant px-1">Select Provider</label>
+<div class="relative">
+<select class="w-full bg-surface-container-highest border-none rounded-2xl py-4 px-5 text-on-surface focus:ring-2 focus:ring-primary/50 appearance-none font-medium">
+<option>OpenAI GPT-4o</option>
+<option>Anthropic Claude 3.5</option>
+<option>Google Gemini Pro</option>
+<option>Mistral Large 2</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant px-1">Secret Key</label>
+<div class="relative">
+<input class="w-full bg-surface-container-highest border-none rounded-2xl py-4 px-5 text-on-surface focus:ring-2 focus:ring-primary/50 font-mono text-sm" placeholder="sk-••••••••••••••••" type="password"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant cursor-pointer" data-icon="visibility">visibility</span>
+</div>
+</div>
+<div class="pt-4">
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary-container font-bold py-4 rounded-full flex items-center justify-center gap-2 hover:brightness-110 transition-all neon-glow">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+                                Establish Connector
+                            </button>
+</div>
+</form>
+</div>
+<div class="bg-surface-container-low rounded-[2.5rem] p-8 border border-outline-variant/5 overflow-hidden relative">
+<div class="relative z-10">
+<h4 class="text-lg font-bold mb-2">Usage Insights</h4>
+<p class="text-sm text-on-surface-variant mb-6">Real-time monitoring of your connected neural networks.</p>
+<div class="flex items-end gap-1 h-20">
+<div class="flex-1 bg-primary/20 rounded-t-lg h-1/2"></div>
+<div class="flex-1 bg-primary/30 rounded-t-lg h-3/4"></div>
+<div class="flex-1 bg-primary/20 rounded-t-lg h-2/3"></div>
+<div class="flex-1 bg-primary/60 rounded-t-lg h-full"></div>
+<div class="flex-1 bg-primary/40 rounded-t-lg h-4/5"></div>
+<div class="flex-1 bg-primary/20 rounded-t-lg h-1/2"></div>
+</div>
+</div>
+<!-- Ambient light element -->
+<div class="absolute -right-20 -bottom-20 w-64 h-64 bg-primary/5 blur-[80px] rounded-full"></div>
+</div>
+</section>
+<!-- Active Connectors Section -->
+<section class="lg:col-span-7">
+<div class="flex items-center justify-between mb-8 px-2">
+<h3 class="text-2xl font-display font-bold tracking-tight">Active Connectors</h3>
+<span class="px-3 py-1 rounded-full bg-surface-container-highest text-primary text-[10px] font-black uppercase tracking-widest">3 Nodes Online</span>
+</div>
+<div class="space-y-4">
+<!-- Connector 1 -->
+<div class="glass-panel p-6 rounded-[2rem] flex items-center gap-6 group hover:bg-surface-container-highest/60 transition-colors duration-300">
+<div class="w-16 h-16 rounded-2xl bg-zinc-800 flex items-center justify-center relative">
+<span class="material-symbols-outlined text-3xl text-white" data-icon="bolt">bolt</span>
+<div class="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full border-4 border-background"></div>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-1">
+<h4 class="font-bold text-lg tracking-tight">OpenAI GPT-4o</h4>
+<span class="px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider">Active</span>
+</div>
+<p class="text-xs text-on-surface-variant font-mono">ID: x294-oa-main</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="text-right hidden sm:block">
+<div class="text-sm font-bold">1.2k req/m</div>
+<div class="text-[10px] uppercase text-on-surface-variant">Throttled</div>
+</div>
+<button class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center text-on-surface-variant hover:text-error hover:bg-error/10 transition-all">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+<!-- Connector 2 -->
+<div class="glass-panel p-6 rounded-[2rem] flex items-center gap-6 group hover:bg-surface-container-highest/60 transition-colors duration-300">
+<div class="w-16 h-16 rounded-2xl bg-zinc-800 flex items-center justify-center relative">
+<span class="material-symbols-outlined text-3xl text-zinc-400" data-icon="diamond">diamond</span>
+<div class="absolute -top-1 -right-1 w-4 h-4 bg-error rounded-full border-4 border-background"></div>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-1">
+<h4 class="font-bold text-lg tracking-tight">Anthropic Claude 3.5</h4>
+<span class="px-2 py-0.5 rounded-md bg-error/10 text-error text-[10px] font-bold uppercase tracking-wider">Limit Reached</span>
+</div>
+<p class="text-xs text-on-surface-variant font-mono">ID: v910-ant-opus</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="text-right hidden sm:block opacity-40">
+<div class="text-sm font-bold">0 req/m</div>
+<div class="text-[10px] uppercase text-on-surface-variant">Quota Exceeded</div>
+</div>
+<button class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center text-on-surface-variant hover:text-error hover:bg-error/10 transition-all">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+<!-- Connector 3 -->
+<div class="glass-panel p-6 rounded-[2rem] flex items-center gap-6 group hover:bg-surface-container-highest/60 transition-colors duration-300">
+<div class="w-16 h-16 rounded-2xl bg-zinc-800 flex items-center justify-center relative">
+<span class="material-symbols-outlined text-3xl text-white" data-icon="psychology">psychology</span>
+<div class="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full border-4 border-background"></div>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-1">
+<h4 class="font-bold text-lg tracking-tight">Mistral Large 2</h4>
+<span class="px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider">Active</span>
+</div>
+<p class="text-xs text-on-surface-variant font-mono">ID: m552-mist-hq</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="text-right hidden sm:block">
+<div class="text-sm font-bold">450 req/m</div>
+<div class="text-[10px] uppercase text-on-surface-variant">Optimal</div>
+</div>
+<button class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center text-on-surface-variant hover:text-error hover:bg-error/10 transition-all">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+<!-- Empty State / Placeholder -->
+<div class="border-2 border-dashed border-outline-variant/10 rounded-[2rem] p-12 flex flex-col items-center justify-center text-center opacity-50">
+<span class="material-symbols-outlined text-4xl mb-4" data-icon="hub">hub</span>
+<p class="text-sm font-medium">Ready for additional nodes.</p>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-[#0e0e0e]/60 backdrop-blur-2xl rounded-t-[2rem] shadow-[0_-10px_40px_rgba(0,0,0,0.4)] md:hidden">
+<a class="flex flex-col items-center justify-center text-zinc-500 hover:bg-zinc-800/40 rounded-xl transition-all p-2" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="library_music">library_music</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest font-semibold">Music</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-500 hover:bg-zinc-800/40 rounded-xl transition-all p-2" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="menu_book">menu_book</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest font-semibold">Reader</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-500 hover:bg-zinc-800/40 rounded-xl transition-all p-2" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="smart_toy">smart_toy</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest font-semibold">Assistant</span>
+</a>
+<a class="flex flex-col items-center justify-center text-emerald-400 drop-shadow-[0_0_8px_rgba(114,254,143,0.5)] p-2" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="vpn_key" style="font-variation-settings: 'FILL' 1;">vpn_key</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest font-semibold">Keys</span>
+</a>
+</nav>
+</body></html>

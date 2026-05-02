@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/services/media_import_service.dart';
+import '../../../../core/services/secure_storage_service.dart';
 import '../../../../core/services/youtube_download_service.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../../../../features/home/data/datasources/home_local_data_source.dart';
@@ -19,6 +20,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   final MediaImportService importService;
   final HomeLocalDataSource homeLocalDataSource;
   final YoutubeDownloadService youtubeDownloadService;
+  final SecureStorageService secureStorageService;
 
   SettingsBloc({
     required this.getSettings,
@@ -28,6 +30,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     required this.importService,
     required this.homeLocalDataSource,
     required this.youtubeDownloadService,
+    required this.secureStorageService,
   }) : super(const SettingsInitial()) {
     on<LoadSettingsEvent>(_onLoadSettings);
     on<LoadUserEvent>(_onLoadUser);
@@ -40,6 +43,18 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<LoadBundledMusicEvent>(_onLoadBundledMusic);
     on<DownloadYoutubeTrackEvent>(_onDownloadYoutubeTrack);
     on<SyncDownloadedMusicEvent>(_onSyncDownloadedMusic);
+    on<UpdateGeminiApiKey>(_onUpdateGeminiApiKey);
+  }
+
+  Future<void> _onUpdateGeminiApiKey(
+    UpdateGeminiApiKey event,
+    Emitter<SettingsState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is SettingsLoaded) {
+      await secureStorageService.saveGeminiApiKey(event.apiKey);
+      emit(currentState.copyWith(geminiApiKey: event.apiKey));
+    }
   }
 
   Future<void> _onCloudImport(
@@ -108,13 +123,14 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
     final settingsResult = await getSettings(NoParams());
     final userResult = await getCurrentUser(NoParams());
+    final apiKey = await secureStorageService.getGeminiApiKey();
 
     settingsResult.fold((failure) => emit(SettingsError(failure.message)), (
       settings,
     ) {
       userResult.fold(
-        (failure) => emit(SettingsLoaded(settings: settings)),
-        (user) => emit(SettingsLoaded(settings: settings, user: user)),
+        (failure) => emit(SettingsLoaded(settings: settings, geminiApiKey: apiKey)),
+        (user) => emit(SettingsLoaded(settings: settings, user: user, geminiApiKey: apiKey)),
       );
     });
   }
