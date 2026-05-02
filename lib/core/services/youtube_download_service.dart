@@ -13,10 +13,12 @@ import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 import '../../features/home/data/models/track_model.dart';
 import './lyrics_service.dart';
+import './secure_storage_service.dart';
 
 class YoutubeDownloadService {
   final YoutubeExplode _yt = YoutubeExplode();
   final LyricsService _lyricsService;
+  final SecureStorageService _secureStorage;
 
   // Persistent Worker State
   static bool _isWorkerStarted = false;
@@ -26,7 +28,7 @@ class YoutubeDownloadService {
   static final Map<String, Completer<void>> _activeDownloadCompleters = {};
   static final Map<String, String?> _downloadErrors = {};
 
-  YoutubeDownloadService(this._lyricsService);
+  YoutubeDownloadService(this._lyricsService, this._secureStorage);
 
   void dispose() {
     _yt.close();
@@ -386,11 +388,18 @@ class YoutubeDownloadService {
       await Future.delayed(const Duration(seconds: 2));
 
       _wasRunCalledInThisProcess = true;
+
+      // Fetch the API key from secure storage
+      final geminiKey = await _secureStorage.getGeminiApiKey();
+
       // For iOS, extraction and re-initialization are sensitive.
       SeriousPython.run(
         appPath,
         appFileName: "main.py",
-        environmentVariables: {"DART_PORT": progressPort.toString()},
+        environmentVariables: {
+          "DART_PORT": progressPort.toString(),
+          "GEMINI_API_KEY": geminiKey ?? "",
+        },
       );
 
       await completer.future.timeout(const Duration(seconds: 60));

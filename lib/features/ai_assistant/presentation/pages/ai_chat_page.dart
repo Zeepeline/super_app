@@ -105,12 +105,11 @@ class _AiChatPageState extends State<AiChatPage> {
                                   isUser: isUser,
                                   isError: hasError,
                                   timestamp: message.timestamp,
-                                  onRetry:
-                                      showRetry
-                                          ? () => context
-                                              .read<AiChatCubit>()
-                                              .retryLastMessage()
-                                          : null,
+                                  onRetry: showRetry
+                                      ? () => context
+                                            .read<AiChatCubit>()
+                                            .retryLastMessage()
+                                      : null,
                                 );
                               },
                             );
@@ -358,8 +357,9 @@ class _ChatBubble extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
       child: Row(
-        mainAxisAlignment:
-            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isUser
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (isUser && isError)
@@ -387,8 +387,9 @@ class _ChatBubble extends StatelessWidget {
                 );
               },
               child: Column(
-                crossAxisAlignment:
-                    isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                crossAxisAlignment: isUser
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -399,10 +400,9 @@ class _ChatBubble extends StatelessWidget {
                       maxWidth: MediaQuery.of(context).size.width * 0.75,
                     ),
                     decoration: BoxDecoration(
-                      color:
-                          isUser
-                              ? AppTheme.kPrimaryColor.withValues(alpha: 0.9)
-                              : Colors.white.withValues(alpha: 0.07),
+                      color: isUser
+                          ? AppTheme.kPrimaryColor.withValues(alpha: 0.9)
+                          : Colors.white.withValues(alpha: 0.07),
                       borderRadius: BorderRadius.only(
                         topLeft: const Radius.circular(20),
                         topRight: const Radius.circular(20),
@@ -410,10 +410,9 @@ class _ChatBubble extends StatelessWidget {
                         bottomRight: Radius.circular(isUser ? 0 : 20),
                       ),
                       border: Border.all(
-                        color:
-                            isUser
-                                ? Colors.white.withValues(alpha: 0.1)
-                                : Colors.white.withValues(alpha: 0.05),
+                        color: isUser
+                            ? Colors.white.withValues(alpha: 0.1)
+                            : Colors.white.withValues(alpha: 0.05),
                       ),
                     ),
                     child: MarkdownBody(
@@ -450,6 +449,29 @@ class _ChatBubble extends StatelessWidget {
                           color: isUser ? Colors.black : Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
+                        ),
+                        blockquote: TextStyle(
+                          color: isUser
+                              ? Colors.black.withValues(alpha: 0.7)
+                              : Colors.white.withValues(alpha: 0.8),
+                          fontStyle: FontStyle.italic,
+                          fontSize: 14,
+                        ),
+                        blockquoteDecoration: BoxDecoration(
+                          color: isUser
+                              ? Colors.black.withValues(alpha: 0.05)
+                              : Colors.white.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border(
+                            left: BorderSide(
+                              color: isUser
+                                  ? Colors.black26
+                                  : AppTheme.kPrimaryColor.withValues(
+                                      alpha: 0.5,
+                                    ),
+                              width: 4,
+                            ),
+                          ),
                         ),
                       ),
                     ),

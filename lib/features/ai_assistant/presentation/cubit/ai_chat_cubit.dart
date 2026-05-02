@@ -2,22 +2,27 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_generative_ai/google_generative_ai.dart' as ai;
 
 import '../../../../core/services/gemini_service.dart';
+import '../../../../core/services/rag_service.dart';
 import 'ai_chat_state.dart';
 import 'chat_message.dart';
 
 class AiChatCubit extends Cubit<AiChatState> {
   final GeminiService _geminiService;
+  final RagService _ragService;
   final List<ChatMessage> _history = [];
 
-  AiChatCubit(this._geminiService) : super(AiChatInitial()) {
+  AiChatCubit(this._geminiService, this._ragService) : super(AiChatInitial()) {
+    // Sync library in background when chat starts
+    _ragService.syncAllTracks();
+
     // Initial welcome message from AI
     _history.add(
       ChatMessage(
         content: ai.Content.model([
           ai.TextPart(
-            "Halo! Saya asisten musik SoundWave. Ada yang bisa saya bantu? "
-            "Saya bisa merekomendasikan lagu berdasarkan suasana hatimu atau "
-            "memberikan informasi tentang artis favoritmu.",
+            "Halo! Saya SoundWave AI, asisten personal cerdasmu. "
+            "Saya sudah terhubung dengan koleksi musik dan data pribadimu. "
+            "Ada yang bisa saya bantu hari ini?",
           ),
         ]),
         timestamp: DateTime.now(),
@@ -41,8 +46,20 @@ class AiChatCubit extends Cubit<AiChatState> {
     emit(AiChatLoading(List.from(_history)));
 
     try {
+      // 1. RAG: Cari konteks dari library lokal
+      final localContext = await _ragService.getLocalContext(message);
+
+      // 2. Gabungkan konteks ke pesan (Augmentation)
+      String finalPrompt = message;
+      if (localContext != null) {
+        finalPrompt = "$localContext\n\n"
+            "Pertanyaan User: $message\n\n"
+            "Instruksi: Jawablah pertanyaan user dengan mengacu pada data library lokal di atas jika relevan. "
+            "Jika tidak relevan, gunakan pengetahuan umum Anda.";
+      }
+
       final response = await _geminiService.getChatResponse(
-        message,
+        finalPrompt,
         // Hanya kirim 6 pesan terakhir sebagai konteks untuk hemat token
         history: _history.length > 7
             ? _history

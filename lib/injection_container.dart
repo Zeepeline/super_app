@@ -12,6 +12,7 @@ import 'core/services/media_import_service.dart';
 import 'core/services/lyrics_service.dart';
 import 'core/services/secure_storage_service.dart';
 import 'core/services/gemini_service.dart';
+import 'core/services/rag_service.dart';
 import 'core/services/youtube_download_service.dart';
 import 'core/services/youtube_explode_service.dart';
 import 'features/auth/data/datasources/auth_remote_datasource.dart';
@@ -63,9 +64,9 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   sl.registerSingleton<LyricsService>(LyricsService(Dio()));
   sl.registerSingleton<DownloadService>(DownloadService());
   sl.registerSingleton<MediaImportService>(MediaImportService());
-  sl.registerSingleton<YoutubeDownloadService>(YoutubeDownloadService(sl()));
-  sl.registerSingleton<YouTubeExplodeService>(YouTubeExplodeService());
   sl.registerSingleton<SecureStorageService>(SecureStorageService());
+  sl.registerSingleton<YoutubeDownloadService>(YoutubeDownloadService(sl(), sl()));
+  sl.registerSingleton<YouTubeExplodeService>(YouTubeExplodeService());
   sl.registerSingleton<GeminiService>(GeminiService(sl()));
 
   // ===== EXTERNAL =====
@@ -93,6 +94,7 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   sl.registerSingleton<HomeLocalDataSource>(
     HomeLocalDataSourceImpl(hive: sl<HiveInterface>()),
   );
+  sl.registerSingleton<RagService>(RagService(sl()));
 
   // ===== REPOSITORIES =====
   sl.registerSingleton<MusicRepository>(
@@ -168,7 +170,7 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
       secureStorageService: sl(),
     ),
   );
-  sl.registerFactory(() => AiChatCubit(sl()));
+  sl.registerFactory(() => AiChatCubit(sl(), sl()));
 
   // Music Player - register as singleton (needs repository already registered)
   sl.registerSingleton<PlayerCubit>(

@@ -43,3 +43,32 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Python / SeriousPython
+python_app/*/
+!python_app/modules/
+!python_app/data/
+!python_app/tests/
+
+# Kecualikan semua file di root python_app kecuali kode kita & requirements
+python_app/*
+!python_app/main.py
+!python_app/config.py
+!python_app/requirements.txt
+!python_app/modules/
+!python_app/data/
+!python_app/tests/
+
+# Kecualikan bytecode & cache
+__pycache__/
+*.pyc
+python_app/**/__pycache__/
+python_app/**/*.pyc
+
+# Database & Cache Lokal (Penting agar data pribadi tidak ter-upload)
+python_app/data/chromadb/
+python_app/data/cache/
+python_app/logs/
+
+# Build Artifacts
+assets/app/app.zip
