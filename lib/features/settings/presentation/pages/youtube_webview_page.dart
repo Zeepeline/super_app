@@ -80,7 +80,7 @@ class YouTubeWebViewController extends GetxController {
       try {
         // 2. Get direct download URL via y2mate
         final downloadUrl = await y2mateService.getDownloadUrl(url);
-        
+
         if (downloadUrl == null) {
           throw Exception("Could not retrieve download link from y2mate.");
         }

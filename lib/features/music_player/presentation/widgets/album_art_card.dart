@@ -98,10 +98,12 @@ class AlbumArtCard extends StatelessWidget {
                       const SizedBox(height: 16),
                       Text(
                         "Artwork Unavailable",
-                        style: AppTheme.darkTheme.textTheme.labelSmall?.copyWith(
-                          color: AppTheme.kOnSurfaceVariantColor.withOpacity(0.5),
-                          letterSpacing: 1.2,
-                        ),
+                        style: AppTheme.darkTheme.textTheme.labelSmall
+                            ?.copyWith(
+                              color: AppTheme.kOnSurfaceVariantColor
+                                  .withOpacity(0.5),
+                              letterSpacing: 1.2,
+                            ),
                       ),
                     ],
                   ),

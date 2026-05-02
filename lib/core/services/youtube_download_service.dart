@@ -15,6 +15,10 @@ class YoutubeDownloadService {
   final YoutubeExplode _yt = YoutubeExplode();
   final LyricsService _lyricsService;
 
+  // Pre-compiled RegExps for performance
+  static final _illegalCharsPattern = RegExp(r'[<>:"/\\|?*]');
+  static final _controlCharsPattern = RegExp(r'[\x00-\x1F\x7F]');
+
   // Persistent Worker State
   static bool _isWorkerStarted = false;
   static int? _workerPort;
@@ -215,11 +219,10 @@ class YoutubeDownloadService {
 
   String _sanitizeFilename(String name) {
     // Character that are illegal in Windows/macOS/Linux filenames
-    final illegalChars = RegExp(r'[<>:"/\\|?*]');
     // Replace with underscores
-    String sanitized = name.replaceAll(illegalChars, '_');
+    String sanitized = name.replaceAll(_illegalCharsPattern, '_');
     // Remove control characters
-    sanitized = sanitized.replaceAll(RegExp(r'[\x00-\x1F\x7F]'), '');
+    sanitized = sanitized.replaceAll(_controlCharsPattern, '');
     // Trim and handle extremely long names (max 200 chars to be safe)
     sanitized = sanitized.trim();
     if (sanitized.length > 200) {
