@@ -15,6 +15,7 @@ class MockHomeRemoteDataSourceImpl implements HomeRemoteDataSource {
         idField: '1',
         titleField: 'Melodigne Champion',
         artistField: 'SoundWave Special',
+        albumField: 'Special Edition',
         albumArtUrlField:
             'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=300',
         durationField: '3:45',
@@ -26,6 +27,7 @@ class MockHomeRemoteDataSourceImpl implements HomeRemoteDataSource {
         idField: '2',
         titleField: 'Cyber Beats',
         artistField: 'Neon Pulse',
+        albumField: 'Neon Nights',
         albumArtUrlField:
             'https://images.unsplash.com/photo-1493225255756-d9584f8606e9?auto=format&fit=crop&q=80&w=300',
         durationField: '3:50',
@@ -36,6 +38,7 @@ class MockHomeRemoteDataSourceImpl implements HomeRemoteDataSource {
         idField: '3',
         titleField: 'Synthwave Dreams',
         artistField: 'Night Drive',
+        albumField: 'Retro Drive',
         albumArtUrlField:
             'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=300',
         durationField: '3:20',

@@ -36,6 +36,7 @@ class YoutubeDownloadService {
     required String url,
     String? title,
     String? artist,
+    String? album,
     String? albumArtUrl,
     Duration? trackDuration,
     Function(String stage, double progress)? onProgress,
@@ -48,6 +49,7 @@ class YoutubeDownloadService {
 
       String finalTitle = title ?? 'YouTube Audio';
       String finalArtist = artist ?? 'Unknown Artist';
+      String finalAlbum = album ?? 'YouTube Download';
       String finalThumbnail = albumArtUrl ?? '';
       String finalDuration = _formatDuration(trackDuration);
 
@@ -59,6 +61,7 @@ class YoutubeDownloadService {
               .timeout(const Duration(seconds: 10));
           finalTitle = title ?? video.title;
           finalArtist = artist ?? video.author;
+          finalAlbum = album ?? video.author;
           finalThumbnail = albumArtUrl ?? video.thumbnails.highResUrl;
           if (trackDuration == null) {
             finalDuration = _formatDuration(video.duration);
@@ -187,6 +190,7 @@ class YoutubeDownloadService {
           videoIdStr,
           finalTitle,
           finalArtist,
+          finalAlbum,
           finalThumbnail,
           finalDuration,
           url,
@@ -412,6 +416,7 @@ class YoutubeDownloadService {
     String id,
     String title,
     String author,
+    String album,
     String thumb,
     String duration,
     String url,
@@ -423,6 +428,7 @@ class YoutubeDownloadService {
       idField: id,
       titleField: title,
       artistField: author,
+      albumField: album,
       albumArtUrlField: thumb,
       durationField: duration,
       audioUrlField: url,

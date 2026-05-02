@@ -27,13 +27,14 @@ class TrackModelAdapter extends TypeAdapter<TrackModel> {
       isFavoriteField: fields[7] as bool,
       syncedLyricsField: fields[8] as String?,
       plainLyricsField: fields[9] as String?,
+      albumField: fields[10] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, TrackModel obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.idField)
       ..writeByte(1)
@@ -53,7 +54,9 @@ class TrackModelAdapter extends TypeAdapter<TrackModel> {
       ..writeByte(8)
       ..write(obj.syncedLyricsField)
       ..writeByte(9)
-      ..write(obj.plainLyricsField);
+      ..write(obj.plainLyricsField)
+      ..writeByte(10)
+      ..write(obj.albumField);
   }
 
   @override

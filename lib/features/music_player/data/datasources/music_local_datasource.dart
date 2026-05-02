@@ -49,6 +49,7 @@ class MusicLocalDataSourceImpl implements MusicLocalDataSource {
     id: 'empty',
     title: 'Select a track',
     artist: 'Digital Curator',
+    album: 'Unknown Album',
     audioUrl: '',
     albumArtUrl:
         'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=300',

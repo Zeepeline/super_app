@@ -75,6 +75,7 @@ class YouTubeController extends GetxController {
         id: videoId,
         title: video.title,
         artist: video.author,
+        album: video.author,
         albumArtUrl: video.thumbnails.highResUrl,
         duration: video.duration ?? Duration.zero,
         audioUrl: streamUrl,

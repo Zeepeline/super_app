@@ -6,6 +6,9 @@ import '../../../home/domain/entities/track_entity.dart';
 import '../../../home/domain/repositories/home_repository.dart';
 import '../../../home/domain/usecases/get_favorite_tracks.dart';
 
+// Categories
+enum LibraryCategory { playlists, artists, albums }
+
 // Events
 abstract class LibraryEvent extends Equatable {
   const LibraryEvent();
@@ -14,6 +17,13 @@ abstract class LibraryEvent extends Equatable {
 }
 
 class LoadFavorites extends LibraryEvent {}
+
+class ChangeCategory extends LibraryEvent {
+  final LibraryCategory category;
+  const ChangeCategory(this.category);
+  @override
+  List<Object> get props => [category];
+}
 
 // States
 abstract class LibraryState extends Equatable {
@@ -27,10 +37,16 @@ class LibraryInitial extends LibraryState {}
 class LibraryLoading extends LibraryState {}
 
 class LibraryLoaded extends LibraryState {
-  final List<TrackEntity> favoriteTracks;
-  const LibraryLoaded({required this.favoriteTracks});
+  final List<TrackEntity> tracks;
+  final LibraryCategory selectedCategory;
+
+  const LibraryLoaded({
+    required this.tracks,
+    this.selectedCategory = LibraryCategory.playlists,
+  });
+
   @override
-  List<Object> get props => [favoriteTracks];
+  List<Object> get props => [tracks, selectedCategory];
 }
 
 class LibraryError extends LibraryState {
@@ -57,11 +73,31 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
       // Don't show loading on every partial update to avoid flickers
       if (state is LibraryInitial) emit(LibraryLoading());
 
-      final result = await getFavoriteTracks(NoParams());
+      final result = await repository.getPopularTracks();
       result.fold(
-        (failure) => emit(const LibraryError('Failed to fetch favorites')),
-        (tracks) => emit(LibraryLoaded(favoriteTracks: tracks)),
+        (failure) => emit(const LibraryError('Failed to fetch tracks')),
+        (tracks) {
+          final currentCategory =
+              state is LibraryLoaded
+                  ? (state as LibraryLoaded).selectedCategory
+                  : LibraryCategory.playlists;
+          emit(
+            LibraryLoaded(tracks: tracks, selectedCategory: currentCategory),
+          );
+        },
       );
+    });
+
+    on<ChangeCategory>((event, emit) {
+      if (state is LibraryLoaded) {
+        final currentState = state as LibraryLoaded;
+        emit(
+          LibraryLoaded(
+            tracks: currentState.tracks,
+            selectedCategory: event.category,
+          ),
+        );
+      }
     });
   }
 

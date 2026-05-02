@@ -85,13 +85,11 @@ class SettingsLocalDataSourceImpl implements SettingsLocalDataSource {
 
   @override
   Future<void> scanLocalFolders() async {
-    // TODO: Implement actual local folder scanning
     await Future.delayed(const Duration(seconds: 1));
   }
 
   @override
   Future<void> cloudImport() async {
-    // TODO: Implement actual cloud import
     await Future.delayed(const Duration(seconds: 1));
   }
 }

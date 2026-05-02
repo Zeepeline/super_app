@@ -26,6 +26,8 @@ class TrackModel extends TrackEntity {
   final String? syncedLyricsField;
   @HiveField(9)
   final String? plainLyricsField;
+  @HiveField(10)
+  final String albumField;
 
   const TrackModel({
     required this.idField,
@@ -38,10 +40,12 @@ class TrackModel extends TrackEntity {
     this.isFavoriteField = false,
     this.syncedLyricsField,
     this.plainLyricsField,
+    required this.albumField,
   }) : super(
          id: idField,
          title: titleField,
          artist: artistField,
+         album: albumField,
          albumArtUrl: albumArtUrlField,
          duration: durationField,
          audioUrl: audioUrlField,
@@ -56,6 +60,7 @@ class TrackModel extends TrackEntity {
     String? id,
     String? title,
     String? artist,
+    String? album,
     String? albumArtUrl,
     String? duration,
     String? audioUrl,
@@ -68,6 +73,7 @@ class TrackModel extends TrackEntity {
       idField: id ?? idField,
       titleField: title ?? titleField,
       artistField: artist ?? artistField,
+      albumField: album ?? albumField,
       albumArtUrlField: albumArtUrl ?? albumArtUrlField,
       durationField: duration ?? durationField,
       audioUrlField: audioUrl ?? audioUrlField,
@@ -83,6 +89,7 @@ class TrackModel extends TrackEntity {
       idField: json['id'] ?? '',
       titleField: json['title'] ?? '',
       artistField: json['artist'] ?? '',
+      albumField: json['album'] ?? 'Unknown Album',
       albumArtUrlField: json['albumArtUrl'] ?? '',
       durationField: json['duration'] ?? '',
       audioUrlField: json['audioUrl'] ?? '',
@@ -98,6 +105,7 @@ class TrackModel extends TrackEntity {
       'id': idField,
       'title': titleField,
       'artist': artistField,
+      'album': albumField,
       'albumArtUrl': albumArtUrlField,
       'duration': durationField,
       'audioUrl': audioUrlField,

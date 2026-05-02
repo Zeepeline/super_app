@@ -41,6 +41,7 @@ class MusicRepositoryImpl implements MusicRepository {
               id: item.id,
               title: item.title,
               artist: item.artist ?? 'Unknown',
+              album: item.album ?? 'Unknown',
               albumArtUrl: item.artUri?.toString() ?? '',
               duration: item.duration ?? Duration.zero,
               audioUrl: '',
@@ -66,8 +67,7 @@ class MusicRepositoryImpl implements MusicRepository {
         if (newUrl != null && newUrl.isNotEmpty) {
           return track.copyWith(audioUrl: newUrl);
         }
-      } catch (e) {
-      }
+      } catch (e) {}
     }
     return track;
   }
@@ -94,6 +94,7 @@ class MusicRepositoryImpl implements MusicRepository {
             id: t.id,
             title: t.title,
             artist: t.artist,
+            album: t.album,
             albumArtUrl: t.albumArtUrl,
             duration: Duration(minutes: minutes, seconds: seconds),
             audioUrl: t.audioUrl,
@@ -108,8 +109,7 @@ class MusicRepositoryImpl implements MusicRepository {
           queue: playerTracks,
         );
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   @override
@@ -142,12 +142,12 @@ class MusicRepositoryImpl implements MusicRepository {
       if (track != null) {
         localDataSource.setCurrentTrack(TrackModel.fromEntity(track));
       }
-      
+
       var trackToPlay = localDataSource.getCurrentTrack();
-      
+
       // Refresh URL if needed before sending to handler
       final refreshedTrack = await _ensureValidAudioUrl(trackToPlay);
-      
+
       await audioHandler.playTrack(refreshedTrack);
       final updatedTrack = localDataSource.updateTrackState(
         isPlaying: true,
@@ -207,19 +207,19 @@ class MusicRepositoryImpl implements MusicRepository {
   Future<Either<Failure, TrackEntity>> skipToNext() async {
     try {
       final nextTrack = localDataSource.getNextTrack();
-      
+
       // Refresh URL if needed
       final refreshedTrack = await _ensureValidAudioUrl(nextTrack);
-      
+
       // Ensure we set it as playing in our local state
       final updatedTrack = localDataSource.updateTrackState(
         isPlaying: true,
         currentPosition: Duration.zero,
       );
-      
+
       // Use the refreshed track for playback
       await audioHandler.playTrack(refreshedTrack);
-      
+
       return Right(updatedTrack);
     } catch (e) {
       return const Left(CacheFailure('Failed to skip to next track'));
@@ -230,19 +230,19 @@ class MusicRepositoryImpl implements MusicRepository {
   Future<Either<Failure, TrackEntity>> skipToPrevious() async {
     try {
       final prevTrack = localDataSource.getPreviousTrack();
-      
+
       // Refresh URL if needed
       final refreshedTrack = await _ensureValidAudioUrl(prevTrack);
-      
+
       // Ensure we set it as playing in our local state
       final updatedTrack = localDataSource.updateTrackState(
         isPlaying: true,
         currentPosition: Duration.zero,
       );
-      
+
       // Use the refreshed track for playback
       await audioHandler.playTrack(refreshedTrack);
-      
+
       return Right(updatedTrack);
     } catch (e) {
       return const Left(CacheFailure('Failed to skip to previous track'));
@@ -299,6 +299,7 @@ class MusicRepositoryImpl implements MusicRepository {
         id: item.id,
         title: item.title,
         artist: item.artist ?? 'Unknown',
+        album: item.album ?? 'Unknown',
         albumArtUrl: item.artUri?.toString() ?? '',
         duration: item.duration ?? Duration.zero,
         audioUrl: '', // URL is not always known from MediaItem

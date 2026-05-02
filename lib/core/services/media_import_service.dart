@@ -158,6 +158,7 @@ class MediaImportService {
             idField: _uuid.v4(),
             titleField: title,
             artistField: 'Local Artist',
+            albumField: 'Local Music',
             albumArtUrlField:
                 'https://images.unsplash.com/photo-1514525253361-bee8ea36b745?auto=format&fit=crop&q=80&w=300',
             durationField: durationText,
@@ -224,6 +225,7 @@ class MediaImportService {
             idField: _uuid.v4(),
             titleField: title,
             artistField: 'Local Artist',
+            albumField: 'Bundled Music',
             albumArtUrlField:
                 'https://images.unsplash.com/photo-1514525253361-bee8ea36b745?auto=format&fit=crop&q=80&w=300',
             durationField: durationText,
@@ -312,6 +314,7 @@ class MediaImportService {
               idField: stableId,
               titleField: title,
               artistField: 'Web Download',
+              albumField: 'YouTube Download',
               albumArtUrlField:
                   'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=300',
               durationField: durationText,

@@ -8,10 +8,10 @@ import 'package:super_app/features/music_player/presentation/cubit/player_cubit.
 import 'package:super_app/features/music_player/presentation/pages/music_player_page.dart';
 
 import '../../../../core/theme/app_theme.dart';
-import '../../domain/entities/track_entity.dart';
+import '../../domain/entities/track_entity.dart' as home;
 
 class PopularTrackCard extends StatelessWidget {
-  final TrackEntity track;
+  final home.TrackEntity track;
 
   const PopularTrackCard({super.key, required this.track});
 
@@ -21,6 +21,7 @@ class PopularTrackCard extends StatelessWidget {
       id: track.id,
       title: track.title,
       artist: track.artist,
+      album: track.album,
       albumArtUrl: track.albumArtUrl,
       audioUrl: track.audioUrl,
       duration: _parseDuration(track.duration),

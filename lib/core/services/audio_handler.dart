@@ -156,7 +156,7 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
       // 5. Prepare metadata
       final item = MediaItem(
         id: track.id,
-        album: 'SoundWave',
+        album: track.album,
         title: track.title,
         artist: track.artist,
         duration: track.duration, // Use existing duration initially

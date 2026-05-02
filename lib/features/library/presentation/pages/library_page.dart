@@ -1,15 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/theme/app_theme.dart';
 import '../../../../injection_container.dart';
-import '../../../home/domain/entities/track_entity.dart';
+import '../../../home/domain/entities/track_entity.dart' as home;
+import '../../../music_player/domain/entities/track_entity.dart' as player;
+import '../../../music_player/presentation/cubit/player_cubit.dart';
 import '../../../music_player/presentation/pages/music_player_page.dart';
 import '../bloc/library_bloc.dart';
+import 'library_detail_page.dart';
 
 class LibraryPage extends StatelessWidget {
   const LibraryPage({super.key});
 
-  void _showFullPlayer(BuildContext context, TrackEntity track) {
+  void _showFullPlayer(BuildContext context, home.TrackEntity track) {
+    // Convert home entity to player entity
+    final playerTrack = player.TrackEntity(
+      id: track.id,
+      title: track.title,
+      artist: track.artist,
+      album: track.album,
+      albumArtUrl: track.albumArtUrl,
+      audioUrl: track.audioUrl,
+      duration: _parseDuration(track.duration),
+      isFavorite: track.isFavorite,
+      localPath: track.localPath,
+    );
+
     Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
@@ -29,6 +46,29 @@ class LibraryPage extends StatelessWidget {
         },
       ),
     );
+
+    // Play the track
+    context.read<PlayerCubit>().selectAndPlay(playerTrack);
+  }
+
+  List<player.TrackEntity> _convertToPlayerTracks(
+    List<home.TrackEntity> tracks,
+  ) {
+    return tracks
+        .map(
+          (track) => player.TrackEntity(
+            id: track.id,
+            title: track.title,
+            artist: track.artist,
+            album: track.album,
+            albumArtUrl: track.albumArtUrl,
+            audioUrl: track.audioUrl,
+            duration: _parseDuration(track.duration),
+            isFavorite: track.isFavorite,
+            localPath: track.localPath,
+          ),
+        )
+        .toList();
   }
 
   @override
@@ -60,7 +100,14 @@ class LibraryPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 32),
-                _buildFilterChips(context),
+                BlocBuilder<LibraryBloc, LibraryState>(
+                  builder: (context, state) {
+                    final selectedCategory = state is LibraryLoaded
+                        ? state.selectedCategory
+                        : LibraryCategory.playlists;
+                    return _buildFilterChips(context, selectedCategory);
+                  },
+                ),
                 const SizedBox(height: 32),
                 Expanded(
                   child: BlocBuilder<LibraryBloc, LibraryState>(
@@ -72,15 +119,79 @@ class LibraryPage extends StatelessWidget {
                           ),
                         );
                       } else if (state is LibraryLoaded) {
-                        final tracks = state.favoriteTracks;
-                        if (tracks.isEmpty) {
+                        final allTracks = state.tracks;
+                        if (allTracks.isEmpty) {
+                          return _buildEmptyState(context);
+                        }
+
+                        if (state.selectedCategory == LibraryCategory.artists) {
+                          final artists = allTracks
+                              .map((t) => t.artist)
+                              .toSet()
+                              .toList();
+                          return ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount: artists.length,
+                            itemBuilder: (context, index) {
+                              final artist = artists[index];
+                              final artistTracks = allTracks
+                                  .where((t) => t.artist == artist)
+                                  .toList();
+                              return _buildArtistItem(
+                                context,
+                                artist,
+                                _convertToPlayerTracks(artistTracks),
+                              );
+                            },
+                          );
+                        } else if (state.selectedCategory ==
+                            LibraryCategory.albums) {
+                          // Group by album name + artist, keeping the first art URL found
+                          final Map<String, List<home.TrackEntity>>
+                          albumGroups = {};
+                          for (var t in allTracks) {
+                            final key = "${t.album}|${t.artist}";
+                            if (!albumGroups.containsKey(key)) {
+                              albumGroups[key] = [];
+                            }
+                            albumGroups[key]!.add(t);
+                          }
+
+                          final albumKeys = albumGroups.keys.toList();
+
+                          return ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount: albumKeys.length,
+                            itemBuilder: (context, index) {
+                              final key = albumKeys[index];
+                              final albumTracks = albumGroups[key]!;
+                              final parts = key.split('|');
+                              final albumName = parts[0];
+                              final artist = parts[1];
+                              final artUrl = albumTracks[0].albumArtUrl;
+                              return _buildAlbumItem(
+                                context,
+                                albumName,
+                                artist,
+                                artUrl,
+                                _convertToPlayerTracks(albumTracks),
+                              );
+                            },
+                          );
+                        }
+
+                        // Default to PLAYLISTS (showing only Liked Songs for now)
+                        final likedTracks = allTracks
+                            .where((t) => t.isFavorite)
+                            .toList();
+                        if (likedTracks.isEmpty) {
                           return _buildEmptyState(context);
                         }
                         return ListView.builder(
                           padding: EdgeInsets.zero,
-                          itemCount: tracks.length,
+                          itemCount: likedTracks.length,
                           itemBuilder: (context, index) {
-                            final track = tracks[index];
+                            final track = likedTracks[index];
                             return _buildLibraryItem(context, track);
                           },
                         );
@@ -126,15 +237,38 @@ class LibraryPage extends StatelessWidget {
     );
   }
 
-  Widget _buildFilterChips(BuildContext context) {
+  Widget _buildFilterChips(
+    BuildContext context,
+    LibraryCategory selectedCategory,
+  ) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          _filterChip(context, 'PLAYLISTS', isSelected: true),
-          _filterChip(context, 'ARTISTS'),
-          _filterChip(context, 'ALBUMS'),
-          _filterChip(context, 'PODCASTS'),
+          _filterChip(
+            context,
+            'PLAYLISTS',
+            isSelected: selectedCategory == LibraryCategory.playlists,
+            onTap: () => context.read<LibraryBloc>().add(
+              const ChangeCategory(LibraryCategory.playlists),
+            ),
+          ),
+          _filterChip(
+            context,
+            'ARTISTS',
+            isSelected: selectedCategory == LibraryCategory.artists,
+            onTap: () => context.read<LibraryBloc>().add(
+              const ChangeCategory(LibraryCategory.artists),
+            ),
+          ),
+          _filterChip(
+            context,
+            'ALBUMS',
+            isSelected: selectedCategory == LibraryCategory.albums,
+            onTap: () => context.read<LibraryBloc>().add(
+              const ChangeCategory(LibraryCategory.albums),
+            ),
+          ),
         ],
       ),
     );
@@ -144,27 +278,31 @@ class LibraryPage extends StatelessWidget {
     BuildContext context,
     String label, {
     bool isSelected = false,
+    VoidCallback? onTap,
   }) {
-    return Container(
-      margin: const EdgeInsets.only(right: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: isSelected
-            ? AppTheme.kPrimaryColor
-            : AppTheme.kSurfaceContainerHighestColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: isSelected ? Colors.black : AppTheme.kOnSurfaceVariantColor,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(right: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppTheme.kPrimaryColor
+              : AppTheme.kSurfaceContainerHighestColor,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: isSelected ? Colors.black : AppTheme.kOnSurfaceVariantColor,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildLibraryItem(BuildContext context, TrackEntity track) {
+  Widget _buildLibraryItem(BuildContext context, home.TrackEntity track) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: GestureDetector(
@@ -231,5 +369,136 @@ class LibraryPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildArtistItem(
+    BuildContext context,
+    String artist,
+    List<player.TrackEntity> tracks,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => LibraryDetailPage(
+              title: artist,
+              subtitle: 'Artist',
+              imageUrl: tracks.isNotEmpty ? tracks[0].albumArtUrl : null,
+              tracks: tracks,
+              isArtist: true,
+            ),
+          ),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Row(
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: const BoxDecoration(
+                color: AppTheme.kSurfaceContainerHighestColor,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.person, color: AppTheme.kPrimaryColor),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    artist,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text('Artist', style: Theme.of(context).textTheme.labelSmall),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAlbumItem(
+    BuildContext context,
+    String albumName,
+    String artist,
+    String artUrl,
+    List<player.TrackEntity> tracks,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => LibraryDetailPage(
+              title: albumName,
+              subtitle: 'Album • $artist',
+              imageUrl: artUrl,
+              tracks: tracks,
+            ),
+          ),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                artUrl,
+                width: 64,
+                height: 64,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  width: 64,
+                  height: 64,
+                  color: AppTheme.kSurfaceContainerHighestColor,
+                  child: const Icon(Icons.album, color: AppTheme.kPrimaryColor),
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    albumName,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(artist, style: Theme.of(context).textTheme.labelSmall),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Duration _parseDuration(String durationStr) {
+    if (durationStr.isEmpty) return Duration.zero;
+    final parts = durationStr.split(':');
+    if (parts.length == 2) {
+      return Duration(
+        minutes: int.tryParse(parts[0]) ?? 0,
+        seconds: int.tryParse(parts[1]) ?? 0,
+      );
+    } else if (parts.length == 3) {
+      return Duration(
+        hours: int.tryParse(parts[0]) ?? 0,
+        minutes: int.tryParse(parts[1]) ?? 0,
+        seconds: int.tryParse(parts[2]) ?? 0,
+      );
+    }
+    return Duration.zero;
   }
 }

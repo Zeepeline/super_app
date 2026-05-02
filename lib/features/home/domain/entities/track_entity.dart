@@ -4,6 +4,7 @@ class TrackEntity extends Equatable {
   final String id;
   final String title;
   final String artist;
+  final String album;
   final String albumArtUrl;
   final String duration;
   final String audioUrl;
@@ -16,6 +17,7 @@ class TrackEntity extends Equatable {
     required this.id,
     required this.title,
     required this.artist,
+    required this.album,
     required this.albumArtUrl,
     required this.duration,
     required this.audioUrl,
@@ -29,6 +31,7 @@ class TrackEntity extends Equatable {
     String? id,
     String? title,
     String? artist,
+    String? album,
     String? albumArtUrl,
     String? duration,
     String? audioUrl,
@@ -41,6 +44,7 @@ class TrackEntity extends Equatable {
       id: id ?? this.id,
       title: title ?? this.title,
       artist: artist ?? this.artist,
+      album: album ?? this.album,
       albumArtUrl: albumArtUrl ?? this.albumArtUrl,
       duration: duration ?? this.duration,
       audioUrl: audioUrl ?? this.audioUrl,
@@ -56,6 +60,7 @@ class TrackEntity extends Equatable {
     id,
     title,
     artist,
+    album,
     albumArtUrl,
     duration,
     audioUrl,
