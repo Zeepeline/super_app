@@ -7,12 +7,15 @@ import time
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-# Global state to track downloads
+# Global state
 active_downloads = {}
+dart_port = None
 
 def send_to_dart(port, data):
-    if not port: return
-    url = f"http://127.0.0.1:{port}/progress"
+    global dart_port
+    target_port = port or dart_port
+    if not target_port: return
+    url = f"http://127.0.0.1:{target_port}/progress"
     req = urllib.request.Request(
         url, 
         data=json.dumps(data).encode("utf-8"), 
@@ -76,8 +79,30 @@ def download_task(url, output_path, port, video_id):
         })
 
 class CommandHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/status':
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({"status": "ok", "version": "1.0.1"}).encode('utf-8'))
+        else:
+            self.send_response(404)
+            self.end_headers()
+
     def do_POST(self):
-        if self.path == '/download':
+        if self.path == '/update_dart_port':
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            params = json.loads(post_data)
+            new_port = params.get('port')
+            if new_port:
+                global dart_port
+                dart_port = str(new_port)
+                print(f"Python Worker: Updated Dart port to {dart_port}")
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"OK")
+        elif self.path == '/download':
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
             params = json.loads(post_data)
@@ -97,6 +122,35 @@ class CommandHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
             self.wfile.write(b"OK")
+        elif self.path == '/get_url':
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            params = json.loads(post_data)
+            
+            video_id = params.get('video_id')
+            url = f"https://www.youtube.com/watch?v={video_id}"
+            
+            try:
+                import yt_dlp
+                ydl_opts = {
+                    'format': '140/bestaudio[ext=m4a]/bestaudio',
+                    'quiet': True,
+                    'no_warnings': True,
+                    'nocheckcertificate': True,
+                    'noplaylist': True,
+                }
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    info = ydl.extract_info(url, download=False)
+                    stream_url = info.get('url')
+                    
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"url": stream_url}).encode('utf-8'))
+            except Exception as e:
+                self.send_response(500)
+                self.end_headers()
+                self.wfile.write(str(e).encode('utf-8'))
         else:
             self.send_response(404)
             self.end_headers()
@@ -105,16 +159,18 @@ class CommandHandler(BaseHTTPRequestHandler):
         return # keep it quiet
 
 def main():
-    # Use a fixed port for the Python worker
-    worker_port = 9000
+    global dart_port
+    # Use a dynamic port for the Python worker to avoid 'Address already in use' errors
+    server = HTTPServer(('127.0.0.1', 0), CommandHandler)
+    worker_port = server.server_port
     
-    # Send "Ready" message to Dart if port was passed in env
-    dart_port = os.environ.get("DART_PORT")
-    if dart_port:
+    # Send "Ready" message to Dart with the assigned port
+    env_dart_port = os.environ.get("DART_PORT")
+    if env_dart_port:
+        dart_port = env_dart_port
         send_to_dart(dart_port, {"status": "worker_ready", "port": worker_port})
 
     print(f"Python Worker starting on port {worker_port}...")
-    server = HTTPServer(('127.0.0.1', worker_port), CommandHandler)
     server.serve_forever()
 
 if __name__ == "__main__":

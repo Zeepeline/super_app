@@ -33,7 +33,9 @@ class PlayerUIController extends GetxController {
   void bindCubit(PlayerCubit cubit) {
     _blocSubscription?.cancel();
     _blocSubscription = cubit.stream.listen((state) {
-      if (state is PlayerLoaded) {
+      if (state is PlayerLoading) {
+        currentTrack.value = null;
+      } else if (state is PlayerLoaded) {
         currentTrack.value = state.track;
         isPlaying.value = state.track.isPlaying;
         showLyrics.value = state.showLyrics;

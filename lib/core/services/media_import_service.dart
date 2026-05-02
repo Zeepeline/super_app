@@ -151,12 +151,8 @@ class MediaImportService {
         // Copy to internal storage
         await file.copy(newPath);
 
-        // Attempt to fetch lyrics and duration
         final title = p.basenameWithoutExtension(fileName);
-        final lyrics = await _lyricsService.fetchLyrics(
-          'Unknown Artist',
-          title,
-        );
+        // lyrics are now fetched on-demand during playback or during direct download
         final durationText = await getAudioDurationText(newPath);
 
         importedTracks.add(
@@ -169,8 +165,8 @@ class MediaImportService {
             durationField: durationText,
             localPathField: newPath,
             audioUrlField: newPath,
-            syncedLyricsField: lyrics['synced'],
-            plainLyricsField: lyrics['plain'],
+            syncedLyricsField: null,
+            plainLyricsField: null,
           ),
         );
       }
@@ -219,10 +215,7 @@ class MediaImportService {
             .basenameWithoutExtension(fileName)
             .replaceAll('-', ' ')
             .replaceAll('_', ' ');
-        final lyrics = await _lyricsService.fetchLyrics(
-          'Unknown Artist',
-          title,
-        );
+        // lyrics are now fetched on-demand during playback
         final durationText = await getAudioDurationText(
           'assets/music/$fileName',
           isAsset: true,
@@ -238,8 +231,8 @@ class MediaImportService {
             durationField: durationText,
             localPathField: newPath,
             audioUrlField: newPath,
-            syncedLyricsField: lyrics['synced'],
-            plainLyricsField: lyrics['plain'],
+            syncedLyricsField: null,
+            plainLyricsField: null,
           ),
         );
       }
@@ -294,25 +287,31 @@ class MediaImportService {
           final fileName = p.basename(path);
           var title = p.basenameWithoutExtension(fileName);
 
-          // Regex to match "Title [VideoID]" and extract "Title"
-          final ytPattern = RegExp(r"^(.*)\s\[[a-zA-Z0-9_-]{11}\]$");
-          final match = ytPattern.firstMatch(title);
+          // Regex to match "Title [VideoID]" and extract "Title" and "VideoID"
+          final ytPattern = RegExp(r"^(.*)\s\[([a-zA-Z0-9_-]{11})\]$");
+          final match = ytPattern.firstMatch(
+            p.basenameWithoutExtension(fileName),
+          );
+          String stableId = _uuid.v4();
+
           if (match != null) {
             title = match.group(1)!;
+            stableId = match.group(2)!; // Use YouTube ID as stable ID
+          } else {
+            // For non-YouTube files, use filename as a semi-stable ID
+            // (Better than random UUID which causes duplicates on path change)
+            stableId = "local_${p.basenameWithoutExtension(fileName)}";
           }
 
           // Replace underscores/hyphens with spaces if they look like they were sanitized
           title = title.replaceAll('_', ' ').replaceAll('-', ' ');
 
-          final lyrics = await _lyricsService.fetchLyrics(
-            'Unknown Artist',
-            title,
-          );
+          // lyrics are now fetched on-demand during playback or during direct download
           final durationText = await getAudioDurationText(path);
 
           discoveredTracks.add(
             TrackModel(
-              idField: _uuid.v4(),
+              idField: stableId,
               titleField: title,
               artistField: 'Web Download',
               albumArtUrlField:
@@ -320,8 +319,8 @@ class MediaImportService {
               durationField: durationText,
               localPathField: path,
               audioUrlField: path,
-              syncedLyricsField: lyrics['synced'],
-              plainLyricsField: lyrics['plain'],
+              syncedLyricsField: null,
+              plainLyricsField: null,
             ),
           );
         }

@@ -1,8 +1,4 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 class YouTubeExplodeService {
@@ -29,6 +25,16 @@ class YouTubeExplodeService {
     } catch (e) {
       debugPrint('YouTube Search Error: $e');
       throw Exception('Gagal melakukan pencarian: $e');
+    }
+  }
+
+  /// Get video metadata by ID.
+  Future<Video> getVideoMetadata(String videoId) async {
+    try {
+      return await _yt.videos.get(videoId);
+    } catch (e) {
+      debugPrint('YouTube Get Video Error: $e');
+      throw Exception('Gagal mengambil data video: $e');
     }
   }
 

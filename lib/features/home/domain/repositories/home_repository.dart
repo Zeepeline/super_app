@@ -6,5 +6,6 @@ import '../../domain/entities/playlist_entity.dart';
 abstract class HomeRepository {
   Future<Either<Failure, List<TrackEntity>>> getPopularTracks();
   Future<Either<Failure, List<PlaylistEntity>>> getFeaturedPlaylists();
+  Future<Either<Failure, void>> deleteTrack(String id);
   Stream<void> watchTracks();
 }

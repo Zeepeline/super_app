@@ -40,5 +40,15 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
+  Future<Either<Failure, void>> deleteTrack(String id) async {
+    try {
+      await localDataSource.deleteTrack(id);
+      return const Right(null);
+    } catch (e) {
+      return const Left(CacheFailure('Failed to delete local track'));
+    }
+  }
+
+  @override
   Stream<void> watchTracks() => localDataSource.watchTracks();
 }

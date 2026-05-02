@@ -9,21 +9,29 @@ class LyricsView extends StatelessWidget {
   final String? plainLyrics;
   final PlayerUIController controller = Get.find<PlayerUIController>();
   final ScrollController _scrollController = ScrollController();
+  
+  // Use a map to store keys for each lyric line
+  final Map<int, GlobalKey> _itemKeys = {};
 
   LyricsView({super.key, this.syncedLyrics, this.plainLyrics});
 
   void _scrollToCurrent(int index) {
-    if (_scrollController.hasClients && index >= 0) {
-      _scrollController.animateTo(
-        index * 60.0,
-        duration: const Duration(milliseconds: 600),
-        curve: Curves.easeInOutCubic,
+    final key = _itemKeys[index];
+    if (key != null && key.currentContext != null) {
+      Scrollable.ensureVisible(
+        key.currentContext!,
+        duration: const Duration(milliseconds: 800),
+        curve: Curves.easeOutCubic,
+        alignment: 0.15, // Keep active lyric at 15% from the top
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final topPadding = screenHeight * 0.15;
+
     // Update lyrics in controller
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.updateLyrics(syncedLyrics);
@@ -46,34 +54,41 @@ class LyricsView extends StatelessWidget {
               }
             }
 
-            // Trigger scroll
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _scrollToCurrent(activeIndex);
-            });
+            // Trigger scroll with centering
+            if (activeIndex != -1) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _scrollToCurrent(activeIndex);
+              });
+            }
 
             return ListView.builder(
               controller: _scrollController,
-              padding: const EdgeInsets.symmetric(vertical: 200),
+              padding: EdgeInsets.only(top: topPadding, bottom: screenHeight * 0.7),
               itemCount: controller.lyrics.length,
               itemBuilder: (context, index) {
                 final lyric = controller.lyrics[index];
                 final isActive = index == activeIndex;
 
+                // Create or reuse key for this index
+                _itemKeys[index] ??= GlobalKey();
+
                 return AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
+                  key: _itemKeys[index],
+                  duration: const Duration(milliseconds: 400),
                   padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 24,
+                    vertical: 14,
+                    horizontal: 32,
                   ),
+                  alignment: Alignment.center,
                   child: Text(
                     lyric.text,
                     style: GoogleFonts.plusJakartaSans(
-                      fontSize: isActive ? 24 : 18,
-                      fontWeight: isActive ? FontWeight.w800 : FontWeight.w500,
+                      fontSize: isActive ? 26 : 20,
+                      fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,
                       color: isActive
                           ? Colors.white
-                          : Colors.white.withOpacity(0.3),
-                      height: 1.4,
+                          : Colors.white.withOpacity(0.2),
+                      height: 1.3,
                     ),
                     textAlign: TextAlign.center,
                   ),

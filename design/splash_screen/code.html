@@ -1,0 +1,135 @@
+<!DOCTYPE html><html class="dark"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error-container": "#ffd2c8",
+                    "on-secondary-fixed-variant": "#006940",
+                    "surface-dim": "#0e0e0e",
+                    "inverse-primary": "#006e2d",
+                    "on-tertiary-container": "#004d58",
+                    "tertiary-container": "#0fe3ff",
+                    "on-secondary-fixed": "#00492b",
+                    "error-dim": "#d53d18",
+                    "secondary-fixed": "#7cfbb5",
+                    "on-secondary": "#005e39",
+                    "secondary-dim": "#6deca8",
+                    "secondary-fixed-dim": "#6deca8",
+                    "tertiary-dim": "#00d4ee",
+                    "outline": "#767575",
+                    "surface-variant": "#262626",
+                    "secondary-container": "#006d42",
+                    "on-primary-fixed-variant": "#006a2b",
+                    "inverse-surface": "#fcf9f8",
+                    "on-tertiary-fixed": "#003840",
+                    "tertiary-fixed": "#0fe3ff",
+                    "surface-container-lowest": "#000000",
+                    "on-primary-container": "#002a0c",
+                    "surface-tint": "#72fe8f",
+                    "surface-container": "#1a1a1a",
+                    "on-error": "#450900",
+                    "on-background": "#ffffff",
+                    "primary-fixed-dim": "#63ef82",
+                    "surface-container-highest": "#262626",
+                    "primary-fixed": "#72fe8f",
+                    "primary-dim": "#63ef82",
+                    "primary-container": "#1cb853",
+                    "on-surface-variant": "#adaaaa",
+                    "surface-bright": "#2c2c2c",
+                    "background": "#0e0e0e",
+                    "on-primary": "#005f26",
+                    "on-primary-fixed": "#004a1c",
+                    "surface": "#0e0e0e",
+                    "tertiary-fixed-dim": "#00d4ee",
+                    "outline-variant": "#484847",
+                    "on-surface": "#ffffff",
+                    "error": "#ff7351",
+                    "secondary": "#7cfbb5",
+                    "on-tertiary-fixed-variant": "#005763",
+                    "on-tertiary": "#005762",
+                    "surface-container-high": "#20201f",
+                    "primary": "#72fe8f",
+                    "inverse-on-surface": "#565555",
+                    "error-container": "#b92902",
+                    "on-secondary-container": "#e2ffe9",
+                    "tertiary": "#88ebff",
+                    "surface-container-low": "#131313"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Plus Jakarta Sans"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .neon-glow {
+            box-shadow: 0 0 50px -10px rgba(114, 254, 143, 0.4);
+        }
+        .letter-spacing-widest {
+            letter-spacing: 0.25em;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body overflow-hidden">
+<!-- Splash Screen Container -->
+<main class="relative h-screen w-full flex flex-col items-center justify-center bg-surface-container-lowest overflow-hidden">
+<!-- Background Ambient Depth -->
+<div class="absolute inset-0 overflow-hidden pointer-events-none">
+<div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-primary/5 blur-[120px]"></div>
+<div class="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-primary-container/5 blur-[120px]"></div>
+</div>
+<!-- Central Brand Content -->
+<div class="relative z-10 flex flex-col items-center text-center">
+<!-- App Icon with Neon Pulse -->
+<div class="relative mb-12 group">
+<!-- Inner Glow Layer -->
+<div class="absolute inset-0 rounded-full bg-primary opacity-20 blur-2xl neon-glow"></div>
+<!-- Main Icon Frame -->
+<div class="relative w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden p-1 bg-gradient-to-br from-primary/30 to-transparent">
+<div class="w-full h-full rounded-full overflow-hidden bg-surface-container-highest flex items-center justify-center">
+<img class="w-full h-full object-cover transform scale-105" data-alt="Modern abstract musical note icon with obsidian textures and vibrant neon green accents against a dark sleek studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClOfx-j1s8OMCuVfnppzYVjJgjDks9rzuLZ9hM-TC-Q0MnIF0wh9THq8V93K8Zdc5JdXiTMXEe7q42s09qRE4o9Dik21dsTozbvC461AEtsH8uf4V6yBh4lAP4hyV_ufPbMsXFFh2CjXJ5oF1fnM6LFWDPAG95BLm1Q2WIXEJruYCTSJlDL7Q5Jd1Npizm4eemidBPPPUPd3VvFcRaoYB-AEA4r-FV2qHpq8lWymOa0wNDY97KnwRPkCwMTCPa9yr7Tti3lBinn7Y" style="">
+</div>
+</div>
+</div>
+<!-- Brand Typography -->
+<h1 class="font-headline font-extrabold text-3xl md:text-5xl text-on-surface uppercase letter-spacing-widest" style="">
+                Obsidian Rhythm
+            </h1>
+<!-- Subtitle/Motto -->
+<p class="mt-6 font-label text-xs md:text-sm text-on-surface-variant uppercase tracking-[0.4em] font-semibold" style="">
+                The Digital Curator
+            </p>
+</div>
+<!-- Version Anchor -->
+<div class="absolute bottom-12 flex flex-col items-center gap-4">
+<div class="w-1 h-12 bg-gradient-to-b from-primary to-transparent opacity-30"></div>
+<span class="font-label text-[10px] tracking-widest text-on-surface-variant font-medium" style="">&nbsp;</span>
+</div>
+<!-- Subtle Glass Texture Overlay -->
+<div class="absolute inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay" style="background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuDG6Q3mH_3PvGTNtnPDR-iAJKcEzqfJYMOTdG1L-5F1UIEayF17ewAyMsc-wWjG_r5Kb2hBEjMdZNxyLYgMBr0R-mexMiUOYMuhi-hM8A6N_1YNtOhGk5qbBe2y4pi4_VPV2jHO6Ss7_LUIPLT-pKazIF5_wQPB9Y8anXEVkRyWpzO7KMz1q2crFpc5xKOrpYy89oP3OwJevlCQUsDj6BYw7g1ZdnGxpIizoF22RI-juAFh8_eg4pEGSR3EqQpTYbiBMX2yw-IIGpk&quot;);">
+</div>
+</main>
+<!-- TopAppBar suppression logic: Not rendered per instructions for splash screens -->
+</body></html>

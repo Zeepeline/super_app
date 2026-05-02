@@ -4,6 +4,8 @@ import 'dart:ui';
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 
 import '../../features/music_player/domain/entities/track_entity.dart';
 
@@ -34,12 +36,15 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
       playbackState.add(_transformEvent(_player.playbackEvent));
     });
 
-    // Handle duration changes dynamically to ensure progress bar works
+    // Handle duration changes dynamically to ensure progress bar works,
+    // but PREFER the original metadata duration if it is valid. 
+    // This prevents just_audio from reporting artificially long durations for HTTP streams.
     _player.durationStream.listen((duration) {
-      if (duration != null &&
-          mediaItem.value != null &&
-          mediaItem.value!.duration != duration) {
-        mediaItem.add(mediaItem.value!.copyWith(duration: duration));
+      final currentItem = mediaItem.value;
+      if (duration != null && currentItem != null) {
+        if (currentItem.duration == null || currentItem.duration == Duration.zero) {
+          mediaItem.add(currentItem.copyWith(duration: duration));
+        }
       }
     });
   }
@@ -87,46 +92,86 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
     playbackState.add(_transformEvent(_player.playbackEvent));
   }
 
+  /// Resolves absolute paths that might have changed (common on iOS Sandbox)
+  Future<String?> _resolvePath(String? path) async {
+    if (path == null || path.isEmpty) return null;
+    
+    final file = File(path);
+    if (await file.exists()) return path;
+
+    // Handle iOS Sandbox UUID rotation
+    if (Platform.isIOS && path.contains('/Documents/')) {
+      try {
+        final appDir = await getApplicationDocumentsDirectory();
+        // Extract relative path after 'Documents/'
+        final parts = path.split('/Documents/');
+        if (parts.length > 1) {
+          final relativePath = parts.last;
+          final newPath = p.join(appDir.path, relativePath);
+          if (await File(newPath).exists()) {
+            print("AudioHandler: Resolved rotated path: $newPath");
+            return newPath;
+          }
+        }
+      } catch (e) {
+        print("AudioHandler: Error resolving path: $e");
+      }
+    }
+    
+    return null;
+  }
+
   Future<void> playTrack(TrackEntity track) async {
     try {
-      // 1. Activate session first
+      // 1. Reset player to ensure clean transition in background
+      await _player.stop();
+
+      // 2. Activate session
       final session = await AudioSession.instance;
       await session.setActive(true);
 
-      // 2. Set audio source
-      if (track.localPath != null) {
-        final file = File(track.localPath!);
-        if (await file.exists()) {
-          await _player.setAudioSource(AudioSource.file(track.localPath!));
-        } else {
-          // Fallback if file missing
-          await _player.setAudioSource(
-            AudioSource.uri(Uri.parse('asset:///${track.localPath}')),
-          );
-        }
-      } else {
-        await _player.setUrl(track.audioUrl);
+      // 3. Resolve source
+      AudioSource? source;
+      final resolvedLocalPath = await _resolvePath(track.localPath);
+      
+      if (resolvedLocalPath != null) {
+        source = AudioSource.file(resolvedLocalPath);
+      } else if (track.audioUrl.isNotEmpty) {
+        source = AudioSource.uri(
+          Uri.parse(track.audioUrl),
+          headers: {
+            'User-Agent':
+                'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
+          },
+        );
       }
 
-      // 3. Prepare metadata
-      final duration = await _player.load() ?? track.duration;
+      if (source == null) {
+        throw Exception("No valid audio source found for track: ${track.title}");
+      }
 
+      // 4. Set source and start playing immediately
+      // We don't await load() here because it can hang in background.
+      // just_audio will start playing as soon as it's buffered.
+      await _player.setAudioSource(source);
+      
+      // 5. Prepare metadata
       final item = MediaItem(
         id: track.id,
         album: 'SoundWave',
         title: track.title,
         artist: track.artist,
-        duration: duration,
+        duration: track.duration, // Use existing duration initially
         artUri: Uri.parse(track.albumArtUrl),
       );
-
-      // 4. Update media item
       mediaItem.add(item);
 
-      // 5. Start playback
+      // 6. Start playback
       await play();
     } catch (e) {
       print("Error playing track: $e");
+      // If error occurs, maybe try to skip to next if it was an auto-play?
+      // For now just log.
     }
   }
 

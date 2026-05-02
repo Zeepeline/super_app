@@ -1,14 +1,16 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:super_app/core/theme/app_theme.dart';
 import 'package:super_app/features/music_player/domain/entities/track_entity.dart';
 import 'package:super_app/features/music_player/presentation/cubit/player_cubit.dart';
-import 'package:super_app/features/music_player/presentation/widgets/album_art_card.dart';
 import 'package:super_app/features/music_player/presentation/widgets/lyrics_view.dart';
 import 'package:super_app/features/music_player/presentation/widgets/playback_controls.dart';
 import 'package:super_app/features/music_player/presentation/widgets/seek_bar.dart';
 import 'package:super_app/features/music_player/presentation/widgets/track_info.dart';
+import 'package:super_app/features/music_player/presentation/widgets/vinyl_record.dart';
 
 import '../controllers/player_ui_controller.dart';
 
@@ -42,93 +44,7 @@ class MusicPlayerPage extends StatelessWidget {
         body: Stack(
           children: [
             // Background Mesh & Blur
-            Stack(
-              children: [
-                // Base Surface
-                Container(color: AppTheme.kBackgroundColor),
-                // Corner Gradients (Mesh)
-                Positioned.fill(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: RadialGradient(
-                        center: Alignment.topLeft,
-                        radius: 1.0,
-                        colors: [
-                          AppTheme.kPrimaryContainerColor.withOpacity(0.15),
-                          Colors.transparent,
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned.fill(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: RadialGradient(
-                        center: Alignment.topRight,
-                        radius: 1.0,
-                        colors: [
-                          AppTheme.kPrimaryColor.withOpacity(0.1),
-                          Colors.transparent,
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned.fill(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: RadialGradient(
-                        center: Alignment.bottomRight,
-                        radius: 1.0,
-                        colors: [
-                          const Color(0xFF006E2D).withOpacity(0.2),
-                          Colors.transparent,
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                // Blurred album art background layer
-                Positioned.fill(
-                  child: Opacity(
-                    opacity: 0.25,
-                    child: Image.network(
-                      track.albumArtUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
-                        decoration: BoxDecoration(
-                          gradient: RadialGradient(
-                            center: Alignment.center,
-                            radius: 1.0,
-                            colors: [
-                              AppTheme.kPrimaryColor.withOpacity(0.2),
-                              AppTheme.kBackgroundColor,
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                // Backdrop Blur
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          AppTheme.kBackgroundColor.withOpacity(0.2),
-                          AppTheme.kBackgroundColor.withOpacity(0.4),
-                          AppTheme.kBackgroundColor,
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            _buildBackground(track),
             // Header (Editorial Style)
             SafeArea(
               child: Padding(
@@ -153,13 +69,13 @@ class MusicPlayerPage extends StatelessWidget {
                                 ?.copyWith(
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
-                                  letterSpacing: 2.2, // 0.2em
+                                  letterSpacing: 2.2,
                                   color: AppTheme.kOnSurfaceVariantColor,
                                 ),
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            "Midnight Sessions", // Could be dynamic if available
+                            "Midnight Sessions",
                             style: AppTheme.darkTheme.textTheme.bodyMedium
                                 ?.copyWith(
                                   color: Colors.white,
@@ -204,6 +120,129 @@ class MusicPlayerPage extends StatelessWidget {
     });
   }
 
+  Widget _buildBackground(TrackEntity track) {
+    return Stack(
+      children: [
+        // Base Surface (#0e0e0e)
+        Container(color: const Color(0xFF0E0E0E)),
+
+        // Mesh gradient layer (4 corner radials, opacity 40%)
+        Positioned.fill(
+          child: Opacity(
+            opacity: 0.40,
+            child: Stack(
+              children: [
+                // Top-left: primary-container green
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: RadialGradient(
+                        center: Alignment.topLeft,
+                        radius: 0.8,
+                        colors: [
+                          const Color(0xFF1CB853).withOpacity(0.15),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                // Top-right: primary green
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: RadialGradient(
+                        center: Alignment.topRight,
+                        radius: 0.8,
+                        colors: [
+                          const Color(0xFF72FE8F).withOpacity(0.10),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                // Bottom-right: dark green
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: RadialGradient(
+                        center: Alignment.bottomRight,
+                        radius: 0.8,
+                        colors: [
+                          const Color(0xFF006E2D).withOpacity(0.20),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                // Bottom-left: surface variant
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: RadialGradient(
+                        center: Alignment.bottomLeft,
+                        radius: 0.8,
+                        colors: [
+                          const Color(0xFF262626),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // Blurred album art ambient layer (blur 60px, saturate, opacity 60%)
+        Positioned.fill(
+          child: ImageFiltered(
+            imageFilter: ImageFilter.blur(
+              sigmaX: 60,
+              sigmaY: 60,
+              tileMode: TileMode.decal,
+            ),
+            child: ColorFiltered(
+              colorFilter: const ColorFilter.matrix(<double>[
+                1.5, 0, 0, 0, 0, // Red
+                0, 1.5, 0, 0, 0, // Green (boosted for saturate)
+                0, 0, 1.5, 0, 0, // Blue
+                0, 0, 0, 0.6, 0, // Alpha (60% opacity)
+              ]),
+              child: Image.network(
+                track.albumArtUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+              ),
+            ),
+          ),
+        ),
+
+        // Gradient overlay: from-surface/20 via-surface/40 to-surface
+        Positioned.fill(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: const [0.0, 0.5, 1.0],
+                colors: [
+                  const Color(0xFF0E0E0E).withOpacity(0.20),
+                  const Color(0xFF0E0E0E).withOpacity(0.40),
+                  const Color(0xFF0E0E0E),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+
   Widget _buildPortraitLayout(
     TrackEntity track,
     BuildContext context,
@@ -212,7 +251,7 @@ class MusicPlayerPage extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Main Content Area (Album Art or Lyrics)
+        // Main Content Area (Vinyl Record or Lyrics)
         Expanded(
           child: Obx(
             () => controller.showLyrics.value
@@ -223,17 +262,19 @@ class MusicPlayerPage extends StatelessWidget {
                   )
                 : Center(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 24),
-                      child: FittedBox(
-                        fit: BoxFit.contain,
-                        child: AlbumArtCard(albumArtUrl: track.albumArtUrl),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: Obx(
+                        () => VinylRecord(
+                          albumArtUrl: track.albumArtUrl,
+                          isPlaying: controller.isPlaying.value,
+                        ),
                       ),
                     ),
                   ),
           ),
         ),
 
-        const SizedBox(height: 24),
+        const SizedBox(height: 16),
 
         // Track Info & Metadata
         TrackInfo(
@@ -242,7 +283,7 @@ class MusicPlayerPage extends StatelessWidget {
           },
         ),
 
-        const SizedBox(height: 32),
+        const SizedBox(height: 24),
 
         // Progress Bar (SeekBar)
         SeekBar(
@@ -252,7 +293,7 @@ class MusicPlayerPage extends StatelessWidget {
           },
         ),
 
-        const SizedBox(height: 32),
+        const SizedBox(height: 24),
 
         // Playback Controls
         PlaybackControls(
@@ -263,16 +304,6 @@ class MusicPlayerPage extends StatelessWidget {
           onRepeat: () => context.read<PlayerCubit>().toggleRepeat(),
         ),
 
-        // const SizedBox(height: 48),
-
-        // Bottom Actions
-        // BottomActions(
-        //   onActionTap: (action) {
-        //     if (action == 'lyrics') {
-        //       context.read<PlayerCubit>().toggleLyrics();
-        //     }
-        //   },
-        // ),
         const SizedBox(height: 16),
       ],
     );
@@ -285,7 +316,7 @@ class MusicPlayerPage extends StatelessWidget {
   ) {
     return Row(
       children: [
-        // Left Side: Album Art / Lyrics
+        // Left Side: Vinyl / Lyrics
         Expanded(
           flex: 1,
           child: Obx(
@@ -301,7 +332,12 @@ class MusicPlayerPage extends StatelessWidget {
                         maxWidth: 500,
                         maxHeight: 500,
                       ),
-                      child: AlbumArtCard(albumArtUrl: track.albumArtUrl),
+                      child: Obx(
+                        () => VinylRecord(
+                          albumArtUrl: track.albumArtUrl,
+                          isPlaying: controller.isPlaying.value,
+                        ),
+                      ),
                     ),
                   ),
           ),
@@ -339,13 +375,6 @@ class MusicPlayerPage extends StatelessWidget {
                 onRepeat: () => context.read<PlayerCubit>().toggleRepeat(),
               ),
               const SizedBox(height: 64),
-              // BottomActions(
-              //   onActionTap: (action) {
-              //     if (action == 'lyrics') {
-              //       context.read<PlayerCubit>().toggleLyrics();
-              //     }
-              //   },
-              // ),
             ],
           ),
         ),

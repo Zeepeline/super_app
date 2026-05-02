@@ -37,4 +37,5 @@ abstract class MusicRepository {
   Stream<Duration> get positionStream;
   Stream<Duration?> get durationStream;
   Stream<TrackEntity?> get currentTrackStream;
+  Future<void> saveLyrics(String path, String? synced, String? plain);
 }

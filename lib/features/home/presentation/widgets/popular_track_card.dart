@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../domain/entities/track_entity.dart';
+import 'package:super_app/features/home/presentation/bloc/home_bloc.dart';
+import 'package:super_app/features/home/presentation/bloc/home_event.dart';
 import 'package:super_app/features/music_player/domain/entities/track_entity.dart'
     as player;
 import 'package:super_app/features/music_player/presentation/cubit/player_cubit.dart';
 import 'package:super_app/features/music_player/presentation/pages/music_player_page.dart';
+
+import '../../../../core/theme/app_theme.dart';
+import '../../domain/entities/track_entity.dart';
 
 class PopularTrackCard extends StatelessWidget {
   final TrackEntity track;
@@ -20,10 +23,8 @@ class PopularTrackCard extends StatelessWidget {
       artist: track.artist,
       albumArtUrl: track.albumArtUrl,
       audioUrl: track.audioUrl,
-      duration: const Duration(
-        minutes: 3,
-        seconds: 45,
-      ), // Mock duration for now
+      duration: _parseDuration(track.duration),
+      isFavorite: track.isFavorite,
       localPath: track.localPath,
     );
 
@@ -92,27 +93,94 @@ class PopularTrackCard extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       letterSpacing: -0.5,
+                      fontSize: 12,
                     ),
-                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     track.artist,
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(fontSize: 10),
                   ),
                 ],
               ),
             ),
-            Text(track.duration, style: Theme.of(context).textTheme.labelSmall),
+            // Text(track.duration, style: Theme.of(context).textTheme.labelSmall),
             const SizedBox(width: 8),
-            const Icon(
-              Icons.more_horiz,
-              color: AppTheme.kOnSurfaceVariantColor,
-              size: 20,
+            PopupMenuButton<String>(
+              icon: const Icon(
+                Icons.more_horiz,
+                color: AppTheme.kOnSurfaceVariantColor,
+                size: 20,
+              ),
+              onSelected: (value) async {
+                if (value == 'delete') {
+                  final confirmed = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Hapus Musik?'),
+                      content: Text(
+                        'Apakah kamu yakin ingin menghapus "${track.title}" dari penyimpanan?',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text('BATAL'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          child: const Text(
+                            'HAPUS',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  if (confirmed == true && context.mounted) {
+                    context.read<HomeBloc>().add(DeleteTrackEvent(track.id));
+                  }
+                }
+              },
+              itemBuilder: (context) => [
+                const PopupMenuItem(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                      SizedBox(width: 8),
+                      Text(
+                        'Hapus dari Perangkat',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  Duration _parseDuration(String durationStr) {
+    if (durationStr.isEmpty) return Duration.zero;
+    final parts = durationStr.split(':');
+    if (parts.length == 2) {
+      return Duration(
+        minutes: int.tryParse(parts[0]) ?? 0,
+        seconds: int.tryParse(parts[1]) ?? 0,
+      );
+    } else if (parts.length == 3) {
+      return Duration(
+        hours: int.tryParse(parts[0]) ?? 0,
+        minutes: int.tryParse(parts[1]) ?? 0,
+        seconds: int.tryParse(parts[2]) ?? 0,
+      );
+    }
+    return Duration.zero;
   }
 }

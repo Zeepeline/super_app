@@ -10,3 +10,12 @@ abstract class HomeEvent extends Equatable {
 class LoadHomeDataEvent extends HomeEvent {}
 
 class SyncHomeDataEvent extends HomeEvent {}
+
+class DeleteTrackEvent extends HomeEvent {
+  final String trackId;
+
+  const DeleteTrackEvent(this.trackId);
+
+  @override
+  List<Object> get props => [trackId];
+}

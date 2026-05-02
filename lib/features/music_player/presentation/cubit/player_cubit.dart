@@ -17,6 +17,21 @@ class PlayerCubit extends Cubit<PlayerState> {
   PlayerCubit({required this.repository, required this.lyricsService})
     : super(PlayerInitial());
 
+  Future<void> setLoading() async {
+    emit(PlayerLoading());
+  }
+
+  void markCurrentTrackAsDownloaded(String localPath) {
+    final currentState = state;
+    if (currentState is PlayerLoaded) {
+      emit(
+        currentState.copyWith(
+          track: currentState.track.copyWith(localPath: localPath),
+        ),
+      );
+    }
+  }
+
   Future<void> loadPlayer() async {
     emit(PlayerLoading());
 
@@ -233,6 +248,11 @@ class PlayerCubit extends Cubit<PlayerState> {
     final plain = result['plain'];
 
     if (synced != null || plain != null) {
+      // PERSIST: Save lyrics to DB so we don't have to fetch them again
+      if (track.localPath != null) {
+        await repository.saveLyrics(track.localPath!, synced, plain);
+      }
+
       final currentState = state;
       if (currentState is PlayerLoaded && currentState.track.id == track.id) {
         emit(

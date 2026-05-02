@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:super_app/core/services/youtube_explode_service.dart';
 import 'package:super_app/core/services/youtube_download_service.dart';
+import 'package:super_app/core/services/youtube_explode_service.dart';
 import 'package:super_app/core/theme/app_theme.dart';
 import 'package:super_app/features/home/data/datasources/home_local_data_source.dart';
-import 'package:super_app/features/home/data/models/track_model.dart';
+import 'package:super_app/features/music_player/domain/entities/track_entity.dart';
+import 'package:super_app/features/music_player/presentation/cubit/player_cubit.dart';
 import 'package:super_app/injection_container.dart';
 import 'package:uuid/uuid.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
@@ -50,6 +51,57 @@ class YouTubeController extends GetxController {
     }
   }
 
+  Future<void> playFromYouTube(
+    String videoId, {
+    required PlayerCubit playerCubit,
+  }) async {
+    try {
+      // 0. Set player to loading immediately for better UX
+      playerCubit.setLoading();
+
+      // 1. Get video metadata
+      // 1. Get video metadata (Keep using YouTubeExplode for speed)
+      final video = await _ytService.getVideoMetadata(videoId);
+
+      // 2. Get audio stream URL directly via yt-dlp (More reliable than YouTubeExplode)
+      final streamUrl = await _downloadService.getStreamUrl(videoId);
+
+      if (streamUrl == null) {
+        throw Exception('Gagal mendapatkan link streaming musik. Silakan coba lagi atau pilih lagu lain.');
+      }
+
+      // 3. Create TrackEntity
+      final track = TrackEntity(
+        id: videoId,
+        title: video?.title ?? 'YouTube Audio',
+        artist: video?.author ?? 'Unknown Artist',
+        albumArtUrl: video?.thumbnails.highResUrl ?? '',
+        duration: video?.duration ?? Duration.zero,
+        audioUrl: streamUrl,
+        isFavorite: false,
+        isPlaying: true,
+      );
+
+      // 4. Play using PlayerCubit
+      await playerCubit.selectAndPlay(track);
+
+      _showSnackbar(
+        'Memutar Musik 🎵',
+        '"${video.title}" sedang diputar...',
+        backgroundColor: AppTheme.kPrimaryColor,
+        colorText: Colors.black,
+      );
+    } catch (e) {
+      debugPrint('Error playing from YouTube: $e');
+      _showSnackbar(
+        'Gagal Memutar',
+        e.toString(),
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    }
+  }
+
   Future<void> downloadVideo(Video video) async {
     final videoId = video.id.value;
 
@@ -76,6 +128,62 @@ class YouTubeController extends GetxController {
 
       downloadStates[videoId] = DownloadState.done();
       downloadProgress.remove(videoId);
+
+      _showSnackbar(
+        'Berhasil! 🎵',
+        '"${trackToSave.titleField}" telah ditambahkan ke Library.',
+        backgroundColor: AppTheme.kPrimaryColor,
+        colorText: Colors.black,
+        icon: const Icon(Icons.check_circle_rounded, color: Colors.black),
+      );
+    } catch (e) {
+      downloadStates[videoId] = DownloadState.error(e.toString());
+      downloadProgress.remove(videoId);
+      _showSnackbar(
+        'Download Gagal',
+        e.toString(),
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+        icon: const Icon(Icons.error_rounded, color: Colors.white),
+      );
+    }
+  }
+
+  Future<void> downloadTrack(TrackEntity track, {PlayerCubit? playerCubit}) async {
+    final videoId = track.id;
+
+    // Already downloading or done
+    if (downloadStates[videoId]?.isDownloading == true) return;
+
+    downloadStates[videoId] = DownloadState.downloading();
+    downloadProgress[videoId] = 0.0;
+
+    try {
+      final url = 'https://www.youtube.com/watch?v=$videoId';
+      // Download using serious_python service
+      final downloadedTrack = await _downloadService.downloadAndConvert(
+        url: url,
+        title: track.title,
+        artist: track.artist,
+        albumArtUrl: track.albumArtUrl,
+        trackDuration: track.duration,
+        onProgress: (stage, progress) => downloadProgress[videoId] = progress,
+      );
+
+      if (downloadedTrack == null) throw Exception('Download gagal');
+
+      // Use the YouTube ID so it matches the streaming track ID, avoiding conflicts
+      final trackToSave = downloadedTrack.copyWith(id: videoId);
+
+      await sl<HomeLocalDataSource>().addImportedTracks([trackToSave]);
+
+      downloadStates[videoId] = DownloadState.done();
+      downloadProgress.remove(videoId);
+
+      // Instantly update the currently playing track in PlayerCubit if it's the one we downloaded
+      if (playerCubit != null) {
+         playerCubit.markCurrentTrackAsDownloaded(trackToSave.localPath!);
+      }
 
       _showSnackbar(
         'Berhasil! 🎵',

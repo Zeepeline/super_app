@@ -7,12 +7,10 @@ import 'package:super_app/core/theme/widgets/offline_badge.dart';
 import 'package:super_app/features/home/presentation/bloc/home_bloc.dart';
 import 'package:super_app/features/home/presentation/bloc/home_event.dart';
 import 'package:super_app/features/home/presentation/bloc/home_state.dart';
-import 'package:super_app/features/home/presentation/widgets/featured_playlist_card.dart';
+import 'package:super_app/features/home/presentation/widgets/empty_library_view.dart';
 import 'package:super_app/features/home/presentation/widgets/popular_track_card.dart';
 import 'package:super_app/features/settings/presentation/pages/settings_page.dart';
 import 'package:super_app/injection_container.dart';
-
-import '../widgets/empty_library_view.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -34,19 +32,6 @@ class HomePage extends StatelessWidget {
                       ),
                     );
                   } else if (state is HomeLoaded) {
-                    if (state.popularTracks.isEmpty &&
-                        state.featuredPlaylists.isEmpty) {
-                      return EmptyLibraryView(
-                        onImportPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SettingsPage(),
-                            ),
-                          );
-                        },
-                      );
-                    }
                     return RefreshIndicator(
                       onRefresh: () async {
                         context.read<HomeBloc>().add(LoadHomeDataEvent());
@@ -204,42 +189,12 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildFeaturedPlaylists(BuildContext context, HomeLoaded state) {
-    return SliverToBoxAdapter(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 24, top: 48, bottom: 24),
-            child: Text(
-              'YOUR ATMOSPHERE',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ),
-          SizedBox(
-            height: 260,
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              scrollDirection: Axis.horizontal,
-              itemCount: state.featuredPlaylists.length,
-              itemBuilder: (context, index) {
-                return FeaturedPlaylistCard(
-                  playlist: state.featuredPlaylists[index],
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildPopularTracksHeader(BuildContext context) {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.only(left: 24, top: 48, bottom: 24),
         child: Text(
-          'ON THE RISE',
+          'Recently Added',
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),
@@ -247,6 +202,23 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildPopularTracksList(BuildContext context, HomeLoaded state) {
+    if (state.popularTracks.isEmpty) {
+      return SliverFillRemaining(
+        hasScrollBody: false,
+        child: EmptyLibraryView(
+          onImportPressed: () {
+            // Navigate to Settings/Import Page
+            // Since this is inside MainWrapper, we might want to switch tabs or open settings
+            // For now, let's just open SettingsPage if we have it
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const SettingsPage()),
+            );
+          },
+        ),
+      );
+    }
+
     return SliverList(
       delegate: SliverChildBuilderDelegate((context, index) {
         return Padding(

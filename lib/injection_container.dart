@@ -24,6 +24,7 @@ import 'features/home/domain/repositories/home_repository.dart';
 import 'features/home/domain/usecases/get_favorite_tracks.dart';
 import 'features/home/domain/usecases/get_featured_playlists.dart';
 import 'features/home/domain/usecases/get_popular_tracks.dart';
+import 'features/home/domain/usecases/delete_track.dart';
 import 'features/home/presentation/bloc/home_bloc.dart';
 import 'features/library/presentation/bloc/library_bloc.dart';
 import 'features/music_player/data/datasources/music_local_datasource.dart';
@@ -94,6 +95,7 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
       localDataSource: sl<MusicLocalDataSource>(),
       homeLocalDataSource: sl<HomeLocalDataSource>(),
       audioHandler: customHandler,
+      youtubeDownloadService: sl<YoutubeDownloadService>(),
     ),
   );
   sl.registerSingleton<HomeRepository>(
@@ -119,6 +121,7 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   sl.registerLazySingleton(() => GetPopularTracks(sl()));
   sl.registerLazySingleton(() => GetFavoriteTracks(sl()));
   sl.registerLazySingleton(() => GetFeaturedPlaylists(sl()));
+  sl.registerLazySingleton(() => DeleteTrackUseCase(sl()));
   sl.registerLazySingleton(() => GetSettings(sl()));
   sl.registerLazySingleton(() => GetCurrentUser(sl()));
   sl.registerLazySingleton(() => UpdateAudioQuality(sl()));
@@ -145,6 +148,7 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
       getFeaturedPlaylists: sl(),
       mediaImportService: sl(),
       localDataSource: sl(),
+      deleteTrackUseCase: sl(),
     ),
   );
   sl.registerFactory(

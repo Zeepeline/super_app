@@ -25,8 +25,11 @@ import 'features/onboarding/presentation/pages/onboarding_page.dart';
 import 'features/search/presentation/pages/search_page.dart';
 import 'features/settings/presentation/pages/settings_page.dart';
 import 'features/youtube/presentation/pages/youtube_page.dart';
+import 'features/youtube/presentation/controllers/youtube_controller.dart';
+import 'core/services/youtube_download_service.dart';
 import 'injection_container.dart' as di;
 import 'injection_container.dart';
+import 'features/splash/presentation/pages/splash_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,20 +54,32 @@ void main() async {
   );
 
   await di.init(audioHandler);
-
-  // Get SharedPreferences from GetIt (now guaranteed to be ready)
+  
+  // Get SharedPreferences from GetIt
   final prefs = sl<SharedPreferences>();
   final showOnboarding = prefs.getBool('show_onboarding') ?? true;
   runApp(SoundWaveApp(showOnboarding: showOnboarding));
 }
 
-class SoundWaveApp extends StatelessWidget {
+
+
+class SoundWaveApp extends StatefulWidget {
   final bool showOnboarding;
 
   const SoundWaveApp({super.key, required this.showOnboarding});
 
   @override
+  State<SoundWaveApp> createState() => _SoundWaveAppState();
+}
+
+class _SoundWaveAppState extends State<SoundWaveApp> {
+  bool _showSplash = true;
+
+  @override
   Widget build(BuildContext context) {
+    // Initialize YouTubeController for GetX
+    Get.put(YouTubeController());
+
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => sl<AuthBloc>()),
@@ -77,7 +92,15 @@ class SoundWaveApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'SoundWave',
         theme: AppTheme.darkTheme,
-        home: AuthWrapper(showOnboarding: showOnboarding),
+        home: _showSplash
+            ? SplashPage(
+                onFinish: () {
+                  setState(() {
+                    _showSplash = false;
+                  });
+                },
+              )
+            : AuthWrapper(showOnboarding: widget.showOnboarding),
       ),
     );
   }
