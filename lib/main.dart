@@ -8,10 +8,12 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:super_app/core/services/audio_handler.dart' as custom;
+import 'package:super_app/core/services/rag_index_service.dart';
 import 'package:super_app/features/ai_assistant/presentation/pages/ai_chat_page.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/widgets/live_activity_island.dart';
+import 'features/ai_assistant/data/models/chat_message_model.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/bloc/auth_state.dart';
 import 'features/home/data/models/playlist_model.dart';
@@ -41,6 +43,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(TrackModelAdapter());
   Hive.registerAdapter(PlaylistModelAdapter());
+  Hive.registerAdapter(ChatMessageModelAdapter());
 
   // Initialize AudioService and AudioHandler
   final audioHandler = await AudioService.init(
@@ -55,8 +58,16 @@ void main() async {
 
   await di.init(audioHandler);
 
+  // Initialize RAG Search Engine
+  try {
+    await di.sl<RagIndexerService>().initialize();
+  } catch (e) {
+    print("Failed to initialize RAG: $e");
+  }
+
   // Get SharedPreferences from GetIt
   final prefs = sl<SharedPreferences>();
+
   final showOnboarding = prefs.getBool('show_onboarding') ?? true;
   runApp(SoundWaveApp(showOnboarding: showOnboarding));
 }

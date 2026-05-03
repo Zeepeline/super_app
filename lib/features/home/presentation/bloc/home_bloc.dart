@@ -1,13 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:super_app/core/services/rag_index_service.dart';
 
 import '../../../../core/services/media_import_service.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../../data/datasources/home_local_data_source.dart';
+import '../../domain/usecases/delete_track.dart';
 import '../../domain/usecases/get_featured_playlists.dart';
 import '../../domain/usecases/get_popular_tracks.dart';
-import '../../domain/usecases/delete_track.dart';
 import 'home_event.dart';
 import 'home_state.dart';
 
@@ -16,6 +17,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final GetFeaturedPlaylists getFeaturedPlaylists;
   final MediaImportService mediaImportService;
   final HomeLocalDataSource localDataSource;
+  final RagIndexerService ragIndexerService;
 
   final DeleteTrackUseCase deleteTrackUseCase;
 
@@ -24,6 +26,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     required this.getFeaturedPlaylists,
     required this.mediaImportService,
     required this.localDataSource,
+    required this.ragIndexerService,
     required this.deleteTrackUseCase,
   }) : super(HomeInitial()) {
     on<LoadHomeDataEvent>((event, emit) async {
@@ -41,7 +44,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         ) {
           emit(HomeLoaded(popularTracks: tracks, featuredPlaylists: playlists));
 
-          // 2. Trigger background sync after a delay to keep UI responsive on startup
+          // Index semua lagu ke RAG agar AI punya konteks musik
+          _indexTracksToRag();
+
+          // Trigger background sync after a delay to keep UI responsive on startup
           Future.delayed(const Duration(seconds: 3), () {
             if (!isClosed) {
               add(SyncHomeDataEvent());
@@ -137,22 +143,43 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               );
             }
           });
+
+          // RE-INDEX RAG (Offline)
+          final allTracks = await localDataSource.getPopularTracks();
+          await ragIndexerService.reindexLibrary(allTracks);
         }
-
-      } catch (e) {
-
-      }
+      } catch (e) {}
     });
     on<DeleteTrackEvent>((event, emit) async {
       try {
         final result = await deleteTrackUseCase(event.trackId);
-        result.fold((failure) => emit(HomeError(failure.message)), (_) {
-          // Refresh list after deletion
+        result.fold((failure) => emit(HomeError(failure.message)), (_) async {
+          // 1. Refresh UI
           add(LoadHomeDataEvent());
+
+          // 2. Re-index RAG so AI knows it's gone
+          final allTracks = await localDataSource.getPopularTracks();
+          await ragIndexerService.reindexLibrary(allTracks);
         });
       } catch (e) {
         emit(HomeError("Failed to delete track: $e"));
       }
     });
+  }
+
+  /// Index semua lagu yang ada ke RAG engine di background
+  Future<void> _indexTracksToRag() async {
+    try {
+      final allTracks = await localDataSource.getPopularTracks();
+      if (allTracks.isNotEmpty) {
+        print("HomeBloc: Indexing ${allTracks.length} tracks to RAG...");
+        await ragIndexerService.reindexLibrary(allTracks);
+        print("HomeBloc: RAG indexing complete ✓");
+      } else {
+        print("HomeBloc: No tracks to index to RAG");
+      }
+    } catch (e) {
+      print("HomeBloc: RAG indexing failed: $e");
+    }
   }
 }

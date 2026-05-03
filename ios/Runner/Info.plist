@@ -57,5 +57,9 @@
 	<array>
 		<string>audio</string>
 	</array>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>SoundWave membutuhkan akses mikrofon untuk asisten suara.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>SoundWave membutuhkan akses pengenal suara untuk asisten suara.</string>
 </dict>
 </plist>

@@ -40,25 +40,73 @@ class GeminiService {
     return await _secureStorage.getGeminiApiKey();
   }
 
-  GenerativeModel _createModel(String modelName, String apiKey) {
+  GenerativeModel _createModel(
+    String modelName,
+    String apiKey, {
+    List<Tool>? tools,
+    bool isCallMode = false,
+  }) {
+    final String systemPrompt = isCallMode
+        ? "Anda adalah asisten musik SoundWave dalam mode Voice Call (Telepon).\n"
+              "Rules:\n"
+              "1. NATIVE AUDIO DIALOG: Jawab layaknya manusia sedang berbicara di telepon. Gunakan bahasa Indonesia sehari-hari yang luwes, santai, namun cerdas.\n"
+              "2. SINGKAT & PADAT: Jawab langsung pada intinya, maksimal 2-3 kalimat pendek agar tidak terlalu lama dibacakan oleh TTS.\n"
+              "3. TANPA FORMAT TEKS: DILARANG KERAS menggunakan Markdown (seperti **bold**, *italic*, atau # header) atau simbol kompleks karena akan dibacakan secara literal oleh TTS.\n"
+              "4. AGENT: Anda memiliki akses ke tools untuk memutar lagu, menjeda, atau mencari library. Gunakan tools jika user memberikan perintah.\n"
+              "5. AKURASI: Jika ditanya lirik atau trivia, sebutkan secara singkat dan jelas."
+        : "Anda adalah SoundWave AI, pakar musik global yang akurat dan informatif.\n"
+              "Rules:\n"
+              "1. AKURASI ADALAH PRIORITAS: Jangan pernah mengarang lirik lagu. Jika tidak tahu, katakan sejujurnya.\n"
+              "2. TO-THE-POINT: Jangan memberikan permintaan maaf yang panjang atau penjelasan robotik. Jawab langsung permintaan user.\n"
+              "3. FORMAT: Gunakan Markdown (Bold untuk judul/artis, blockquote untuk lirik) agar rapi.\n"
+              "4. KONTEKS: Berikan sedikit trivia menarik jika memberikan lirik atau rekomendasi.\n"
+              "5. BAHASA: Gunakan bahasa Indonesia yang santai tapi tetap profesional dan cerdas.\n"
+              "6. AGENT: Anda memiliki akses ke tools untuk memutar lagu, menjeda, atau mencari library. Gunakan tools jika user memberikan perintah.";
+
     return GenerativeModel(
       model: modelName,
       apiKey: apiKey,
-      systemInstruction: Content.system(
-        "Anda adalah SoundWave AI, pakar musik global yang akurat dan informatif.\n"
-        "Rules:\n"
-        "1. AKURASI ADALAH PRIORITAS: Jangan pernah mengarang lirik lagu. Jika tidak tahu, katakan sejujurnya.\n"
-        "2. TO-THE-POINT: Jangan memberikan permintaan maaf yang panjang atau penjelasan robotik. Jawab langsung permintaan user.\n"
-        "3. FORMAT: Gunakan Markdown (Bold untuk judul/artis, blockquote untuk lirik) agar rapi.\n"
-        "4. KONTEKS: Berikan sedikit trivia menarik jika memberikan lirik atau rekomendasi.\n"
-        "5. BAHASA: Gunakan bahasa Indonesia yang santai tapi tetap profesional dan cerdas.",
-      ),
+      tools: tools,
+      systemInstruction: Content.system(systemPrompt),
       generationConfig: GenerationConfig(
         maxOutputTokens: 1000,
         temperature: 0.7,
         topP: 0.9,
       ),
     );
+  }
+
+  Future<GenerateContentResponse?> getAgenticResponse(
+    String prompt, {
+    List<Content>? history,
+    List<Tool>? tools,
+    bool isCallMode = false,
+  }) async {
+    final apiKeys = await getApiKeys();
+    if (apiKeys.isEmpty) return null;
+
+    String? lastError;
+    for (String apiKey in apiKeys) {
+      for (String modelName in _modelPriorityList) {
+        try {
+          final model = _createModel(
+            modelName,
+            apiKey,
+            tools: tools,
+            isCallMode: isCallMode,
+          );
+          final chat = model.startChat(history: history);
+          return await chat.sendMessage(Content.text(prompt));
+        } catch (e) {
+          lastError = e.toString();
+          print("GeminiService: Model $modelName failed - $lastError");
+          if (lastError.contains('429')) break;
+          continue;
+        }
+      }
+    }
+    print("GeminiService: All agentic models failed. Last error: $lastError");
+    return null;
   }
 
   Future<String> getChatResponse(
@@ -110,7 +158,8 @@ class GeminiService {
     final apiKeys = await getApiKeys();
     if (apiKeys.isEmpty) return "API Key missing.";
 
-    final prompt = """
+    final prompt =
+        """
     You are a music expert assistant. Based on the following user music context, 
     provide 3 personalized song recommendations. 
     Explain why you chose each one briefly.

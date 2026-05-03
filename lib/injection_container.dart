@@ -1,19 +1,24 @@
 import 'package:audio_service/audio_service.dart' as audio_service;
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:super_app/core/services/rag_index_service.dart';
 
 import 'core/network/network_info.dart';
+import 'core/services/ai_tools_service.dart';
 import 'core/services/audio_handler.dart' as custom_audio;
 import 'core/services/download_service.dart';
-import 'core/services/media_import_service.dart';
-import 'core/services/lyrics_service.dart';
-import 'core/services/secure_storage_service.dart';
 import 'core/services/gemini_service.dart';
+import 'core/services/lyrics_service.dart';
+import 'core/services/media_import_service.dart';
+import 'core/services/rag_service.dart';
+import 'core/services/secure_storage_service.dart';
+import 'core/services/voice_service.dart';
 import 'core/services/youtube_download_service.dart';
 import 'core/services/youtube_explode_service.dart';
+import 'features/ai_assistant/presentation/cubit/ai_chat_cubit.dart';
 import 'features/auth/data/datasources/auth_remote_datasource.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
 import 'features/auth/domain/repositories/auth_repository.dart';
@@ -23,10 +28,10 @@ import 'features/home/data/datasources/home_local_data_source.dart';
 import 'features/home/data/datasources/home_remote_datasource.dart';
 import 'features/home/data/repositories/home_repository_impl.dart';
 import 'features/home/domain/repositories/home_repository.dart';
+import 'features/home/domain/usecases/delete_track.dart';
 import 'features/home/domain/usecases/get_favorite_tracks.dart';
 import 'features/home/domain/usecases/get_featured_playlists.dart';
 import 'features/home/domain/usecases/get_popular_tracks.dart';
-import 'features/home/domain/usecases/delete_track.dart';
 import 'features/home/presentation/bloc/home_bloc.dart';
 import 'features/library/presentation/bloc/library_bloc.dart';
 import 'features/music_player/data/datasources/music_local_datasource.dart';
@@ -34,7 +39,6 @@ import 'features/music_player/data/repositories/music_repository_impl.dart';
 import 'features/music_player/domain/repositories/music_repository.dart';
 import 'features/music_player/domain/usecases/get_current_track.dart';
 import 'features/music_player/domain/usecases/player_usecases.dart';
-import 'features/ai_assistant/presentation/cubit/ai_chat_cubit.dart';
 import 'features/music_player/presentation/cubit/player_cubit.dart';
 import 'features/search/data/datasources/search_remote_datasource.dart';
 import 'features/search/data/repositories/search_repository_impl.dart';
@@ -67,6 +71,10 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   sl.registerSingleton<YouTubeExplodeService>(YouTubeExplodeService());
   sl.registerSingleton<SecureStorageService>(SecureStorageService());
   sl.registerSingleton<GeminiService>(GeminiService(sl()));
+  sl.registerLazySingleton<VoiceService>(() => VoiceService());
+  sl.registerLazySingleton<RagIndexerService>(() => RagIndexerService());
+  sl.registerLazySingleton<AiToolsService>(() => AiToolsService(sl(), sl()));
+  sl.registerLazySingleton<RagService>(() => RagService(sl(), sl()));
 
   // ===== EXTERNAL =====
   sl.registerSingleton<Connectivity>(Connectivity());
@@ -154,6 +162,7 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
       mediaImportService: sl(),
       localDataSource: sl(),
       deleteTrackUseCase: sl(),
+      ragIndexerService: sl(),
     ),
   );
   sl.registerFactory(
@@ -168,7 +177,7 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
       secureStorageService: sl(),
     ),
   );
-  sl.registerFactory(() => AiChatCubit(sl()));
+  sl.registerFactory(() => AiChatCubit(sl(), sl()));
 
   // Music Player - register as singleton (needs repository already registered)
   sl.registerSingleton<PlayerCubit>(

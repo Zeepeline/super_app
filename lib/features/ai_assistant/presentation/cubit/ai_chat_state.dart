@@ -1,36 +1,57 @@
 import 'package:equatable/equatable.dart';
+
 import 'chat_message.dart';
 
 abstract class AiChatState extends Equatable {
-  const AiChatState();
+  final List<ChatMessage> history;
+  final bool isCallMode;
+  final bool hasApiKey;
+
+  const AiChatState({
+    this.history = const [],
+    this.isCallMode = false,
+    this.hasApiKey = true,
+  });
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [history, isCallMode, hasApiKey];
 }
 
 class AiChatInitial extends AiChatState {}
 
 class AiChatLoading extends AiChatState {
-  final List<ChatMessage> history;
-  const AiChatLoading(this.history);
-
-  @override
-  List<Object?> get props => [history];
+  const AiChatLoading(
+    List<ChatMessage> history, {
+    bool isCallMode = false,
+    bool hasApiKey = true,
+  }) : super(history: history, isCallMode: isCallMode, hasApiKey: hasApiKey);
 }
 
 class AiChatLoaded extends AiChatState {
-  final List<ChatMessage> history;
-  const AiChatLoaded(this.history);
+  const AiChatLoaded(
+    List<ChatMessage> history, {
+    bool isCallMode = false,
+    bool hasApiKey = true,
+  }) : super(history: history, isCallMode: isCallMode, hasApiKey: hasApiKey);
+}
 
-  @override
-  List<Object?> get props => [history];
+class AiChatListening extends AiChatState {
+  const AiChatListening(
+    List<ChatMessage> history, {
+    bool isCallMode = false,
+    bool hasApiKey = true,
+  }) : super(history: history, isCallMode: isCallMode, hasApiKey: hasApiKey);
 }
 
 class AiChatError extends AiChatState {
   final String message;
-  final List<ChatMessage> history;
-  const AiChatError(this.message, this.history);
+  const AiChatError(
+    this.message,
+    List<ChatMessage> history, {
+    bool isCallMode = false,
+    bool hasApiKey = true,
+  }) : super(history: history, isCallMode: isCallMode, hasApiKey: hasApiKey);
 
   @override
-  List<Object?> get props => [message, history];
+  List<Object?> get props => [message, history, isCallMode, hasApiKey];
 }
