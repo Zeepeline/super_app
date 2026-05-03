@@ -13,8 +13,10 @@ import 'core/services/download_service.dart';
 import 'core/services/gemini_service.dart';
 import 'core/services/lyrics_service.dart';
 import 'core/services/media_import_service.dart';
+import 'core/services/native_device_service.dart';
 import 'core/services/rag_service.dart';
 import 'core/services/secure_storage_service.dart';
+import 'core/services/user_memory_service.dart';
 import 'core/services/voice_service.dart';
 import 'core/services/youtube_download_service.dart';
 import 'core/services/youtube_explode_service.dart';
@@ -72,8 +74,12 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   sl.registerSingleton<SecureStorageService>(SecureStorageService());
   sl.registerSingleton<GeminiService>(GeminiService(sl()));
   sl.registerLazySingleton<VoiceService>(() => VoiceService());
+  sl.registerLazySingleton<UserMemoryService>(() => UserMemoryService());
+  sl.registerLazySingleton<NativeDeviceService>(() => NativeDeviceService());
   sl.registerLazySingleton<RagIndexerService>(() => RagIndexerService());
-  sl.registerLazySingleton<AiToolsService>(() => AiToolsService(sl(), sl()));
+  sl.registerLazySingleton<AiToolsService>(
+    () => AiToolsService(sl(), sl(), sl(), sl(), sl(), sl()),
+  );
   sl.registerLazySingleton<RagService>(() => RagService(sl(), sl()));
 
   // ===== EXTERNAL =====

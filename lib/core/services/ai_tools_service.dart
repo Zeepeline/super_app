@@ -1,13 +1,31 @@
+import 'package:super_app/core/services/youtube_download_service.dart';
+
 import '../../features/home/data/datasources/home_local_data_source.dart';
 import '../../features/home/data/models/track_model.dart' as home;
 import '../../features/music_player/data/models/track_model.dart' as player;
 import '../../features/music_player/domain/repositories/music_repository.dart';
+import 'native_device_service.dart';
+import 'user_memory_service.dart';
+import 'youtube_explode_service.dart';
 
 class AiToolsService {
   final MusicRepository _musicRepository;
   final HomeLocalDataSource _localDataSource;
+  final UserMemoryService _memoryService;
+  final NativeDeviceService _nativeService;
+  final YoutubeDownloadService _downloadService;
+  final YouTubeExplodeService _ytService;
 
-  AiToolsService(this._musicRepository, this._localDataSource);
+  AiToolsService(
+    this._musicRepository,
+    this._localDataSource,
+    this._memoryService,
+    this._nativeService,
+    this._downloadService,
+    this._ytService,
+  );
+
+  UserMemoryService getMemoryService() => _memoryService;
 
   /// Mencari dan memutar lagu berdasarkan judul atau ID.
   Future<String> playTrack(String query) async {
@@ -80,11 +98,137 @@ class AiToolsService {
     return "Memutar lagu selanjutnya.";
   }
 
-  /// Statistik library untuk konteks AI.
+  /// Mencari lagu di library berdasarkan query teks umum.
+  Future<String> searchLibrary(String query) async {
+    try {
+      final tracks = await _localDataSource.getPopularTracks();
+      final results = tracks
+          .where(
+            (t) =>
+                t.titleField.toLowerCase().contains(query.toLowerCase()) ||
+                t.artistField.toLowerCase().contains(query.toLowerCase()) ||
+                t.albumField.toLowerCase().contains(query.toLowerCase()),
+          )
+          .toList();
+
+      if (results.isEmpty)
+        return "Tidak ditemukan lagu yang cocok dengan '$query' di library Anda.";
+
+      final list = results
+          .take(5)
+          .map((t) => "- ${t.titleField} oleh ${t.artistField}")
+          .join("\n");
+      return "Ditemukan beberapa lagu:\n$list";
+    } catch (e) {
+      return "Gagal mencari di library: $e";
+    }
+  }
+
+  /// Mendapatkan lirik lagu yang sedang diputar atau berdasarkan judul.
+  Future<String> getLyrics(String query) async {
+    try {
+      final tracks = await _localDataSource.getPopularTracks();
+      final track = tracks.firstWhere(
+        (t) => t.titleField.toLowerCase().contains(query.toLowerCase()),
+        orElse: () => throw "Lirik untuk '$query' tidak ditemukan.",
+      );
+
+      if (track.plainLyricsField == null || track.plainLyricsField!.isEmpty) {
+        return "Lagu '${track.titleField}' ada, tapi liriknya belum tersedia.";
+      }
+
+      return "Berikut lirik lagu ${track.titleField}:\n\n${track.plainLyricsField}";
+    } catch (e) {
+      return "Maaf, saya tidak bisa menemukan liriknya: $e";
+    }
+  }
+
+  /// Mendapatkan statistik library untuk konteks AI.
   Future<String> getLibrarySummary() async {
     final tracks = await _localDataSource.getPopularTracks();
     if (tracks.isEmpty) return "Library musik Anda kosong.";
 
     return "Anda memiliki ${tracks.length} lagu di library lokal.";
+  }
+
+  /// MEMORY: Menyimpan informasi penting tentang preferensi user.
+  Future<String> saveUserFact(
+    String subject,
+    String predicate,
+    String object,
+  ) async {
+    await _memoryService.saveFact(
+      subject: subject,
+      predicate: predicate,
+      object: object,
+    );
+    return "Saya simpan di memori: $subject $predicate $object";
+  }
+
+  /// MEMORY: Mengambil semua memori tentang user untuk konteks.
+  Future<String> getUserMemories() async {
+    return _memoryService.getCompactMemory();
+  }
+
+  /// NATIVE: Mengatur volume sistem (0-100).
+  Future<String> setSystemVolume(int percent) async {
+    final level = percent / 100.0;
+    await _nativeService.setVolume(level);
+    return "Volume sistem diatur ke $percent%";
+  }
+
+  /// NATIVE: Mendapatkan status sistem (Baterai, Koneksi, dll).
+  Future<String> getSystemStatus() async {
+    final battery = await _nativeService.getBatteryLevel();
+    final conn = await _nativeService.getConnectivityStatus();
+    final volume = await _nativeService.getVolume();
+    return "Status: Baterai $battery%, Koneksi $conn, Volume ${(volume * 100).toInt()}%";
+  }
+
+  /// NATIVE: Informasi Perangkat.
+  Future<String> getDeviceInfo() async {
+    final info = await _nativeService.getDeviceInfo();
+    final app = await _nativeService.getAppInfo();
+    return "Perangkat: ${info['model']}, OS: ${info['version']}. Aplikasi: $app";
+  }
+
+  /// DOWNLOAD: Mencari dan mendownload lagu dari YouTube.
+  Future<String> downloadMusic(String query) async {
+    try {
+      String videoUrl = query;
+      String trackTitle = query;
+
+      // If not a URL, search for it
+      if (!query.contains('youtube.com') && !query.contains('youtu.be')) {
+        final searchResults = await _ytService.searchVideos(query);
+        if (searchResults.isEmpty) {
+          return "Maaf, saya tidak menemukan lagu '$query' di YouTube.";
+        }
+        final firstVideo = searchResults.first;
+        videoUrl = "https://www.youtube.com/watch?v=${firstVideo.id}";
+        trackTitle = firstVideo.title;
+      }
+
+      // Start the download in background
+      _downloadService
+          .downloadAndConvert(
+            url: videoUrl,
+            onProgress: (stage, progress) {
+              // Progress logging can be added here
+            },
+          )
+          .then((track) async {
+            if (track != null) {
+              await _localDataSource.addImportedTracks([track]);
+            }
+          })
+          .catchError((e) {
+            print("AiToolsService: Download error for $trackTitle: $e");
+          });
+
+      return "Mulai mendownload: $trackTitle. Lagu akan muncul di library setelah selesai.";
+    } catch (e) {
+      return "Gagal inisialisasi download: $e";
+    }
   }
 }

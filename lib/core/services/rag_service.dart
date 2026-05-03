@@ -17,7 +17,9 @@ class RagService {
   }) async {
     // 1. Search Local Context (Offline RAG)
     String context = "";
+    String graphContext = "";
     try {
+      // Vector Search
       if (MobileRag.instance.isIndexReady) {
         final ragResult = await MobileRag.instance.search(
           query,
@@ -25,52 +27,29 @@ class RagService {
         );
         context = ragResult.context.text;
       }
+
+      // Graph Search (Entity-Linker)
+      // Ekstrak entitas sederhana dari query
+      final words = query.split(' ').where((w) => w.length > 3).toList();
+      final relatedFacts = _aiToolsService.getMemoryService().findRelatedFacts(words);
+      if (relatedFacts.isNotEmpty) {
+        graphContext = relatedFacts.map((f) => "- $f").join("\n");
+      }
     } catch (e) {
-      print("RagService: RAG Search failed: $e");
+      print("RagService: Search failed: $e");
     }
 
-    // 2. Define Tools for Gemini
-    final tools = [
-      Tool(
-        functionDeclarations: [
-          FunctionDeclaration(
-            'play_music',
-            'Memutar lagu berdasarkan judul, nama artis, atau ID',
-            Schema(
-              SchemaType.object,
-              properties: {
-                'query': Schema(
-                  SchemaType.string,
-                  description: 'Judul lagu, artis, atau ID lagu',
-                ),
-              },
-              // required: ['query'],
-            ),
-          ),
-          FunctionDeclaration(
-            'pause_music',
-            'Menghentikan musik yang sedang diputar',
-            Schema(SchemaType.object, properties: {}),
-          ),
-          FunctionDeclaration(
-            'resume_music',
-            'Melanjutkan musik yang dijeda',
-            Schema(SchemaType.object, properties: {}),
-          ),
-          FunctionDeclaration(
-            'skip_next',
-            'Memutar lagu selanjutnya',
-            Schema(SchemaType.object, properties: {}),
-          ),
-        ],
-      ),
-    ];
+    // 2. Tools sudah didefinisikan secara global di GeminiService
+    final List<Tool>? tools = null; 
 
-    // 3. Prepare Prompt with Context
+    // 3. Prepare Prompt with Augmented Context (Hybrid RAG)
     final prompt =
         """
-DATA LOKAL DARI LIBRARY USER (Gunakan ini jika user bertanya tentang lagunya):
+KONTEKS LIBRARY (Vektor):
 $context
+
+KONTEKS MEMORI/HUBUNGAN (Graph):
+$graphContext
 
 PERTANYAAN USER: $query
 """;
@@ -96,6 +75,7 @@ PERTANYAAN USER: $query
       );
 
       switch (call.name) {
+        case 'play_track':
         case 'play_music':
           final q = call.args['query'] as String;
           return await _aiToolsService.playTrack(q);
@@ -105,6 +85,29 @@ PERTANYAAN USER: $query
           return await _aiToolsService.resumeMusic();
         case 'skip_next':
           return await _aiToolsService.skipNext();
+        case 'search_library':
+          final q = call.args['query'] as String;
+          return await _aiToolsService.searchLibrary(q);
+        case 'get_lyrics':
+          final q = call.args['query'] as String;
+          return await _aiToolsService.getLyrics(q);
+        case 'save_user_fact':
+          final s = call.args['subject'] as String;
+          final p = call.args['predicate'] as String;
+          final o = call.args['object'] as String;
+          return await _aiToolsService.saveUserFact(s, p, o);
+        case 'get_user_memories':
+          return await _aiToolsService.getUserMemories();
+        case 'set_system_volume':
+          final p = (call.args['percent'] as num).toInt();
+          return await _aiToolsService.setSystemVolume(p);
+        case 'get_system_status':
+          return await _aiToolsService.getSystemStatus();
+        case 'get_device_info':
+          return await _aiToolsService.getDeviceInfo();
+        case 'download_music':
+          final q = call.args['query'] as String;
+          return await _aiToolsService.downloadMusic(q);
       }
     }
 

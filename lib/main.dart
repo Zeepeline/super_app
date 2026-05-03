@@ -9,6 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:super_app/core/services/audio_handler.dart' as custom;
 import 'package:super_app/core/services/rag_index_service.dart';
+import 'package:super_app/core/services/user_memory_service.dart';
 import 'package:super_app/features/ai_assistant/presentation/pages/ai_chat_page.dart';
 
 import 'core/theme/app_theme.dart';
@@ -61,8 +62,9 @@ void main() async {
   // Initialize RAG Search Engine
   try {
     await di.sl<RagIndexerService>().initialize();
+    await di.sl<UserMemoryService>().initialize();
   } catch (e) {
-    print("Failed to initialize RAG: $e");
+    print("Failed to initialize AI Services: $e");
   }
 
   // Get SharedPreferences from GetIt

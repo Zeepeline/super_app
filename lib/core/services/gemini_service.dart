@@ -47,27 +47,142 @@ class GeminiService {
     bool isCallMode = false,
   }) {
     final String systemPrompt = isCallMode
-        ? "Anda adalah asisten musik SoundWave dalam mode Voice Call (Telepon).\n"
-              "Rules:\n"
-              "1. NATIVE AUDIO DIALOG: Jawab layaknya manusia sedang berbicara di telepon. Gunakan bahasa Indonesia sehari-hari yang luwes, santai, namun cerdas.\n"
-              "2. SINGKAT & PADAT: Jawab langsung pada intinya, maksimal 2-3 kalimat pendek agar tidak terlalu lama dibacakan oleh TTS.\n"
-              "3. TANPA FORMAT TEKS: DILARANG KERAS menggunakan Markdown (seperti **bold**, *italic*, atau # header) atau simbol kompleks karena akan dibacakan secara literal oleh TTS.\n"
-              "4. AGENT: Anda memiliki akses ke tools untuk memutar lagu, menjeda, atau mencari library. Gunakan tools jika user memberikan perintah.\n"
-              "5. AKURASI: Jika ditanya lirik atau trivia, sebutkan secara singkat dan jelas."
-        : "Anda adalah SoundWave AI, pakar musik global yang akurat dan informatif.\n"
-              "Rules:\n"
-              "1. AKURASI ADALAH PRIORITAS: Jangan pernah mengarang lirik lagu. Jika tidak tahu, katakan sejujurnya.\n"
-              "2. TO-THE-POINT: Jangan memberikan permintaan maaf yang panjang atau penjelasan robotik. Jawab langsung permintaan user.\n"
-              "3. FORMAT: Gunakan Markdown (Bold untuk judul/artis, blockquote untuk lirik) agar rapi.\n"
-              "4. KONTEKS: Berikan sedikit trivia menarik jika memberikan lirik atau rekomendasi.\n"
-              "5. BAHASA: Gunakan bahasa Indonesia yang santai tapi tetap profesional dan cerdas.\n"
-              "6. AGENT: Anda memiliki akses ke tools untuk memutar lagu, menjeda, atau mencari library. Gunakan tools jika user memberikan perintah.";
+        ? "Anda adalah SoundWave AI Voice Assistant (Mode Telepon).\n"
+              "SIFAT: Hangat, singkat, cerdas. Anda adalah persona hasil fine-tuning.\n"
+              "GRAPH-AUGMENTED RAG:\n"
+              "1. SELALU hubungkan informasi baru. Jika user bilang suka artis X, panggil 'save_user_fact' (User, suka, X).\n"
+              "2. Gunakan KONTEKS MEMORI (Graph) yang diberikan untuk mempersonalisasi jawaban.\n"
+              "3. SINGKAT: Maksimal 2 kalimat, tanpa markdown."
+        : "Anda adalah SoundWave AI (Expert Mode).\n"
+              "SIFAT: Pakar musik dengan kemampuan Graph-Augmented RAG.\n"
+              "INSTRUKSI GRAPH:\n"
+              "1. ENTITY LINKING: Anda harus aktif membangun Knowledge Graph user. Gunakan 'save_user_fact' untuk menghubungkan User, Artist, Genre, dan Mood.\n"
+              "2. HYBRID RETRIEVAL: Anda diberikan data dari Vektor (Library) dan Graph (Memori). Gabungkan keduanya untuk jawaban yang komprehensif.\n"
+              "3. TUGAS: Jika user bertanya tentang rekomendasi, cek memori dulu, lalu cari di library, baru berikan jawaban.";
+
+    // Definisi Tools untuk Function Calling
+    final List<Tool> availableTools = [
+      Tool(
+        functionDeclarations: [
+          FunctionDeclaration(
+            'play_track',
+            'Memutar lagu berdasarkan judul atau query.',
+            Schema(
+              SchemaType.object,
+              properties: {
+                'query': Schema(
+                  SchemaType.string,
+                  description: 'Judul lagu atau nama artis.',
+                ),
+              },
+              requiredProperties: ['query'],
+            ),
+          ),
+          FunctionDeclaration(
+            'pause_music',
+            'Menghentikan musik yang sedang diputar.',
+            Schema(SchemaType.object),
+          ),
+          FunctionDeclaration(
+            'search_library',
+            'Mencari lagu di library musik lokal user.',
+            Schema(
+              SchemaType.object,
+              properties: {
+                'query': Schema(
+                  SchemaType.string,
+                  description: 'Kata kunci pencarian.',
+                ),
+              },
+              requiredProperties: ['query'],
+            ),
+          ),
+          FunctionDeclaration(
+            'get_lyrics',
+            'Mendapatkan lirik lagu tertentu.',
+            Schema(
+              SchemaType.object,
+              properties: {
+                'query': Schema(SchemaType.string, description: 'Judul lagu.'),
+              },
+              requiredProperties: ['query'],
+            ),
+          ),
+          FunctionDeclaration(
+            'save_user_fact',
+            'Menyimpan fakta terstruktur tentang preferensi user ke memori jangka panjang.',
+            Schema(
+              SchemaType.object,
+              properties: {
+                'subject': Schema(
+                  SchemaType.string,
+                  description: 'Subjek (misal: "User", "Artist").',
+                ),
+                'predicate': Schema(
+                  SchemaType.string,
+                  description:
+                      'Relasi (misal: "suka", "benci", "sering_putar").',
+                ),
+                'object': Schema(
+                  SchemaType.string,
+                  description: 'Objek fakta (misal: "Jazz", "Taylor Swift").',
+                ),
+              },
+              requiredProperties: ['subject', 'predicate', 'object'],
+            ),
+          ),
+          FunctionDeclaration(
+            'get_user_memories',
+            'Mengambil semua informasi yang diingat tentang user untuk personalisasi.',
+            Schema(SchemaType.object),
+          ),
+          FunctionDeclaration(
+            'set_system_volume',
+            'Mengatur volume sistem perangkat.',
+            Schema(
+              SchemaType.object,
+              properties: {
+                'percent': Schema(
+                  SchemaType.integer,
+                  description: 'Persentase volume 0-100.',
+                ),
+              },
+              requiredProperties: ['percent'],
+            ),
+          ),
+          FunctionDeclaration(
+            'get_system_status',
+            'Mendapatkan status baterai, koneksi, dan volume sistem saat ini.',
+            Schema(SchemaType.object),
+          ),
+          FunctionDeclaration(
+            'get_device_info',
+            'Mendapatkan informasi model perangkat dan versi aplikasi.',
+            Schema(SchemaType.object),
+          ),
+          FunctionDeclaration(
+            'download_music',
+            'Mendownload lagu baru dari YouTube ke library lokal.',
+            Schema(
+              SchemaType.object,
+              properties: {
+                'query': Schema(
+                  SchemaType.string,
+                  description: 'Judul lagu, artis, atau URL YouTube.',
+                ),
+              },
+              requiredProperties: ['query'],
+            ),
+          ),
+        ],
+      ),
+    ];
 
     return GenerativeModel(
       model: modelName,
       apiKey: apiKey,
-      tools: tools,
-      systemInstruction: Content.system(systemPrompt),
+      tools: availableTools,
+      systemInstruction: Content.text(systemPrompt),
       generationConfig: GenerationConfig(
         maxOutputTokens: 1000,
         temperature: 0.7,

@@ -14,6 +14,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../injection_container.dart';
 import '../cubit/ai_chat_cubit.dart';
 import '../cubit/ai_chat_state.dart';
+import 'ai_abilities_page.dart';
 import 'ai_configuration_page.dart';
 
 class AiChatPage extends StatefulWidget {
@@ -31,6 +32,10 @@ class _AiChatPageState extends State<AiChatPage> {
   void initState() {
     super.initState();
     _requestPermission();
+    // Tunggu sebentar sampai data ter-load dan list rendered
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) _scrollToBottom(immediate: true);
+    });
   }
 
   Future<void> _requestPermission() async {
@@ -64,14 +69,18 @@ class _AiChatPageState extends State<AiChatPage> {
     }
   }
 
-  void _scrollToBottom() {
+  void _scrollToBottom({bool immediate = false}) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
+        if (immediate) {
+          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        } else {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
       }
     });
   }
@@ -408,6 +417,21 @@ class _AiChatPageState extends State<AiChatPage> {
               color: state.isCallMode
                   ? AppTheme.kPrimaryColor
                   : (!state.hasApiKey ? Colors.white38 : Colors.white),
+              size: 22,
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AiAbilitiesPage(),
+                ),
+              );
+            },
+            icon: const Icon(
+              Icons.info_outline_rounded,
+              color: Colors.white,
               size: 22,
             ),
           ),
@@ -1132,6 +1156,18 @@ class _ChatBubble extends StatelessWidget {
                           color: isUser ? Colors.black : Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
+                        ),
+                        blockquote: TextStyle(
+                          color: isUser
+                              ? Colors.black.withValues(alpha: 0.7)
+                              : Colors.white70,
+                          fontStyle: FontStyle.italic,
+                        ),
+                        blockquoteDecoration: BoxDecoration(
+                          color: isUser
+                              ? Colors.black.withValues(alpha: 0.05)
+                              : Colors.white.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                     ),
