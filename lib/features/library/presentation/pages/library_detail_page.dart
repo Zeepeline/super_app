@@ -72,10 +72,7 @@ class LibraryDetailPage extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   if (imageUrl != null)
-                    Image.network(
-                      imageUrl!,
-                      fit: BoxFit.cover,
-                    )
+                    Image.network(imageUrl!, fit: BoxFit.cover)
                   else
                     Container(
                       color: AppTheme.kSurfaceContainerColor,
@@ -124,7 +121,7 @@ class LibraryDetailPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    isArtist 
+                    isArtist
                         ? '${albums.length} albums • ${tracks.length} tracks'
                         : '${tracks.length} tracks',
                     style: Theme.of(context).textTheme.labelSmall,
@@ -153,94 +150,103 @@ class LibraryDetailPage extends StatelessWidget {
           ),
           if (isArtist)
             SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final albumName = albumList[index];
-                  final albumTracks = albums[albumName]!;
-                  final artUrl = albumTracks[0].albumArtUrl;
-                  
-                  return ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        artUrl,
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final albumName = albumList[index];
+                final albumTracks = albums[albumName]!;
+                final artUrl = albumTracks[0].albumArtUrl;
+
+                return ListTile(
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      artUrl,
+                      width: 56,
+                      height: 56,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
                         width: 56,
                         height: 56,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
-                          width: 56,
-                          height: 56,
-                          color: AppTheme.kSurfaceContainerColor,
-                          child: const Icon(Icons.album, color: AppTheme.kPrimaryColor),
+                        color: AppTheme.kSurfaceContainerColor,
+                        child: const Icon(
+                          Icons.album,
+                          color: AppTheme.kPrimaryColor,
                         ),
                       ),
                     ),
-                    title: Text(
-                      albumName,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(
-                      '${albumTracks.length} tracks',
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                    trailing: const Icon(Icons.chevron_right_rounded),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => LibraryDetailPage(
-                            title: albumName,
-                            subtitle: 'Album • $title',
-                            imageUrl: artUrl,
-                            tracks: albumTracks,
-                            isArtist: false,
-                          ),
+                  ),
+                  title: Text(
+                    albumName,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    '${albumTracks.length} tracks',
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => LibraryDetailPage(
+                          title: albumName,
+                          subtitle: 'Album • $title',
+                          imageUrl: artUrl,
+                          tracks: albumTracks,
+                          isArtist: false,
                         ),
-                      );
-                    },
-                  );
-                },
-                childCount: albumList.length,
-              ),
+                      ),
+                    );
+                  },
+                );
+              }, childCount: albumList.length),
             )
           else
             SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final track = tracks[index];
-                  return ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        track.albumArtUrl,
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final track = tracks[index];
+                return ListTile(
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      track.albumArtUrl,
+                      width: 48,
+                      height: 48,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
                         width: 48,
                         height: 48,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
-                          width: 48,
-                          height: 48,
-                          color: AppTheme.kSurfaceContainerColor,
-                          child: const Icon(Icons.music_note, color: AppTheme.kPrimaryColor),
+                        color: AppTheme.kSurfaceContainerColor,
+                        child: const Icon(
+                          Icons.music_note,
+                          color: AppTheme.kPrimaryColor,
                         ),
                       ),
                     ),
-                    title: Text(
-                      track.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  title: Text(
+                    track.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  subtitle: Text(
+                    track.artist,
+                    style: TextStyle(
+                      color: AppTheme.kOnSurfaceVariantColor,
+                      fontSize: 12,
                     ),
-                    subtitle: Text(
-                      track.artist,
-                      style: TextStyle(color: AppTheme.kOnSurfaceVariantColor, fontSize: 12),
-                    ),
-                    trailing: const Icon(Icons.more_vert, size: 20),
-                    onTap: () => _playTrack(context, track),
-                  );
-                },
-                childCount: tracks.length,
-              ),
+                  ),
+                  trailing: const Icon(Icons.more_vert, size: 20),
+                  onTap: () => _playTrack(context, track),
+                );
+              }, childCount: tracks.length),
             ),
           const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
         ],

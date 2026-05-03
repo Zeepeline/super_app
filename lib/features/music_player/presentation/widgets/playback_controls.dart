@@ -73,7 +73,9 @@ class PlaybackControls extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.kPrimaryContainerColor.withValues(alpha: 0.4),
+                    color: AppTheme.kPrimaryContainerColor.withValues(
+                      alpha: 0.4,
+                    ),
                     blurRadius: 30,
                     spreadRadius: 4,
                   ),

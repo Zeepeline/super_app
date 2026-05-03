@@ -37,12 +37,13 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
     });
 
     // Handle duration changes dynamically to ensure progress bar works,
-    // but PREFER the original metadata duration if it is valid. 
+    // but PREFER the original metadata duration if it is valid.
     // This prevents just_audio from reporting artificially long durations for HTTP streams.
     _player.durationStream.listen((duration) {
       final currentItem = mediaItem.value;
       if (duration != null && currentItem != null) {
-        if (currentItem.duration == null || currentItem.duration == Duration.zero) {
+        if (currentItem.duration == null ||
+            currentItem.duration == Duration.zero) {
           mediaItem.add(currentItem.copyWith(duration: duration));
         }
       }
@@ -95,7 +96,7 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
   /// Resolves absolute paths that might have changed (common on iOS Sandbox)
   Future<String?> _resolvePath(String? path) async {
     if (path == null || path.isEmpty) return null;
-    
+
     final file = File(path);
     if (await file.exists()) return path;
 
@@ -112,10 +113,9 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
             return newPath;
           }
         }
-      } catch (e) {
-      }
+      } catch (e) {}
     }
-    
+
     return null;
   }
 
@@ -131,7 +131,7 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
       // 3. Resolve source
       AudioSource? source;
       final resolvedLocalPath = await _resolvePath(track.localPath);
-      
+
       if (resolvedLocalPath != null) {
         source = AudioSource.file(resolvedLocalPath);
       } else if (track.audioUrl.isNotEmpty) {
@@ -145,14 +145,16 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
       }
 
       if (source == null) {
-        throw Exception("No valid audio source found for track: ${track.title}");
+        throw Exception(
+          "No valid audio source found for track: ${track.title}",
+        );
       }
 
       // 4. Set source and start playing immediately
       // We don't await load() here because it can hang in background.
       // just_audio will start playing as soon as it's buffered.
       await _player.setAudioSource(source);
-      
+
       // 5. Prepare metadata
       final item = MediaItem(
         id: track.id,

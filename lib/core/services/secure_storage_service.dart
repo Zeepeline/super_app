@@ -11,7 +11,10 @@ class SecureStorageService {
     final currentKeys = await getGeminiApiKeys();
     if (!currentKeys.contains(key)) {
       currentKeys.add(key);
-      await _storage.write(key: _geminiApiKeysList, value: currentKeys.join(','));
+      await _storage.write(
+        key: _geminiApiKeysList,
+        value: currentKeys.join(','),
+      );
     }
   }
 

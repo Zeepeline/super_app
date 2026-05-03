@@ -16,10 +16,12 @@ import '../../features/home/data/datasources/home_local_data_source.dart';
 /// 4. Mengambil statistik dari /rag/stats
 class RagService {
   final HomeLocalDataSource _localDataSource;
-  final Dio _dio = Dio(BaseOptions(
-    connectTimeout: const Duration(seconds: 5),
-    receiveTimeout: const Duration(seconds: 10),
-  ));
+  final Dio _dio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 5),
+      receiveTimeout: const Duration(seconds: 10),
+    ),
+  );
 
   RagService(this._localDataSource);
 
@@ -45,10 +47,7 @@ class RagService {
       final url = await _baseUrl();
       if (url == null) return null;
 
-      final response = await _dio.post(
-        '$url/rag/chat',
-        data: {"query": query},
-      );
+      final response = await _dio.post('$url/rag/chat', data: {"query": query});
 
       if (response.statusCode == 200 && response.data['status'] == 'ok') {
         return response.data['data']['context'];
@@ -84,8 +83,7 @@ class RagService {
         },
       );
 
-      return response.statusCode == 200 &&
-          response.data['status'] == 'ok';
+      return response.statusCode == 200 && response.data['status'] == 'ok';
     } catch (e) {
       return false;
     }
@@ -100,13 +98,17 @@ class RagService {
       final tracks = await _localDataSource.getPopularTracks();
       if (tracks.isEmpty) return {'success': 0, 'failed': 0};
 
-      final List<Map<String, dynamic>> batch = tracks.map((t) => {
-        'source_type': 'music',
-        'id': t.id,
-        'title': t.title,
-        'artist': t.artist,
-        'album': t.album,
-      }).toList();
+      final List<Map<String, dynamic>> batch = tracks
+          .map(
+            (t) => {
+              'source_type': 'music',
+              'id': t.id,
+              'title': t.title,
+              'artist': t.artist,
+              'album': t.album,
+            },
+          )
+          .toList();
 
       final response = await _dio.post(
         '$url/index/batch',
@@ -116,10 +118,7 @@ class RagService {
 
       if (response.statusCode == 200 && response.data['status'] == 'ok') {
         final data = response.data['data'];
-        return {
-          'success': data['success'] ?? 0,
-          'failed': data['failed'] ?? 0,
-        };
+        return {'success': data['success'] ?? 0, 'failed': data['failed'] ?? 0};
       }
       return {'success': 0, 'failed': 0};
     } catch (e) {

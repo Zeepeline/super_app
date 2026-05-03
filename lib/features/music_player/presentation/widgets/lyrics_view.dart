@@ -8,7 +8,7 @@ class LyricsView extends StatelessWidget {
   final String? plainLyrics;
   final PlayerUIController controller = Get.find<PlayerUIController>();
   final ScrollController _scrollController = ScrollController();
-  
+
   // Use a map to store keys for each lyric line
   final Map<int, GlobalKey> _itemKeys = {};
 
@@ -62,7 +62,10 @@ class LyricsView extends StatelessWidget {
 
             return ListView.builder(
               controller: _scrollController,
-              padding: EdgeInsets.only(top: topPadding, bottom: screenHeight * 0.7),
+              padding: EdgeInsets.only(
+                top: topPadding,
+                bottom: screenHeight * 0.7,
+              ),
               itemCount: controller.lyrics.length,
               itemBuilder: (context, index) {
                 final lyric = controller.lyrics[index];

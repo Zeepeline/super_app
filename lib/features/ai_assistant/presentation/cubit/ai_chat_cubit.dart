@@ -52,7 +52,8 @@ class AiChatCubit extends Cubit<AiChatState> {
       // 2. Gabungkan konteks ke pesan (Augmentation)
       String finalPrompt = message;
       if (localContext != null) {
-        finalPrompt = "$localContext\n\n"
+        finalPrompt =
+            "$localContext\n\n"
             "Pertanyaan User: $message\n\n"
             "Instruksi: Jawablah pertanyaan user dengan mengacu pada data library lokal di atas jika relevan. "
             "Jika tidak relevan, gunakan pengetahuan umum Anda.";
@@ -63,13 +64,10 @@ class AiChatCubit extends Cubit<AiChatState> {
         // Hanya kirim 6 pesan terakhir sebagai konteks untuk hemat token
         history: _history.length > 7
             ? _history
-                .sublist(_history.length - 7, _history.length - 1)
-                .map((e) => e.content)
-                .toList()
-            : _history
-                .take(_history.length - 1)
-                .map((e) => e.content)
-                .toList(),
+                  .sublist(_history.length - 7, _history.length - 1)
+                  .map((e) => e.content)
+                  .toList()
+            : _history.take(_history.length - 1).map((e) => e.content).toList(),
       );
 
       // Add AI response to history
@@ -100,9 +98,7 @@ class AiChatCubit extends Cubit<AiChatState> {
     String? lastUserMessage;
     for (var i = _history.length - 1; i >= 0; i--) {
       if (_history[i].content.role == 'user') {
-        final text = _history[i]
-            .content
-            .parts
+        final text = _history[i].content.parts
             .whereType<ai.TextPart>()
             .map((e) => e.text)
             .join();

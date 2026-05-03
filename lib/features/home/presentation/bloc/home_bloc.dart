@@ -138,10 +138,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             }
           });
         }
-
-      } catch (e) {
-
-      }
+      } catch (e) {}
     });
     on<DeleteTrackEvent>((event, emit) async {
       try {

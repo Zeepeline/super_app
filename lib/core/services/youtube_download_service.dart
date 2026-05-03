@@ -20,6 +20,9 @@ class YoutubeDownloadService {
   final LyricsService _lyricsService;
   final SecureStorageService _secureStorage;
 
+  static final _illegalChars = RegExp(r'[<>:"/\\|?*]');
+  static final _controlChars = RegExp(r'[\x00-\x1F\x7F]');
+
   // Persistent Worker State
   static bool _isWorkerStarted = false;
   static bool _isInitializing = false; // ignore: unused_field
@@ -449,11 +452,10 @@ class YoutubeDownloadService {
 
   String _sanitizeFilename(String name) {
     // Character that are illegal in Windows/macOS/Linux filenames
-    final illegalChars = RegExp(r'[<>:"/\\|?*]');
     // Replace with underscores
-    String sanitized = name.replaceAll(illegalChars, '_');
+    String sanitized = name.replaceAll(_illegalChars, '_');
     // Remove control characters
-    sanitized = sanitized.replaceAll(RegExp(r'[\x00-\x1F\x7F]'), '');
+    sanitized = sanitized.replaceAll(_controlChars, '');
     // Trim and handle extremely long names (max 200 chars to be safe)
     sanitized = sanitized.trim();
     if (sanitized.length > 200) {

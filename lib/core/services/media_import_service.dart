@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:just_audio/just_audio.dart';
 import 'package:path/path.dart' as p;
@@ -13,6 +14,8 @@ import '../../features/home/data/models/track_model.dart';
 
 class MediaImportService {
   final _uuid = const Uuid();
+
+  static final _ytPattern = RegExp(r"^(.*)\s\[([a-zA-Z0-9_-]{11})\]$");
 
   MediaImportService();
 
@@ -48,16 +51,13 @@ class MediaImportService {
   Future<List<TrackModel>> importLocalTracks() async {
     // Strict guard — static so it survives hot-restart within same isolate
     if (_isPickerActive) {
-
       return [];
     }
     _isPickerActive = true;
 
-
     try {
       // Check permissions first
       if (!await _checkPermissions()) {
-
         return [];
       }
 
@@ -70,25 +70,20 @@ class MediaImportService {
       }
 
       if (filePaths.isEmpty) {
-
         return [];
       }
 
       return await _processFiles(filePaths);
     } catch (_) {
-
       return [];
     } finally {
       _isPickerActive = false;
-
     }
   }
 
   /// iOS: Use multi-file picker with retry logic for the common
   /// `multiple_request` PlatformException (happens after hot restart).
   Future<List<String?>> _pickFilesIOS() async {
-
-
     for (int attempt = 1; attempt <= 2; attempt++) {
       try {
         final result = await FilePicker.platform.pickFiles(
@@ -96,13 +91,11 @@ class MediaImportService {
           allowMultiple: true,
         );
         if (result != null && result.paths.isNotEmpty) {
-
           return result.paths;
         }
 
         return [];
       } on Exception {
-
         if (attempt == 1) {
           // First attempt failed — wait for native picker to fully release
 
@@ -115,13 +108,10 @@ class MediaImportService {
 
   /// Desktop/Android: Scan an entire directory recursively.
   Future<List<String?>> _scanDirectoryDesktop() async {
-
     final directoryPath = await FilePicker.platform.getDirectoryPath();
     if (directoryPath == null) {
-
       return [];
     }
-
 
     final directory = Directory(directoryPath);
     final entities = await directory.list(recursive: true).toList();
@@ -137,41 +127,47 @@ class MediaImportService {
 
     final supportedExtensions = ['.mp3', '.m4a', '.wav', '.flac'];
 
-    for (var path in filePaths) {
-      if (path == null) continue;
-      final ext = p.extension(path).toLowerCase();
+    final player = AudioPlayer();
+    try {
+      for (var path in filePaths) {
+        if (path == null) continue;
+        final ext = p.extension(path).toLowerCase();
 
-      if (supportedExtensions.contains(ext)) {
-        final file = File(path);
-        final fileName = p.basename(path);
-        final newPath = p.join(musicDir.path, fileName);
+        if (supportedExtensions.contains(ext)) {
+          final file = File(path);
+          final fileName = p.basename(path);
+          final newPath = p.join(musicDir.path, fileName);
 
-        // Copy to internal storage
-        await file.copy(newPath);
+          // Copy to internal storage
+          await file.copy(newPath);
 
-        final title = p.basenameWithoutExtension(fileName);
-        // lyrics are now fetched on-demand during playback or during direct download
-        final durationText = await getAudioDurationText(newPath);
+          final title = p.basenameWithoutExtension(fileName);
+          // lyrics are now fetched on-demand during playback or during direct download
+          final durationText =
+              await getAudioDurationText(newPath, player: player);
 
-        importedTracks.add(
-          TrackModel(
-            idField: _uuid.v4(),
-            titleField: title,
-            artistField: 'Local Artist',
-            albumField: 'Local Music',
-            albumArtUrlField:
-                'https://images.unsplash.com/photo-1514525253361-bee8ea36b745?auto=format&fit=crop&q=80&w=300',
-            durationField: durationText,
-            localPathField: newPath,
-            audioUrlField: newPath,
-            syncedLyricsField: null,
-            plainLyricsField: null,
-          ),
-        );
+          importedTracks.add(
+            TrackModel(
+              idField: _uuid.v4(),
+              titleField: title,
+              artistField: 'Local Artist',
+              albumField: 'Local Music',
+              albumArtUrlField:
+                  'https://images.unsplash.com/photo-1514525253361-bee8ea36b745?auto=format&fit=crop&q=80&w=300',
+              durationField: durationText,
+              localPathField: newPath,
+              audioUrlField: newPath,
+              syncedLyricsField: null,
+              plainLyricsField: null,
+            ),
+          );
+        }
       }
+    } finally {
+      await player.dispose();
     }
 
-    print(
+    debugPrint(
       "MediaImportService: Successfully imported ${importedTracks.length} tracks",
     );
     return importedTracks;
@@ -179,7 +175,7 @@ class MediaImportService {
 
   /// Load music files bundled with the app (from assets/music/).
   Future<List<TrackModel>> loadBundledAssets() async {
-
+    final player = AudioPlayer();
     try {
       final appDir = await getApplicationDocumentsDirectory();
       final musicDir = Directory(p.join(appDir.path, 'imported_music'));
@@ -201,14 +197,10 @@ class MediaImportService {
           try {
             final data = await rootBundle.load('assets/music/$fileName');
             await targetFile.writeAsBytes(data.buffer.asUint8List());
-
           } catch (e) {
-
             continue;
           }
-        } else {
-
-        }
+        } else {}
 
         final title = p
             .basenameWithoutExtension(fileName)
@@ -218,6 +210,7 @@ class MediaImportService {
         final durationText = await getAudioDurationText(
           'assets/music/$fileName',
           isAsset: true,
+          player: player,
         );
 
         importedTracks.add(
@@ -237,13 +230,14 @@ class MediaImportService {
         );
       }
 
-      print(
+      debugPrint(
         "MediaImportService: Loaded ${importedTracks.length} bundled tracks",
       );
       return importedTracks;
     } catch (e) {
-
       return [];
+    } finally {
+      await player.dispose();
     }
   }
 
@@ -252,13 +246,11 @@ class MediaImportService {
   Future<List<TrackModel>> scanDownloadedMusic({
     Set<String>? existingPaths,
   }) async {
-
     try {
       final appDir = await getApplicationDocumentsDirectory();
       final musicDir = Directory(p.join(appDir.path, 'music'));
 
       if (!await musicDir.exists()) {
-
         return [];
       }
 
@@ -271,68 +263,71 @@ class MediaImportService {
       }
 
       if (filePaths.isEmpty) {
-
         return [];
       }
 
       final List<TrackModel> discoveredTracks = [];
       final supportedExtensions = ['.mp3', '.m4a', '.wav', '.flac'];
 
-      for (var path in filePaths) {
-        // QUICK EXIT: skip if we already have this in library
-        if (existingPaths != null && existingPaths.contains(path)) continue;
+      final player = AudioPlayer();
+      try {
+        for (var path in filePaths) {
+          // QUICK EXIT: skip if we already have this in library
+          if (existingPaths != null && existingPaths.contains(path)) continue;
 
-        final ext = p.extension(path).toLowerCase();
-        if (supportedExtensions.contains(ext)) {
-          final fileName = p.basename(path);
-          var title = p.basenameWithoutExtension(fileName);
+          final ext = p.extension(path).toLowerCase();
+          if (supportedExtensions.contains(ext)) {
+            final fileName = p.basename(path);
+            var title = p.basenameWithoutExtension(fileName);
 
-          // Regex to match "Title [VideoID]" and extract "Title" and "VideoID"
-          final ytPattern = RegExp(r"^(.*)\s\[([a-zA-Z0-9_-]{11})\]$");
-          final match = ytPattern.firstMatch(
-            p.basenameWithoutExtension(fileName),
-          );
-          String stableId = _uuid.v4();
+            // Regex to match "Title [VideoID]" and extract "Title" and "VideoID"
+            final match = _ytPattern.firstMatch(
+              p.basenameWithoutExtension(fileName),
+            );
+            String stableId = _uuid.v4();
 
-          if (match != null) {
-            title = match.group(1)!;
-            stableId = match.group(2)!; // Use YouTube ID as stable ID
-          } else {
-            // For non-YouTube files, use filename as a semi-stable ID
-            // (Better than random UUID which causes duplicates on path change)
-            stableId = "local_${p.basenameWithoutExtension(fileName)}";
+            if (match != null) {
+              title = match.group(1)!;
+              stableId = match.group(2)!; // Use YouTube ID as stable ID
+            } else {
+              // For non-YouTube files, use filename as a semi-stable ID
+              // (Better than random UUID which causes duplicates on path change)
+              stableId = "local_${p.basenameWithoutExtension(fileName)}";
+            }
+
+            // Replace underscores/hyphens with spaces if they look like they were sanitized
+            title = title.replaceAll('_', ' ').replaceAll('-', ' ');
+
+            // lyrics are now fetched on-demand during playback or during direct download
+            final durationText =
+                await getAudioDurationText(path, player: player);
+
+            discoveredTracks.add(
+              TrackModel(
+                idField: stableId,
+                titleField: title,
+                artistField: 'Web Download',
+                albumField: 'YouTube Download',
+                albumArtUrlField:
+                    'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=300',
+                durationField: durationText,
+                localPathField: path,
+                audioUrlField: path,
+                syncedLyricsField: null,
+                plainLyricsField: null,
+              ),
+            );
           }
-
-          // Replace underscores/hyphens with spaces if they look like they were sanitized
-          title = title.replaceAll('_', ' ').replaceAll('-', ' ');
-
-          // lyrics are now fetched on-demand during playback or during direct download
-          final durationText = await getAudioDurationText(path);
-
-          discoveredTracks.add(
-            TrackModel(
-              idField: stableId,
-              titleField: title,
-              artistField: 'Web Download',
-              albumField: 'YouTube Download',
-              albumArtUrlField:
-                  'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=300',
-              durationField: durationText,
-              localPathField: path,
-              audioUrlField: path,
-              syncedLyricsField: null,
-              plainLyricsField: null,
-            ),
-          );
         }
+      } finally {
+        await player.dispose();
       }
 
-      print(
+      debugPrint(
         "MediaImportService: Discovered ${discoveredTracks.length} tracks in downloads folder.",
       );
       return discoveredTracks;
     } catch (e) {
-
       return [];
     }
   }
@@ -341,14 +336,15 @@ class MediaImportService {
   Future<String> getAudioDurationText(
     String path, {
     bool isAsset = false,
+    AudioPlayer? player,
   }) async {
-    final player = AudioPlayer();
+    final playerToUse = player ?? AudioPlayer();
     try {
       Duration? duration;
       if (isAsset) {
-        duration = await player.setAsset(path);
+        duration = await playerToUse.setAsset(path);
       } else {
-        duration = await player.setFilePath(path);
+        duration = await playerToUse.setFilePath(path);
       }
 
       if (duration == null || duration == Duration.zero) return "0:00";
@@ -357,10 +353,11 @@ class MediaImportService {
       final seconds = duration.inSeconds.remainder(60);
       return "$minutes:${seconds.toString().padLeft(2, '0')}";
     } catch (e) {
-
       return "0:00";
     } finally {
-      await player.dispose();
+      if (player == null) {
+        await playerToUse.dispose();
+      }
     }
   }
 }
