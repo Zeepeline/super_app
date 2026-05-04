@@ -129,8 +129,11 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       settings,
     ) {
       userResult.fold(
-        (failure) => emit(SettingsLoaded(settings: settings, geminiApiKey: apiKey)),
-        (user) => emit(SettingsLoaded(settings: settings, user: user, geminiApiKey: apiKey)),
+        (failure) =>
+            emit(SettingsLoaded(settings: settings, geminiApiKey: apiKey)),
+        (user) => emit(
+          SettingsLoaded(settings: settings, user: user, geminiApiKey: apiKey),
+        ),
       );
     });
   }

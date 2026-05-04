@@ -362,7 +362,9 @@ class _Header extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.1),
+                      ),
                     ),
                     child: TextField(
                       controller: searchController,

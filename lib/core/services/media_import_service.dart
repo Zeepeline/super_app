@@ -14,6 +14,9 @@ import '../../features/home/data/models/track_model.dart';
 class MediaImportService {
   final _uuid = const Uuid();
 
+  /// Optimized RegExp for matching YouTube titles
+  static final _ytPattern = RegExp(r"^(.*)\s\[([a-zA-Z0-9_-]{11})\]$");
+
   MediaImportService();
 
   /// Static flag to prevent concurrent calls across any instance or hot-restart
@@ -48,16 +51,13 @@ class MediaImportService {
   Future<List<TrackModel>> importLocalTracks() async {
     // Strict guard — static so it survives hot-restart within same isolate
     if (_isPickerActive) {
-
       return [];
     }
     _isPickerActive = true;
 
-
     try {
       // Check permissions first
       if (!await _checkPermissions()) {
-
         return [];
       }
 
@@ -70,25 +70,20 @@ class MediaImportService {
       }
 
       if (filePaths.isEmpty) {
-
         return [];
       }
 
       return await _processFiles(filePaths);
     } catch (_) {
-
       return [];
     } finally {
       _isPickerActive = false;
-
     }
   }
 
   /// iOS: Use multi-file picker with retry logic for the common
   /// `multiple_request` PlatformException (happens after hot restart).
   Future<List<String?>> _pickFilesIOS() async {
-
-
     for (int attempt = 1; attempt <= 2; attempt++) {
       try {
         final result = await FilePicker.platform.pickFiles(
@@ -96,13 +91,11 @@ class MediaImportService {
           allowMultiple: true,
         );
         if (result != null && result.paths.isNotEmpty) {
-
           return result.paths;
         }
 
         return [];
       } on Exception {
-
         if (attempt == 1) {
           // First attempt failed — wait for native picker to fully release
 
@@ -115,13 +108,10 @@ class MediaImportService {
 
   /// Desktop/Android: Scan an entire directory recursively.
   Future<List<String?>> _scanDirectoryDesktop() async {
-
     final directoryPath = await FilePicker.platform.getDirectoryPath();
     if (directoryPath == null) {
-
       return [];
     }
-
 
     final directory = Directory(directoryPath);
     final entities = await directory.list(recursive: true).toList();
@@ -179,7 +169,6 @@ class MediaImportService {
 
   /// Load music files bundled with the app (from assets/music/).
   Future<List<TrackModel>> loadBundledAssets() async {
-
     try {
       final appDir = await getApplicationDocumentsDirectory();
       final musicDir = Directory(p.join(appDir.path, 'imported_music'));
@@ -201,14 +190,10 @@ class MediaImportService {
           try {
             final data = await rootBundle.load('assets/music/$fileName');
             await targetFile.writeAsBytes(data.buffer.asUint8List());
-
           } catch (e) {
-
             continue;
           }
-        } else {
-
-        }
+        } else {}
 
         final title = p
             .basenameWithoutExtension(fileName)
@@ -242,7 +227,6 @@ class MediaImportService {
       );
       return importedTracks;
     } catch (e) {
-
       return [];
     }
   }
@@ -252,13 +236,11 @@ class MediaImportService {
   Future<List<TrackModel>> scanDownloadedMusic({
     Set<String>? existingPaths,
   }) async {
-
     try {
       final appDir = await getApplicationDocumentsDirectory();
       final musicDir = Directory(p.join(appDir.path, 'music'));
 
       if (!await musicDir.exists()) {
-
         return [];
       }
 
@@ -271,7 +253,6 @@ class MediaImportService {
       }
 
       if (filePaths.isEmpty) {
-
         return [];
       }
 
@@ -288,8 +269,7 @@ class MediaImportService {
           var title = p.basenameWithoutExtension(fileName);
 
           // Regex to match "Title [VideoID]" and extract "Title" and "VideoID"
-          final ytPattern = RegExp(r"^(.*)\s\[([a-zA-Z0-9_-]{11})\]$");
-          final match = ytPattern.firstMatch(
+          final match = _ytPattern.firstMatch(
             p.basenameWithoutExtension(fileName),
           );
           String stableId = _uuid.v4();
@@ -332,7 +312,6 @@ class MediaImportService {
       );
       return discoveredTracks;
     } catch (e) {
-
       return [];
     }
   }
@@ -357,7 +336,6 @@ class MediaImportService {
       final seconds = duration.inSeconds.remainder(60);
       return "$minutes:${seconds.toString().padLeft(2, '0')}";
     } catch (e) {
-
       return "0:00";
     } finally {
       await player.dispose();
