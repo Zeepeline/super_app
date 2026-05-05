@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-dim": "#00d4ee",
+                    "surface-container-low": "#131313",
+                    "on-secondary-fixed": "#00492b",
+                    "inverse-primary": "#006e2d",
+                    "primary-dim": "#63ef82",
+                    "surface-bright": "#2c2c2c",
+                    "error-container": "#b92902",
+                    "tertiary-fixed": "#0fe3ff",
+                    "secondary": "#7cfbb5",
+                    "surface": "#0e0e0e",
+                    "surface-dim": "#0e0e0e",
+                    "outline-variant": "#484847",
+                    "on-primary-fixed": "#004a1c",
+                    "on-tertiary": "#005762",
+                    "secondary-container": "#006d42",
+                    "background": "#0e0e0e",
+                    "on-error-container": "#ffd2c8",
+                    "on-secondary": "#005e39",
+                    "primary-container": "#1cb853",
+                    "outline": "#767575",
+                    "primary-fixed-dim": "#63ef82",
+                    "on-tertiary-container": "#004d58",
+                    "on-primary-fixed-variant": "#006a2b",
+                    "on-background": "#ffffff",
+                    "tertiary-fixed-dim": "#00d4ee",
+                    "secondary-dim": "#6deca8",
+                    "surface-container": "#1a1a1a",
+                    "secondary-fixed": "#7cfbb5",
+                    "inverse-on-surface": "#565555",
+                    "on-tertiary-fixed-variant": "#005763",
+                    "error-dim": "#d53d18",
+                    "surface-variant": "#262626",
+                    "primary": "#72fe8f",
+                    "tertiary-container": "#0fe3ff",
+                    "inverse-surface": "#fcf9f8",
+                    "error": "#ff7351",
+                    "surface-container-lowest": "#000000",
+                    "on-primary-container": "#002a0c",
+                    "primary-fixed": "#72fe8f",
+                    "on-surface-variant": "#adaaaa",
+                    "on-primary": "#005f26",
+                    "on-secondary-container": "#e2ffe9",
+                    "tertiary": "#88ebff",
+                    "surface-container-highest": "#262626",
+                    "surface-container-high": "#20201f",
+                    "on-secondary-fixed-variant": "#006940",
+                    "secondary-fixed-dim": "#6deca8",
+                    "surface-tint": "#72fe8f",
+                    "on-error": "#450900",
+                    "on-surface": "#ffffff",
+                    "on-tertiary-fixed": "#003840"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Plus Jakarta Sans"],
+                    "display": ["Plus Jakarta Sans"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .fill-icon {
+        font-variation-settings: 'FILL' 1;
+      }
+      ::-webkit-scrollbar { width: 4px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #262626; border-radius: 10px; }
+      .glass-panel { background: rgba(38, 38, 38, 0.4); backdrop-filter: blur(20px); }
+    </style>
+<style>
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style></head>
+<body class="bg-background text-on-surface font-body selection:bg-primary selection:text-on-primary-container">
+<!-- Top Navigation -->
+<nav class="fixed top-0 w-full z-50 flex items-center justify-between px-6 h-16 bg-transparent">
+<button class="w-10 h-10 flex items-center justify-center rounded-full glass-panel text-on-surface hover:text-primary transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full glass-panel text-on-surface hover:text-primary transition-colors">
+<span class="material-symbols-outlined">share</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full glass-panel text-on-surface hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</nav>
+<main class="pb-32">
+<!-- Hero Header Section -->
+<section class="relative w-full pt-20 px-6 overflow-hidden">
+<!-- Background Bloom -->
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-gradient-to-b from-primary/10 to-transparent blur-3xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col md:flex-row gap-10 items-center md:items-end">
+<!-- Uniform Cover Concept -->
+<div class="relative group">
+<div class="absolute -inset-1 bg-gradient-to-tr from-primary/20 to-transparent rounded-xl blur-lg transition duration-1000 group-hover:duration-200 group-hover:opacity-100 opacity-50"></div>
+<div class="relative w-64 aspect-[2/3] rounded-xl overflow-hidden shadow-2xl bg-surface-container-low border border-outline-variant/10">
+<img alt="Digital book cover" class="w-full h-full object-cover" data-alt="A sophisticated book cover featuring abstract obsidian textures and glowing neon green geometric patterns. The artwork is minimalist and high-end, utilizing deep blacks and the signature primary green pulse. The aesthetic is digital curator style, suggesting a premium e-reader experience with sharp, editorial lighting and dark mode elegance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdVIWS2zqOXURO0-f0jNUvFQ20-4sSQ3ne1hTh7zBJARGS4uYszWDehO2pxuiT2RcyH1A4AxdPUGFEPGt1QobLxlOJqzzCe8b8flf2rcxn_5XPswcIlYRwOGJuPH4sVZmapTOHYl9WObhtoQMmdmpvXU8AFG2IO9aQN4IYtSRYkZJrdV4apnkVZOjv9ZuSDX5I-AzbpVzehFYiHD5fvb4Dqsp5H6D1BHG3ou0jxcAo08GnqzwzR2b9bq7JIPtah0IeyojQqVTC2pU"/>
+<div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
+<span class="text-[10px] tracking-widest uppercase font-bold text-primary">EPUB EDITION</span>
+</div>
+</div>
+</div>
+<!-- Basic Metadata -->
+<div class="flex-1 text-center md:text-left space-y-4">
+<div>
+<h1 class="font-headline text-4xl md:text-6xl font-black tracking-tighter uppercase text-on-surface mb-2">Obsidian Rhythm</h1>
+<p class="font-headline text-xl text-primary font-bold tracking-tight">K. ELARA VANCE</p>
+</div>
+<div class="flex flex-wrap justify-center md:justify-start gap-6 text-on-surface-variant text-sm font-medium">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">description</span>
+<span class="">EPUB Format</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">data_usage</span>
+<span class="">4.2 MB</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">auto_stories</span>
+<span class="">342 Pages</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Reading Progress Card -->
+<section class="px-6 mt-12">
+<div class="p-8 rounded-3xl bg-surface-container-low border border-outline-variant/10">
+<div class="flex justify-between items-end mb-6">
+<div>
+<span class="block text-xs uppercase tracking-[0.2em] font-bold text-on-surface-variant mb-1">CURRENT STATUS</span>
+<h2 class="text-3xl font-black font-headline text-primary">65% COMPLETED</h2>
+</div>
+<div class="text-right">
+<span class="block text-xs uppercase tracking-[0.2em] font-bold text-on-surface-variant mb-1">REMAINING</span>
+<p class="text-xl font-bold font-headline text-on-surface">~ 2h 15m</p>
+</div>
+</div>
+<!-- Neon Liquid Slider -->
+<div class="relative h-2 w-full bg-outline-variant/20 rounded-full overflow-hidden">
+<div class="absolute top-0 left-0 h-full w-[65%] bg-gradient-to-r from-primary-container to-primary shadow-[0_0_15px_rgba(114,254,143,0.4)]"></div>
+</div>
+</div>
+</section>
+<!-- Action Grid -->
+<section class="px-6 mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-3 py-5 rounded-full bg-gradient-to-r from-primary-container to-primary text-on-primary-container font-headline font-extrabold uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all">
+<span class="material-symbols-outlined fill-icon">play_arrow</span>
+                Read Now
+            </button>
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-2 py-5 rounded-full glass-panel border border-outline-variant/20 text-on-surface font-headline font-bold uppercase text-xs tracking-widest hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-lg">headphones</span>
+                    Audio
+                </button>
+<button class="flex items-center justify-center gap-2 py-5 rounded-full glass-panel border border-outline-variant/20 text-on-surface font-headline font-bold uppercase text-xs tracking-widest hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-lg">settings</span>
+                    Config
+                </button>
+</div>
+</section>
+<!-- Content Split Layout -->
+<section class="px-6 mt-12 flex flex-col lg:flex-row gap-12">
+<!-- Synopsis -->
+<div class="lg:w-2/3">
+<h3 class="text-xs uppercase tracking-[0.3em] font-black text-primary mb-6">Synopsis</h3>
+<div class="max-h-64 overflow-y-auto pr-4 space-y-4 text-on-surface-variant leading-relaxed font-body">
+<p class="">In the silence of the obsidian fields, the rhythm of the old world still beats. "Obsidian Rhythm" explores the intersection of ancient geology and futuristic sonic landscapes, following a curator who uncovers a digital signal frozen in volcanic glass for over three millennia.</p>
+<p class="">As the protagonist delves deeper into the rhythmic patterns, the boundaries between physical reality and digital simulation begin to blur. Vance crafts a visceral narrative that challenges our perception of time, memory, and the permanence of data in a shifting universe.</p>
+<p class="">Praised for its "haunting atmosphere and architectural prose," this volume stands as a cornerstone of modern speculative editorial fiction.</p>
+</div>
+</div>
+<!-- Detailed Metadata -->
+<div class="lg:w-1/3">
+<h3 class="text-xs uppercase tracking-[0.3em] font-black text-primary mb-6">Information</h3>
+<div class="space-y-6">
+<div class="flex justify-between items-center py-1 border-b border-outline-variant/10">
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Published</span>
+<span class="text-sm font-medium">October 2023</span>
+</div>
+<div class="flex justify-between items-center py-1 border-b border-outline-variant/10">
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Language</span>
+<span class="text-sm font-medium">English (US)</span>
+</div>
+<div class="flex justify-between items-center py-1 border-b border-outline-variant/10">
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">ISBN</span>
+<span class="text-sm font-medium">978-3-16-148410-0</span>
+</div>
+<div class="pt-2">
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-3">Genre Tags</span>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter bg-surface-container-highest text-primary">Hard Science</span>
+<span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter bg-surface-container-highest text-primary">Cyberpunk</span>
+<span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter bg-surface-container-highest text-primary">Editorial</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Recommendations Section -->
+<section class="px-6 mt-16">
+<h3 class="text-xs uppercase tracking-[0.3em] font-black text-primary mb-8">Recommendations</h3>
+<div class="flex gap-6 overflow-x-auto pb-8 snap-x no-scrollbar">
+<!-- Book 1 -->
+<div class="flex-none w-48 snap-start group">
+<div class="relative mb-4">
+<div class="absolute -inset-0.5 bg-gradient-to-tr from-primary/10 to-transparent rounded-lg blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
+<div class="relative aspect-[2/3] rounded-lg overflow-hidden border border-outline-variant/20 bg-surface-container-high">
+<img alt="Cover 1" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AG5n-8l65T7h3-5zX1Zp9v1j8t2k4m7o9p0q1r2s3t4u5v6w7x8y9z0_"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+</div>
+</div>
+<h4 class="font-headline text-sm font-bold uppercase tracking-tight text-on-surface line-clamp-1">Silicon Pulse</h4>
+<p class="text-[10px] font-bold text-primary uppercase tracking-widest mt-1">Marcus Vane</p>
+</div>
+<!-- Book 2 -->
+<div class="flex-none w-48 snap-start group">
+<div class="relative mb-4">
+<div class="absolute -inset-0.5 bg-gradient-to-tr from-primary/10 to-transparent rounded-lg blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
+<div class="relative aspect-[2/3] rounded-lg overflow-hidden border border-outline-variant/20 bg-surface-container-high">
+<img alt="Cover 2" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AG5n-8l65T7h3-5zX1Zp9v1j8t2k4m7o9p0q1r2s3t4u5v6w7x8y9z0_"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+</div>
+</div>
+<h4 class="font-headline text-sm font-bold uppercase tracking-tight text-on-surface line-clamp-1">Deep Glass</h4>
+<p class="text-[10px] font-bold text-primary uppercase tracking-widest mt-1">Elias Thorne</p>
+</div>
+<!-- Book 3 -->
+<div class="flex-none w-48 snap-start group">
+<div class="relative mb-4">
+<div class="absolute -inset-0.5 bg-gradient-to-tr from-primary/10 to-transparent rounded-lg blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
+<div class="relative aspect-[2/3] rounded-lg overflow-hidden border border-outline-variant/20 bg-surface-container-high">
+<img alt="Cover 3" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AG5n-8l65T7h3-5zX1Zp9v1j8t2k4m7o9p0q1r2s3t4u5v6w7x8y9z0_"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+</div>
+</div>
+<h4 class="font-headline text-sm font-bold uppercase tracking-tight text-on-surface line-clamp-1">Neon Archive</h4>
+<p class="text-[10px] font-bold text-primary uppercase tracking-widest mt-1">Lyra Kora</p>
+</div>
+<!-- Book 4 -->
+<div class="flex-none w-48 snap-start group">
+<div class="relative mb-4">
+<div class="absolute -inset-0.5 bg-gradient-to-tr from-primary/10 to-transparent rounded-lg blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
+<div class="relative aspect-[2/3] rounded-lg overflow-hidden border border-outline-variant/20 bg-surface-container-high">
+<img alt="Cover 4" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AG5n-8l65T7h3-5zX1Zp9v1j8t2k4m7o9p0q1r2s3t4u5v6w7x8y9z0_"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+</div>
+</div>
+<h4 class="font-headline text-sm font-bold uppercase tracking-tight text-on-surface line-clamp-1">Shadow Signal</h4>
+<p class="text-[10px] font-bold text-primary uppercase tracking-widest mt-1">A. J. Pierce</p>
+</div>
+</div>
+</section></main>
+<!-- Navigation Shell -->
+<footer class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 h-20 pb-safe bg-[#1a1a1a]/60 backdrop-blur-xl rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)]">
+<a class="flex flex-col items-center justify-center text-[#adaaaa] hover:text-white transition-all scale-95 active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span class="font-['Inter'] text-[10px] tracking-widest uppercase mt-1">Explore</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#72fe8f] drop-shadow-[0_0_8px_rgba(114,254,143,0.5)] scale-95 active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined fill-icon">electric_bolt</span>
+<span class="font-['Inter'] text-[10px] tracking-widest uppercase mt-1">Curator</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#adaaaa] hover:text-white transition-all scale-95 active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">library_music</span>
+<span class="font-['Inter'] text-[10px] tracking-widest uppercase mt-1">Library</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#adaaaa] hover:text-white transition-all scale-95 active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Inter'] text-[10px] tracking-widest uppercase mt-1">Profile</span>
+</a>
+</footer>
+</body></html>

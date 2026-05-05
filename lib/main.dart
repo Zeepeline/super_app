@@ -12,6 +12,7 @@ import 'package:super_app/core/services/rag_index_service.dart';
 import 'package:super_app/core/services/user_memory_service.dart';
 import 'package:super_app/features/ai_assistant/presentation/pages/ai_chat_page.dart';
 
+import 'core/services/python_worker_service.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widgets/live_activity_island.dart';
 import 'features/ai_assistant/data/models/chat_message_model.dart';
@@ -22,6 +23,7 @@ import 'features/home/data/models/track_model.dart';
 import 'features/home/presentation/bloc/home_bloc.dart';
 import 'features/home/presentation/bloc/home_event.dart';
 import 'features/home/presentation/pages/home_page.dart';
+import 'features/home/presentation/pages/obsidian_home_page.dart';
 import 'features/home/presentation/widgets/mini_player.dart';
 import 'features/library/presentation/pages/library_page.dart';
 import 'features/music_player/presentation/cubit/player_cubit.dart';
@@ -65,6 +67,13 @@ void main() async {
     await di.sl<UserMemoryService>().initialize();
   } catch (e) {
     print("Failed to initialize AI Services: $e");
+  }
+
+  // Initialize Python Worker early
+  try {
+    sl<PythonWorkerService>().initWorker();
+  } catch (e) {
+    print("Failed to start Python Worker: $e");
   }
 
   // Get SharedPreferences from GetIt
@@ -140,9 +149,9 @@ class AuthWrapper extends StatelessWidget {
       return BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
           if (state is Authenticated) {
-            return const MainWrapper();
+            return const ObsidianHomePage();
           } else {
-            return const MainWrapper();
+            return const ObsidianHomePage();
           }
         },
       );

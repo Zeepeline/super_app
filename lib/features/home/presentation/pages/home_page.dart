@@ -10,8 +10,6 @@ import 'package:super_app/features/home/presentation/bloc/home_state.dart';
 import 'package:super_app/features/home/presentation/widgets/empty_library_view.dart';
 import 'package:super_app/features/home/presentation/widgets/popular_track_card.dart';
 import 'package:super_app/features/settings/presentation/pages/settings_page.dart';
-import 'package:super_app/features/home/domain/entities/track_entity.dart'
-    as home;
 import 'package:super_app/injection_container.dart';
 
 class HomePage extends StatelessWidget {

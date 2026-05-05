@@ -7,26 +7,18 @@ import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_new/return_code.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:serious_python/serious_python.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 import '../../features/home/data/models/track_model.dart';
 import './lyrics_service.dart';
+import './python_worker_service.dart';
 
 class YoutubeDownloadService {
   final YoutubeExplode _yt = YoutubeExplode();
   final LyricsService _lyricsService;
+  final PythonWorkerService _workerService;
 
-  // Persistent Worker State
-  static bool _isWorkerStarted = false;
-  static bool _isInitializing = false; // ignore: unused_field
-  static int? _workerPort;
-  static bool _wasRunCalledInThisProcess = false;
-  static final Map<String, Completer<void>> _activeDownloadCompleters = {};
-  static final Map<String, String?> _downloadErrors = {};
-
-  YoutubeDownloadService(this._lyricsService);
+  YoutubeDownloadService(this._lyricsService, this._workerService);
 
   void dispose() {
     _yt.close();
@@ -66,9 +58,7 @@ class YoutubeDownloadService {
           if (trackDuration == null) {
             finalDuration = _formatDuration(video.duration);
           }
-        } catch (e) {
-          // ignore: empty_catches
-        }
+        } catch (e) {}
       }
 
       final safeTitle = _sanitizeFilename(finalTitle);
@@ -95,34 +85,22 @@ class YoutubeDownloadService {
 
         final currentDownloadCompleter = Completer<void>();
         final videoIdStr = videoId;
-        _activeDownloadCompleters[videoIdStr] = currentDownloadCompleter;
+        _workerService.registerTaskCompleter(videoIdStr, currentDownloadCompleter);
 
         progressServer.listen((HttpRequest request) async {
           if (request.uri.path == '/progress') {
             final content = await utf8.decoder.bind(request).join();
             try {
               final data = jsonDecode(content);
-              final status = data['status'] as String?;
               final targetVideoId = data['videoId'] as String?;
 
-              if (status == 'worker_ready') {
-                _workerPort = (data['port'] as num).toInt();
-              } else if (targetVideoId == videoIdStr) {
+              if (targetVideoId == videoIdStr) {
                 final progress = (data['progress'] as num?)?.toDouble() ?? 0.0;
+                final status = data['status'] as String?;
 
-                if (status == 'error') {
-                  _downloadErrors[videoIdStr] =
-                      data['error']?.toString() ?? 'Unknown error';
-                  if (!currentDownloadCompleter.isCompleted) {
-                    currentDownloadCompleter.complete();
-                  }
-                } else if (status == 'done') {
-                  if (!currentDownloadCompleter.isCompleted) {
-                    currentDownloadCompleter.complete();
-                  }
-                } else if (status == 'processing') {
+                if (status == 'processing') {
                   onProgress?.call('Finalizing file...', 0.95);
-                } else {
+                } else if (status != 'done' && status != 'error') {
                   onProgress?.call(
                     'Downloading: ${(progress * 100).toInt()}%',
                     0.15 + (progress * 0.8),
@@ -135,11 +113,11 @@ class YoutubeDownloadService {
           }
         });
 
-        await initWorker();
+        await _workerService.initWorker();
 
         onProgress?.call('Starting download...', 0.15);
         final response = await Dio().post(
-          'http://127.0.0.1:$_workerPort/download',
+          'http://127.0.0.1:${_workerService.workerPort}/download',
           data: {
             "url": url,
             "output_path": finalPath,
@@ -156,17 +134,14 @@ class YoutubeDownloadService {
           const Duration(minutes: 15),
         );
 
-        if (_downloadErrors[videoIdStr] != null) {
-          final err = _downloadErrors[videoIdStr];
-          _downloadErrors.remove(videoIdStr);
+        if (_workerService.getTaskError(videoIdStr) != null) {
+          final err = _workerService.getTaskError(videoIdStr);
+          _workerService.clearTaskError(videoIdStr);
           throw Exception(err);
         }
 
         onProgress?.call('Finished downloading!', 0.96);
 
-        // --- FFmpeg FIX ---
-        // Sometimes YouTube m4a files have wrong headers/duration.
-        // We use ffmpeg-kit (which is already in pubspec) to re-mux it.
         onProgress?.call('Optimizing audio...', 0.98);
         final tempPath = '$finalPath.tmp';
         final file = File(finalPath);
@@ -200,215 +175,34 @@ class YoutubeDownloadService {
         );
       } finally {
         await progressServer?.close();
-        _activeDownloadCompleters.remove(videoId);
+        _workerService.removeTaskCompleter(videoId);
       }
     } catch (e) {
       rethrow;
     }
   }
 
-  /// Get direct stream URL via yt-dlp (Python Worker)
   Future<String?> getStreamUrl(String videoId) async {
     try {
-      // 1. Try to initialize worker.
-      // On first run (extraction), this can take 15-20s.
-      // We wait up to 45s to be safe, but it returns immediately if already ready.
-      await initWorker().timeout(const Duration(seconds: 45), onTimeout: () {});
+      await _workerService.initWorker().timeout(const Duration(seconds: 45), onTimeout: () {});
 
-      // 2. Plan A: Try Python Worker (yt-dlp) if available
-      if (_workerPort != null) {
+      if (_workerService.isReady) {
         try {
           final response = await Dio()
               .post(
-                'http://127.0.0.1:$_workerPort/get_url',
+                'http://127.0.0.1:${_workerService.workerPort}/get_url',
                 data: {"video_id": videoId},
               )
               .timeout(const Duration(seconds: 15));
 
           if (response.statusCode == 200 && response.data['url'] != null) {
             return response.data['url'];
-          } else {
-            return null;
           }
-        } catch (e) {
-          return null;
-        }
-      } else {
-        return null;
+        } catch (e) {}
       }
+      return null;
     } catch (e) {
       return null;
-    }
-  }
-
-  static Completer<void>? _initCompleter;
-
-  /// Ensures the Python worker is running and ready
-  Future<void> initWorker() async {
-    if (_isWorkerStarted && _workerPort != null) return;
-
-    if (_initCompleter != null) {
-      return _initCompleter!.future;
-    }
-
-    _initCompleter = Completer<void>();
-    _isInitializing = true;
-
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final savedPort = prefs.getInt('python_worker_port');
-      final savedPid = prefs.getInt('python_worker_pid');
-      final currentPid = pid;
-
-      if (savedPort != null && savedPid == currentPid) {
-        if (await _pingWorker(savedPort)) {
-          _workerPort = savedPort;
-          _isWorkerStarted = true;
-          await _setupNewProgressServer();
-          if (!_initCompleter!.isCompleted) _initCompleter!.complete();
-          return;
-        }
-      }
-
-      // 2. Start fresh worker
-      if (_wasRunCalledInThisProcess) {
-        if (savedPort != null && await _pingWorker(savedPort)) {
-          _workerPort = savedPort;
-          _isWorkerStarted = true;
-          await _setupNewProgressServer();
-          _initCompleter!.complete();
-          return;
-        }
-        _initCompleter!.complete();
-        return;
-      }
-
-      // Save PID *before* run to handle Hot Restart during initialization
-      await prefs.setInt('python_worker_pid', pid);
-
-      await _startFreshWorker();
-
-      if (_workerPort != null) {
-        await prefs.setInt('python_worker_port', _workerPort!);
-      }
-
-      _initCompleter!.complete();
-    } catch (e) {
-      if (!_initCompleter!.isCompleted) _initCompleter!.completeError(e);
-      _initCompleter = null;
-    } finally {
-      _isInitializing = false;
-    }
-  }
-
-  Future<bool> _pingWorker(int port) async {
-    try {
-      final response = await Dio().get(
-        'http://127.0.0.1:$port/status',
-        options: Options(
-          receiveTimeout: const Duration(seconds: 2),
-          connectTimeout: const Duration(seconds: 2),
-        ),
-      );
-      return response.statusCode == 200;
-    } catch (_) {
-      return false;
-    }
-  }
-
-  Future<void> _setupNewProgressServer() async {
-    HttpServer? progressServer;
-    try {
-      progressServer = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
-      final progressPort = progressServer.port;
-
-      progressServer.listen((HttpRequest request) async {
-        if (request.uri.path == '/progress') {
-          final content = await utf8.decoder.bind(request).join();
-          try {
-            final data = jsonDecode(content);
-            final videoId = data['videoId'] as String?;
-            final status = data['status'] as String?;
-
-            if (videoId != null &&
-                _activeDownloadCompleters.containsKey(videoId)) {
-              // Handle progress as before
-              if (status == 'done' || status == 'error') {
-                if (!_activeDownloadCompleters[videoId]!.isCompleted) {
-                  _activeDownloadCompleters[videoId]!.complete();
-                }
-              }
-              // Progress updates are handled by the caller who has the onProgress callback
-              // For simplicity, we keep it global or rely on the fact that
-              // only one download happens at a time or they are keyed by videoId.
-            }
-          } catch (e) {}
-          request.response.statusCode = HttpStatus.ok;
-          await request.response.close();
-        }
-      });
-
-      // Tell the existing Python worker to update its DART_PORT
-      await Dio().post(
-        'http://127.0.0.1:$_workerPort/update_dart_port',
-        data: {"port": progressPort},
-      );
-
-      // Keep server alive
-      // Note: In a real app, you might want to manage this lifecycle better
-    } catch (e) {}
-  }
-
-  Future<void> _startFreshWorker() async {
-    HttpServer? progressServer;
-    try {
-      progressServer = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
-      final progressPort = progressServer.port;
-
-      final completer = Completer<void>();
-
-      progressServer.listen((HttpRequest request) async {
-        if (request.uri.path == '/progress') {
-          final content = await utf8.decoder.bind(request).join();
-          try {
-            final data = jsonDecode(content);
-            if (data['status'] == 'worker_ready') {
-              _workerPort = (data['port'] as num).toInt();
-              if (!completer.isCompleted) completer.complete();
-            }
-          } catch (e) {}
-          request.response.statusCode = HttpStatus.ok;
-          await request.response.close();
-        }
-      });
-
-      const appPath = "app/app.zip";
-      await Future.delayed(const Duration(seconds: 2));
-
-      _wasRunCalledInThisProcess = true;
-      // For iOS, extraction and re-initialization are sensitive.
-      SeriousPython.run(
-        appPath,
-        appFileName: "main.py",
-        environmentVariables: {"DART_PORT": progressPort.toString()},
-      );
-
-      await completer.future.timeout(const Duration(seconds: 60));
-
-      if (_workerPort == null) {
-        throw Exception("Python Worker failed to start.");
-      }
-
-      // Persist the port for future sessions (Hot Restarts)
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('python_worker_port', _workerPort!);
-
-      _isWorkerStarted = true;
-    } finally {
-      // We keep the server alive briefly to handle any late messages
-      Future.delayed(const Duration(seconds: 5), () {
-        progressServer?.close();
-      });
     }
   }
 
@@ -439,13 +233,9 @@ class YoutubeDownloadService {
   }
 
   String _sanitizeFilename(String name) {
-    // Character that are illegal in Windows/macOS/Linux filenames
     final illegalChars = RegExp(r'[<>:"/\\|?*]');
-    // Replace with underscores
     String sanitized = name.replaceAll(illegalChars, '_');
-    // Remove control characters
     sanitized = sanitized.replaceAll(RegExp(r'[\x00-\x1F\x7F]'), '');
-    // Trim and handle extremely long names (max 200 chars to be safe)
     sanitized = sanitized.trim();
     if (sanitized.length > 200) {
       sanitized = sanitized.substring(0, 200);

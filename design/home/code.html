@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Obsidian Rhythm - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "on-tertiary-container": "#004d58",
+                "on-primary-container": "#002a0c",
+                "secondary-container": "#006d42",
+                "primary-container": "#1cb853",
+                "on-error": "#450900",
+                "surface-container": "#1a1a1a",
+                "on-surface-variant": "#adaaaa",
+                "tertiary-dim": "#00d4ee",
+                "error": "#ff7351",
+                "on-primary": "#005f26",
+                "secondary-dim": "#6deca8",
+                "on-tertiary-fixed-variant": "#005763",
+                "primary-dim": "#63ef82",
+                "on-secondary-fixed-variant": "#006940",
+                "error-dim": "#d53d18",
+                "outline": "#767575",
+                "secondary-fixed": "#7cfbb5",
+                "on-error-container": "#ffd2c8",
+                "surface-tint": "#72fe8f",
+                "on-primary-fixed": "#004a1c",
+                "on-surface": "#ffffff",
+                "inverse-primary": "#006e2d",
+                "tertiary-fixed-dim": "#00d4ee",
+                "on-secondary-container": "#e2ffe9",
+                "surface-container-low": "#131313",
+                "tertiary-container": "#0fe3ff",
+                "on-tertiary": "#005762",
+                "surface": "#0e0e0e",
+                "on-background": "#ffffff",
+                "surface-container-highest": "#262626",
+                "primary": "#72fe8f",
+                "secondary-fixed-dim": "#6deca8",
+                "surface-container-lowest": "#000000",
+                "inverse-on-surface": "#565555",
+                "tertiary": "#88ebff",
+                "tertiary-fixed": "#0fe3ff",
+                "surface-variant": "#262626",
+                "secondary": "#7cfbb5",
+                "on-secondary": "#005e39",
+                "background": "#0e0e0e",
+                "surface-bright": "#2c2c2c",
+                "outline-variant": "#484847",
+                "on-secondary-fixed": "#00492b",
+                "on-primary-fixed-variant": "#006a2b",
+                "error-container": "#b92902",
+                "inverse-surface": "#fcf9f8",
+                "primary-fixed-dim": "#63ef82",
+                "primary-fixed": "#72fe8f",
+                "on-tertiary-fixed": "#003840",
+                "surface-dim": "#0e0e0e",
+                "surface-container-high": "#20201f"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+            },
+            "fontFamily": {
+                "headline": ["Plus Jakarta Sans"],
+                "display": ["Plus Jakarta Sans"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(38, 38, 38, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .premium-card-gradient {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+        }
+        .text-glow {
+            text-shadow: 0 0 15px rgba(114, 254, 143, 0.4);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary/30">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-zinc-950/60 backdrop-blur-xl flex justify-between items-center px-6 h-16">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-primary/20">
+<img alt="user_profile_photo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiFqy-pc52WSLYQKIRgnjDWIxyWMvJYmDcvaF-wiRSzlgOfZTawam6dPHclAP9C7xh7ITl4rTKsoXm9e8iL7wjY-k_mEg02bZIPRMw08cMkJKPesY8pUPMOdR6K2QOjmR36gz_D_ZbUTgvt18wqr9ud-5midIzMFdJj4AbUSVBQLf01hqyPtZkUlOpayfFt5_A-8lzzqXaPKELfntxJmpthnJSAKnJEAtfZfdqzirP3E53egYU5M5JsZQhxk7fe6a2l-kiG9mKZOo"/>
+</div>
+<span class="font-['Plus_Jakarta_Sans'] tracking-tight font-bold text-lg text-white tracking-tighter">Obsidian Rhythm</span>
+</div>
+<button class="text-zinc-400 hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-2xl" data-icon="notifications">notifications</span>
+</button>
+</header>
+<main class="pt-20 pb-32 px-6 max-w-lg mx-auto space-y-6">
+<!-- Header Section -->
+<section class="space-y-1">
+<h1 class="font-display text-2xl font-extrabold tracking-tight text-white">Good evening, User</h1>
+<p class="text-on-surface-variant text-sm font-medium">85% creative peak reached today.</p>
+</section>
+<!-- Premium "Account" Card: Daily Rhythm Score -->
+<section class="premium-card-gradient p-5 rounded-[2rem] border border-white/10 shadow-2xl relative overflow-hidden">
+<div class="absolute -top-12 -right-12 w-32 h-32 bg-primary/5 rounded-full blur-3xl"></div>
+<div class="flex flex-col gap-5">
+<!-- Now Reading Module -->
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary shrink-0 border border-white/5">
+<span class="material-symbols-outlined" data-icon="auto_stories">auto_stories</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1.5">
+<span class="text-[10px] font-label uppercase tracking-widest text-on-surface-variant font-bold">Now Reading</span>
+<span class="text-[10px] font-bold text-primary">65%</span>
+</div>
+<h4 class="text-sm font-bold text-white truncate mb-2">Digital Minimalism</h4>
+<div class="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[65%] rounded-full shadow-[0_0_8px_rgba(114,254,143,0.4)]"></div>
+</div>
+</div>
+</div>
+<div class="h-px w-full bg-white/5"></div>
+<!-- Now Playing Module -->
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary shrink-0 border border-white/5">
+<span class="material-symbols-outlined" data-icon="music_note">music_note</span>
+</div>
+<div class="flex-1 min-w-0">
+<span class="text-[10px] font-label uppercase tracking-widest text-on-surface-variant font-bold">Now Playing</span>
+<div class="mt-1 truncate">
+<span class="text-sm font-bold text-white">Ambient Obsidian</span>
+<span class="text-xs text-on-surface-variant ml-2 italic">• Lofi Girl</span>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<div class="w-0.5 h-3 bg-primary animate-[bounce_1s_infinite]"></div>
+<div class="w-0.5 h-5 bg-primary animate-[bounce_1.2s_infinite]"></div>
+<div class="w-0.5 h-2 bg-primary animate-[bounce_0.8s_infinite]"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Quick Action Grid (Banking Style) -->
+<section>
+<h2 class="text-xs font-label uppercase tracking-widest text-zinc-500 mb-4 px-1">Quick Actions</h2>
+<div class="grid grid-cols-4 gap-4">
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-14 h-14 rounded-2xl glass-panel border border-white/5 flex items-center justify-center text-primary transition-all group-active:scale-95 group-hover:bg-primary group-hover:text-black">
+<span class="material-symbols-outlined text-2xl" data-icon="library_music" style="font-variation-settings: 'FILL' 1;">library_music</span>
+</div>
+<span class="text-[10px] font-semibold text-center leading-tight">Music</span>
+</button>
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-14 h-14 rounded-2xl glass-panel border border-white/5 flex items-center justify-center text-primary transition-all group-active:scale-95 group-hover:bg-primary group-hover:text-black">
+<span class="material-symbols-outlined text-2xl" data-icon="menu_book" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+</div>
+<span class="text-[10px] font-semibold text-center leading-tight">Reader</span>
+</button>
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-14 h-14 rounded-2xl glass-panel border border-white/5 flex items-center justify-center text-primary transition-all group-active:scale-95 group-hover:bg-primary group-hover:text-black">
+<span class="material-symbols-outlined text-2xl" data-icon="task_alt" style="font-variation-settings: 'FILL' 1;">task_alt</span>
+</div>
+<span class="text-[10px] font-semibold text-center leading-tight">Tasks</span>
+</button>
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-14 h-14 rounded-2xl glass-panel border border-white/5 flex items-center justify-center text-primary transition-all group-active:scale-95 group-hover:bg-primary group-hover:text-black">
+<span class="material-symbols-outlined text-2xl" data-icon="psychology" style="font-variation-settings: 'FILL' 1;">psychology</span>
+</div>
+<span class="text-[10px] font-semibold text-center leading-tight">AI</span>
+</button>
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-14 h-14 rounded-2xl glass-panel border border-white/5 flex items-center justify-center text-zinc-400 transition-all group-active:scale-95 group-hover:border-primary/40">
+<span class="material-symbols-outlined text-2xl" data-icon="calendar_today">calendar_today</span>
+</div>
+<span class="text-[10px] font-semibold text-center leading-tight">Calendar</span>
+</button>
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-14 h-14 rounded-2xl glass-panel border border-white/5 flex items-center justify-center text-zinc-400 transition-all group-active:scale-95 group-hover:border-primary/40">
+<span class="material-symbols-outlined text-2xl" data-icon="neurology">neurology</span>
+</div>
+<span class="text-[10px] font-semibold text-center leading-tight">Neural</span>
+</button>
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-14 h-14 rounded-2xl glass-panel border border-white/5 flex items-center justify-center text-zinc-400 transition-all group-active:scale-95 group-hover:border-primary/40">
+<span class="material-symbols-outlined text-2xl" data-icon="monitoring">monitoring</span>
+</div>
+<span class="text-[10px] font-semibold text-center leading-tight">Stats</span>
+</button>
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-14 h-14 rounded-2xl glass-panel border border-white/5 flex items-center justify-center text-zinc-400 transition-all group-active:scale-95 group-hover:border-primary/40">
+<span class="material-symbols-outlined text-2xl" data-icon="more_horiz">more_horiz</span>
+</div>
+<span class="text-[10px] font-semibold text-center leading-tight">More</span>
+</button>
+</div>
+</section>
+<!-- Recent Activity / "Transaction" List -->
+<section class="space-y-4">
+<div class="flex justify-between items-center px-1">
+<h2 class="text-xs font-label uppercase tracking-widest text-zinc-500">Quick Resume</h2>
+<button class="text-xs font-bold text-primary">View All</button>
+</div>
+<div class="glass-panel rounded-3xl border border-white/5 divide-y divide-white/5 overflow-hidden">
+<!-- Activity Item 1 (Music) -->
+<div class="flex items-center gap-4 p-4 hover:bg-white/5 transition-colors cursor-pointer active:scale-[0.98] transition-transform duration-150">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined" data-icon="play_arrow" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="text-sm font-bold text-white truncate">Ambient Obsidian</h4>
+<p class="text-[11px] text-on-surface-variant truncate">Now Playing • 04:22 remaining</p>
+</div>
+<div class="text-right">
+<span class="text-xs font-bold text-primary">Resume</span>
+</div>
+</div>
+<!-- Activity Item 2 (Book) -->
+<div class="flex items-center gap-4 p-4 hover:bg-white/5 transition-colors cursor-pointer active:scale-[0.98] transition-transform duration-150">
+<div class="w-12 h-12 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-400 shrink-0">
+<span class="material-symbols-outlined" data-icon="auto_stories">auto_stories</span>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="text-sm font-bold text-white truncate">Digital Minimalism</h4>
+<p class="text-[11px] text-on-surface-variant truncate">Last read 2h ago • Ch. 4</p>
+</div>
+<div class="text-right shrink-0">
+<span class="text-[10px] font-medium text-zinc-500">Page 142</span>
+</div>
+</div>
+<!-- Activity Item 3 (Task) -->
+<div class="flex items-center gap-4 p-4 hover:bg-white/5 transition-colors cursor-pointer active:scale-[0.98] transition-transform duration-150">
+<div class="w-12 h-12 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-400 shrink-0">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="text-sm font-bold text-white truncate">Creative Session Completed</h4>
+<p class="text-[11px] text-on-surface-variant truncate">Daily task finished • 1h ago</p>
+</div>
+<div class="text-right shrink-0">
+<span class="text-[10px] font-bold text-emerald-500">+12 XP</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full h-20 flex justify-around items-center px-4 pb-4 bg-zinc-950/80 backdrop-blur-2xl rounded-t-[2.5rem] z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.6)] border-t border-white/5">
+<a class="flex flex-col items-center justify-center text-primary drop-shadow-[0_0_10px_rgba(114,254,143,0.3)] hover:text-emerald-300 transition-all duration-300 active:scale-90" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="grid_view" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest font-bold mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-500 hover:text-primary transition-all duration-300 active:scale-90" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="calendar_today">calendar_today</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest font-semibold mt-1">Schedule</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-500 hover:text-primary transition-all duration-300 active:scale-90" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest font-semibold mt-1">Insights</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-500 hover:text-primary transition-all duration-300 active:scale-90" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="person">person</span>
+<span class="font-['Inter'] text-[10px] uppercase tracking-widest font-semibold mt-1">Profile</span>
+</a>
+</nav>
+</body></html>

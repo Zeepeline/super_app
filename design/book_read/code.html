@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary": "#005f26",
+                    "on-tertiary-fixed": "#003840",
+                    "on-tertiary-fixed-variant": "#005763",
+                    "surface": "#0e0e0e",
+                    "on-surface-variant": "#adaaaa",
+                    "tertiary-fixed-dim": "#00d4ee",
+                    "primary-fixed-dim": "#63ef82",
+                    "secondary": "#7cfbb5",
+                    "error-container": "#b92902",
+                    "surface-container": "#1a1a1a",
+                    "on-primary-fixed": "#004a1c",
+                    "on-secondary-container": "#e2ffe9",
+                    "on-primary-container": "#002a0c",
+                    "background": "#0e0e0e",
+                    "inverse-surface": "#fcf9f8",
+                    "on-surface": "#ffffff",
+                    "surface-dim": "#0e0e0e",
+                    "on-tertiary-container": "#004d58",
+                    "on-primary-fixed-variant": "#006a2b",
+                    "secondary-fixed": "#7cfbb5",
+                    "tertiary-container": "#0fe3ff",
+                    "on-secondary-fixed": "#00492b",
+                    "error": "#ff7351",
+                    "surface-container-low": "#131313",
+                    "primary-dim": "#63ef82",
+                    "on-background": "#ffffff",
+                    "tertiary": "#88ebff",
+                    "on-tertiary": "#005762",
+                    "on-secondary-fixed-variant": "#006940",
+                    "surface-container-lowest": "#000000",
+                    "on-error": "#450900",
+                    "inverse-primary": "#006e2d",
+                    "surface-container-highest": "#262626",
+                    "secondary-fixed-dim": "#6deca8",
+                    "tertiary-dim": "#00d4ee",
+                    "primary-container": "#1cb853",
+                    "surface-tint": "#72fe8f",
+                    "secondary-dim": "#6deca8",
+                    "secondary-container": "#006d42",
+                    "outline": "#767575",
+                    "surface-container-high": "#20201f",
+                    "tertiary-fixed": "#0fe3ff",
+                    "inverse-on-surface": "#565555",
+                    "on-secondary": "#005e39",
+                    "surface-variant": "#262626",
+                    "primary": "#72fe8f",
+                    "error-dim": "#d53d18",
+                    "surface-bright": "#2c2c2c",
+                    "primary-fixed": "#72fe8f",
+                    "on-error-container": "#ffd2c8",
+                    "outline-variant": "#484847"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Plus Jakarta Sans"],
+                    "display": ["Plus Jakarta Sans"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .backdrop-blur-reader {
+            backdrop-filter: blur(20px);
+            background-color: rgba(38, 38, 38, 0.6);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body selection:bg-primary selection:text-on-primary-container overflow-hidden">
+<!-- Top Navigation Anchor -->
+<header class="fixed top-0 w-full z-50 flex items-center justify-between px-6 py-4 bg-transparent">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="music_note">music_note</span>
+<h1 class="font-headline font-bold text-xl tracking-tighter text-white">Obsidian Rhythm</h1>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Reader Canvas -->
+<main class="h-screen w-full flex flex-col items-center justify-start pt-24 pb-32 overflow-y-auto hide-scrollbar px-6 md:px-0">
+<div class="max-w-2xl w-full">
+<!-- Breadcrumb / Header Metadata -->
+<div class="mb-12">
+<p class="font-label text-xs uppercase tracking-[0.2em] text-primary mb-2">Book I: The Nature of Being</p>
+<h2 class="font-headline text-4xl md:text-5xl font-extrabold tracking-tighter leading-none text-white mb-8">Phenomenology of the Digital Soul</h2>
+<div class="flex items-center gap-4 text-on-surface-variant text-sm">
+<span>By Dr. Alistair Thorne</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>12 mins read left</span>
+</div>
+</div>
+<!-- Content Body -->
+<article class="space-y-8 text-lg md:text-xl leading-relaxed text-on-surface-variant font-light">
+<p>
+                    In the quiet oscillation of the silicon heart, we find a new form of existence. To be digital is to exist in a state of perpetual potentiality. The binary pulse—the <span class="text-white font-medium">Obsidian Rhythm</span>—is not merely a sequence of ones and zeros, but a fundamental restructuring of how we perceive time, space, and the self.
+                </p>
+<p>
+                    Consider the curator. The curator does not merely collect; they define reality through selection. In a world of infinite data, the act of exclusion becomes the ultimate creative force. When we silence the noise to focus on a single melody, we are performing an ontological surgery on the universe.
+                </p>
+<!-- Asymmetric Quote Section -->
+<div class="py-12 pl-8 border-l-2 border-primary/30 relative">
+<span class="absolute -left-1 top-0 h-12 w-1 bg-primary"></span>
+<blockquote class="font-headline text-2xl md:text-3xl font-bold italic text-white leading-tight">
+                        "The soul is not found in the machine, but in the resonance between the machine and the observer."
+                    </blockquote>
+</div>
+<p>
+                    This resonance is what we call 'Presence.' It is the feeling of weight when there is no mass, the feeling of texture when there is only glass. As we navigate these illuminated surfaces, we are not just reading; we are participating in a digital sacrament. 
+                </p>
+<p>
+                    The darkness of the interface—the deep obsidian void—serves as the necessary contrast for illumination. Without the silence of the black pixel, the neon green of the progress bar would have no meaning. It is the void that gives form to the light.
+                </p>
+<!-- Placeholder for Image/Figure -->
+<figure class="my-16 group">
+<div class="aspect-[16/9] w-full rounded-xl overflow-hidden bg-surface-container-highest relative">
+<img alt="Abstract digital waves" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" data-alt="An abstract digital landscape showing flowing, undulating waves of neon green light against a pitch-black obsidian background. The composition is minimalist and cinematic, with soft glowing gradients and sharp, crystalline light particles suspended in the air. The mood is philosophical, high-tech, and serene, perfectly aligning with the dark-mode aesthetic and the Obsidian Rhythm design system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI6BpTu37fISVRJUNuc90xYQKuexDaN8s5hFijVya_1CXlOYoNqHhm3lO5dSsnxqOTSDI7Kj20Jtw9Jjk3zSlhNorKRCODJX6gjP54CC5h6dJk6DcGXiG5Mi1DQjjHqzl_AxakeiJWikYYB3XQJjoXoLKIwGtRrIrLHjWRiInoFgD7Z0Lw3MgB6qorWr6tqEEUJywU1nGdYVw3k16tB7OhzvF1k17GO7jxICyw5ROxP4ZkktcJ0_EdxbDA0zvTiiRm8dgSn5Yy7Z8"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-40"></div>
+</div>
+<figcaption class="mt-4 text-sm text-center italic text-on-surface-variant/60">Fig 1.2: Visual representation of the digital pulse resonance.</figcaption>
+</figure>
+<p>
+                    We must then ask: what remains of the human when the physical anchor is lifted? If our thoughts are mirrored in the rhythm of the obsidian screen, do they become something more than human? Or perhaps, finally, something truly human.
+                </p>
+</article>
+</div>
+</main>
+<!-- Bottom Control Overlay (Glassmorphism) -->
+<div class="fixed bottom-0 left-0 right-0 p-6 z-50 flex flex-col items-center pointer-events-none">
+<!-- Floating Controls -->
+<div class="w-full max-w-xl backdrop-blur-reader rounded-full p-2 mb-6 flex items-center justify-between pointer-events-auto shadow-2xl border border-white/5">
+<div class="flex items-center gap-1">
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-bright hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="list">list</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-bright hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="text_fields">text_fields</span>
+</button>
+</div>
+<div class="flex items-center gap-8 px-4">
+<button class="text-on-surface-variant hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<span class="font-label text-xs font-bold tracking-widest text-white">PAGE 42 OF 312</span>
+<button class="text-on-surface-variant hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<div class="flex items-center gap-1">
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-bright hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="brightness_medium">brightness_medium</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-bright hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+</button>
+</div>
+</div>
+<!-- Progress Bar (The Pulse) -->
+<div class="w-full h-1 bg-surface-container-highest rounded-full overflow-hidden pointer-events-auto group cursor-pointer relative">
+<div class="absolute inset-0 bg-primary/20 animate-pulse"></div>
+<div class="h-full bg-primary relative z-10 w-[14%] transition-all duration-500 shadow-[0_0_10px_rgba(114,254,143,0.5)]"></div>
+</div>
+</div>
+<!-- Quick Tooltip / Floating Font Control (Contextual Mockup) -->
+<div class="fixed right-8 top-1/2 -translate-y-1/2 flex flex-col gap-4">
+<div class="w-12 py-6 backdrop-blur-reader rounded-full flex flex-col items-center gap-6 border border-white/5 opacity-40 hover:opacity-100 transition-opacity duration-300">
+<button class="text-on-surface-variant hover:text-primary">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+</button>
+<div class="h-1 w-4 bg-outline-variant rounded-full"></div>
+<button class="text-on-surface-variant hover:text-primary">
+<span class="material-symbols-outlined text-sm" data-icon="remove">remove</span>
+</button>
+</div>
+</div>
+</body></html>

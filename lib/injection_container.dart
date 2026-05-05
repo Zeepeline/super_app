@@ -18,8 +18,12 @@ import 'core/services/rag_service.dart';
 import 'core/services/secure_storage_service.dart';
 import 'core/services/user_memory_service.dart';
 import 'core/services/voice_service.dart';
+import 'core/services/book_library_service.dart';
+import 'core/services/book_cover_service.dart';
+import 'core/services/python_worker_service.dart';
 import 'core/services/youtube_download_service.dart';
 import 'core/services/youtube_explode_service.dart';
+import 'core/services/book_store_service.dart';
 import 'features/ai_assistant/presentation/cubit/ai_chat_cubit.dart';
 import 'features/auth/data/datasources/auth_remote_datasource.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
@@ -56,6 +60,10 @@ import 'features/settings/domain/usecases/get_settings.dart';
 import 'features/settings/domain/usecases/logout.dart';
 import 'features/settings/domain/usecases/update_audio_quality.dart';
 import 'features/settings/presentation/bloc/settings_bloc.dart';
+import 'features/book_search/data/datasources/book_remote_datasource.dart';
+import 'features/book_search/data/repositories/book_search_repository_impl.dart';
+import 'features/book_search/domain/repositories/book_search_repository.dart';
+import 'features/book_search/presentation/bloc/book_search_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -63,13 +71,25 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   // 1. Cast the handler to our custom implementation to access specific methods/streams
   final customHandler = audioHandler as custom_audio.AudioHandler;
 
+  // ===== EXTERNAL =====
+  // SharedPreferences - initialize synchronously first because other services depend on it
+  final prefs = await SharedPreferences.getInstance();
+  sl.registerSingleton<SharedPreferences>(prefs);
+
+  sl.registerSingleton<Connectivity>(Connectivity());
+  sl.registerSingleton<HiveInterface>(Hive);
+  sl.registerSingleton<Dio>(Dio());
+
   // ===== CORE SERVICES =====
   sl.registerSingleton<audio_service.AudioHandler>(customHandler);
   sl.registerSingleton<custom_audio.AudioHandler>(customHandler);
-  sl.registerSingleton<LyricsService>(LyricsService(Dio()));
+  sl.registerSingleton<LyricsService>(LyricsService(sl()));
+  sl.registerSingleton<PythonWorkerService>(PythonWorkerService(sl()));
+  sl.registerSingleton<BookCoverService>(BookCoverService());
+  sl.registerSingleton<BookLibraryService>(BookLibraryService(sl()));
   sl.registerSingleton<DownloadService>(DownloadService());
   sl.registerSingleton<MediaImportService>(MediaImportService());
-  sl.registerSingleton<YoutubeDownloadService>(YoutubeDownloadService(sl()));
+  sl.registerSingleton<YoutubeDownloadService>(YoutubeDownloadService(sl(), sl()));
   sl.registerSingleton<YouTubeExplodeService>(YouTubeExplodeService());
   sl.registerSingleton<SecureStorageService>(SecureStorageService());
   sl.registerSingleton<GeminiService>(GeminiService(sl()));
@@ -81,14 +101,18 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
     () => AiToolsService(sl(), sl(), sl(), sl(), sl(), sl()),
   );
   sl.registerLazySingleton<RagService>(() => RagService(sl(), sl()));
+  
+  // Register Book Search before BookStoreService
+  sl.registerSingleton<BookSearchRepository>(
+    BookSearchRepositoryImpl(BookRemoteDataSourceImpl(sl())),
+  );
+  sl.registerSingleton<BookStoreService>(BookStoreService(sl(), sl(), sl()));
 
   // ===== EXTERNAL =====
-  sl.registerSingleton<Connectivity>(Connectivity());
-  sl.registerSingleton<HiveInterface>(Hive);
+  // sl.registerSingleton<Connectivity>(Connectivity()); (moved up)
+  // sl.registerSingleton<HiveInterface>(Hive); (moved up)
 
-  // SharedPreferences - initialize synchronously
-  final prefs = await SharedPreferences.getInstance();
-  sl.registerSingleton<SharedPreferences>(prefs);
+  // SharedPreferences - initialize synchronously (moved up)
 
   // ===== DATA SOURCES =====
   sl.registerSingleton<AuthRemoteDataSource>(MockAuthRemoteDataSourceImpl());
@@ -184,6 +208,7 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
     ),
   );
   sl.registerFactory(() => AiChatCubit(sl(), sl()));
+  sl.registerFactory(() => BookSearchBloc(sl()));
 
   // Music Player - register as singleton (needs repository already registered)
   sl.registerSingleton<PlayerCubit>(

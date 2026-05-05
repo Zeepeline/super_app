@@ -33,6 +33,27 @@ migrate_working_dir/
 /build/
 /coverage/
 
+# Python
+python_app/site-packages/
+python_app/.env
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+pyvenv.cfg
+.python-version
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.mypy_cache/
+.tox/
+.coverage
+*.db
+*.sqlite
+
 # Symbolication related
 app.*.symbols
 

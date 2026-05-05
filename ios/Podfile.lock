@@ -54,6 +54,13 @@ PODS:
     - DKImagePickerController/PhotoGallery
     - Flutter
   - Flutter (1.0.0)
+  - flutter_inappwebview_ios (0.0.1):
+    - Flutter
+    - flutter_inappwebview_ios/Core (= 0.0.1)
+    - OrderedSet (~> 6.0.3)
+  - flutter_inappwebview_ios/Core (0.0.1):
+    - Flutter
+    - OrderedSet (~> 6.0.3)
   - flutter_secure_storage (6.0.0):
     - Flutter
   - flutter_tts (0.0.1):
@@ -72,7 +79,10 @@ PODS:
     - onnxruntime-objc/Core (= 1.15.1)
   - onnxruntime-objc/Core (1.15.1):
     - onnxruntime-c (= 1.15.1)
+  - OrderedSet (6.0.3)
   - package_info_plus (0.4.5):
+    - Flutter
+  - pdfx (1.0.0):
     - Flutter
   - permission_handler_apple (9.3.0):
     - Flutter
@@ -112,12 +122,14 @@ DEPENDENCIES:
   - ffmpeg_kit_flutter_new (from `.symlinks/plugins/ffmpeg_kit_flutter_new/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
   - Flutter (from `Flutter`)
+  - flutter_inappwebview_ios (from `.symlinks/plugins/flutter_inappwebview_ios/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - flutter_tts (from `.symlinks/plugins/flutter_tts/ios`)
   - just_audio (from `.symlinks/plugins/just_audio/darwin`)
   - on_audio_query_ios (from `.symlinks/plugins/on_audio_query_ios/ios`)
   - onnxruntime (from `.symlinks/plugins/onnxruntime/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
+  - pdfx (from `.symlinks/plugins/pdfx/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - rag_engine_flutter (from `.symlinks/plugins/rag_engine_flutter/ios`)
   - serious_python_darwin (from `.symlinks/plugins/serious_python_darwin/darwin`)
@@ -135,6 +147,7 @@ SPEC REPOS:
     - DKPhotoGallery
     - onnxruntime-c
     - onnxruntime-objc
+    - OrderedSet
     - ReachabilitySwift
     - SDWebImage
     - SwiftyBeaver
@@ -157,6 +170,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/file_picker/ios"
   Flutter:
     :path: Flutter
+  flutter_inappwebview_ios:
+    :path: ".symlinks/plugins/flutter_inappwebview_ios/ios"
   flutter_secure_storage:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
   flutter_tts:
@@ -169,6 +184,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/onnxruntime/ios"
   package_info_plus:
     :path: ".symlinks/plugins/package_info_plus/ios"
+  pdfx:
+    :path: ".symlinks/plugins/pdfx/ios"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   rag_engine_flutter:
@@ -199,6 +216,7 @@ SPEC CHECKSUMS:
   ffmpeg_kit_flutter_new: 12426a19f10ac81186c67c6ebc4717f8f4364b7f
   file_picker: a0560bc09d61de87f12d246fc47d2119e6ef37be
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  flutter_inappwebview_ios: b89ba3482b96fb25e00c967aae065701b66e9b99
   flutter_secure_storage: 1ed9476fba7e7a782b22888f956cce43e2c62f13
   flutter_tts: 35ac3c7d42412733e795ea96ad2d7e05d0a75113
   just_audio: 4e391f57b79cad2b0674030a00453ca5ce817eed
@@ -206,7 +224,9 @@ SPEC CHECKSUMS:
   onnxruntime: 2ab1957eb029c71d47f7bb35cc4efc9f0d297828
   onnxruntime-c: ebdcfd8650bcbd10121c125262f99dea681b92a3
   onnxruntime-objc: ae7acec7a3d03eaf072d340afed7a35635c1c2a6
+  OrderedSet: e539b66b644ff081c73a262d24ad552a69be3a94
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
+  pdfx: 77f4dddc48361fbb01486fa2bdee4532cbb97ef3
   permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
   rag_engine_flutter: 340c0090dfc537ae364b63b6a9c3cbf02e7b7519
   ReachabilitySwift: 32793e867593cfc1177f5d16491e3a197d2fccda
