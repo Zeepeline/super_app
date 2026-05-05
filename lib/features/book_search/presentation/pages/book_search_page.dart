@@ -2,24 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:super_app/core/services/books/book_store_service.dart';
 import 'package:super_app/core/theme/app_theme.dart';
+import 'package:super_app/features/book_collection/presentation/widgets/external_sources_list.dart';
 import 'package:super_app/injection_container.dart';
 import '../bloc/book_search_bloc.dart';
 import '../widgets/book_search_result_item.dart';
 
 class BookSearchPage extends StatelessWidget {
-  const BookSearchPage({super.key});
+  final bool showAppBar;
+  const BookSearchPage({super.key, this.showAppBar = true});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<BookSearchBloc>(),
-      child: const BookSearchView(),
+      child: BookSearchView(showAppBar: showAppBar),
     );
   }
 }
 
 class BookSearchView extends StatefulWidget {
-  const BookSearchView({super.key});
+  final bool showAppBar;
+  const BookSearchView({super.key, this.showAppBar = true});
 
   @override
   State<BookSearchView> createState() => _BookSearchViewState();
@@ -33,7 +36,7 @@ class _BookSearchViewState extends State<BookSearchView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.kBackgroundColor,
-      appBar: AppBar(
+      appBar: widget.showAppBar ? AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text('Book Store'),
@@ -41,7 +44,7 @@ class _BookSearchViewState extends State<BookSearchView> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-      ),
+      ) : null,
       body: Column(
         children: [
           _buildSearchField(context),
@@ -117,6 +120,9 @@ class _BookSearchViewState extends State<BookSearchView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(height: 24),
+          const ExternalSourcesList(),
+          const SizedBox(height: 40),
           // Genre Chips
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),

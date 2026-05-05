@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'dart:io';
 import 'dart:ui';
 
@@ -127,13 +128,15 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
       final session = await AudioSession.instance;
       await session.setActive(true);
 
-      // 3. Resolve source
+      // 3. Resolve source with fallback
       AudioSource? source;
       final resolvedLocalPath = await _resolvePath(track.localPath);
 
-      if (resolvedLocalPath != null) {
+      if (resolvedLocalPath != null && await File(resolvedLocalPath).exists()) {
+        dev.log("AudioHandler: Playing from local file: $resolvedLocalPath");
         source = AudioSource.file(resolvedLocalPath);
       } else if (track.audioUrl.isNotEmpty) {
+        dev.log("AudioHandler: Local file missing or invalid, falling back to streaming");
         source = AudioSource.uri(
           Uri.parse(track.audioUrl),
           headers: {
@@ -144,15 +147,15 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
       }
 
       if (source == null) {
-        throw Exception(
-          "No valid audio source found for track: ${track.title}",
-        );
+        // Last resort: If it's a YouTube ID, we might need one more refresh attempt
+        // but for now we throw to trigger the Repository's retry logic
+        throw Exception("No valid audio source (local or stream) for: ${track.title}");
       }
 
       // 4. Set source and start playing immediately
-      // We don't await load() here because it can hang in background.
-      // just_audio will start playing as soon as it's buffered.
-      await _player.setAudioSource(source);
+      // We set preload: false to prevent the player from hanging/awaiting 
+      // full metadata load while in background, which can cause OS suspension.
+      await _player.setAudioSource(source, preload: false);
 
       // 5. Prepare metadata
       final item = MediaItem(
@@ -168,8 +171,8 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
       // 6. Start playback
       await play();
     } catch (e) {
-      // If error occurs, maybe try to skip to next if it was an auto-play?
-      // For now just log.
+      dev.log("AudioHandler: Error playing track: $e");
+      rethrow;
     }
   }
 
@@ -216,5 +219,9 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
   // Expose streams for UI components
   Stream<PlayerState> get playerStateStream => _player.playerStateStream;
   Stream<Duration> get positionStream => _player.positionStream;
-  Stream<Duration?> get durationStream => _player.durationStream;
+
+  // Use MediaItem duration as source of truth to avoid just_audio's
+  // incorrect bitrate estimation for YouTube streams.
+  Stream<Duration?> get durationStream =>
+      mediaItem.map((item) => item?.duration);
 }

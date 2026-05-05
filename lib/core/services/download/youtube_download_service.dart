@@ -8,8 +8,8 @@ import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_new/return_code.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:super_app/core/services/media/lyrics_service.dart';
 import 'package:super_app/core/services/infrastructure/python_worker_service.dart';
+import 'package:super_app/core/services/media/lyrics_service.dart';
 import 'package:super_app/features/home/data/models/track_model.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
@@ -119,18 +119,21 @@ class YoutubeDownloadService {
         await _workerService.initWorker();
 
         onProgress?.call('Starting download...', 0.15);
-        final response = await Dio(BaseOptions(
-          connectTimeout: const Duration(seconds: 10),
-          receiveTimeout: const Duration(seconds: 10),
-        )).post(
-          'http://127.0.0.1:${_workerService.workerPort}/download',
-          data: {
-            "url": url,
-            "output_path": finalPath,
-            "port": progressPort,
-            "video_id": videoIdStr,
-          },
-        );
+        final response =
+            await Dio(
+              BaseOptions(
+                connectTimeout: const Duration(seconds: 10),
+                receiveTimeout: const Duration(seconds: 10),
+              ),
+            ).post(
+              'http://127.0.0.1:${_workerService.workerPort}/download',
+              data: {
+                "url": url,
+                "output_path": finalPath,
+                "port": progressPort,
+                "video_id": videoIdStr,
+              },
+            );
 
         if (response.statusCode != 200) {
           throw Exception("Failed to communicate with Python Worker");
@@ -188,12 +191,39 @@ class YoutubeDownloadService {
     }
   }
 
-  Future<String?> getStreamUrl(String videoId) async {
+  Future<String?> getStreamUrl(
+    String videoId, {
+    bool forceWorker = false,
+  }) async {
     try {
-      // 1. Try Python Worker first (Usually more stable for long-term URLs)
+      if (!forceWorker) {
+        // 1. Try youtube_explode_dart FIRST for instant playback (Zero delay)
+        dev.log(
+          "Trying YouTubeExplode for instant stream URL...",
+          name: "YoutubeDownloadService",
+        );
+        try {
+          final manifest = await _yt.videos.streamsClient.getManifest(videoId);
+          final streamInfo = manifest.audioOnly.withHighestBitrate();
+          return streamInfo.url.toString();
+        } catch (e) {
+          dev.log(
+            "YouTubeExplode failed: $e, falling back to Python Worker...",
+            name: "YoutubeDownloadService",
+          );
+        }
+      } else {
+        dev.log(
+          "Forcing Python Worker for $videoId",
+          name: "YoutubeDownloadService",
+        );
+      }
+
+      // 2. Fallback to Python Worker (yt-dlp) if YouTubeExplode fails or throttles
       await _workerService.initWorker().timeout(
-        const Duration(seconds: 15),
-        onTimeout: () => dev.log("Worker init timeout, falling back to YouTubeExplode", name: "YoutubeDownloadService"),
+        const Duration(seconds: 5),
+        onTimeout: () =>
+            dev.log("Worker init timeout", name: "YoutubeDownloadService"),
       );
 
       if (_workerService.isReady) {
@@ -209,17 +239,15 @@ class YoutubeDownloadService {
             return response.data['url'];
           }
         } catch (e) {
-          dev.log("Worker get_url failed: $e, trying fallback...", name: "YoutubeDownloadService");
+          dev.log("Worker get_url failed: $e", name: "YoutubeDownloadService");
         }
       }
-
-      // 2. Fallback to youtube_explode_dart directly if worker fails
-      dev.log("Using YouTubeExplode fallback for $videoId", name: "YoutubeDownloadService");
-      final manifest = await _yt.videos.streamsClient.getManifest(videoId);
-      final streamInfo = manifest.audioOnly.withHighestBitrate();
-      return streamInfo.url.toString();
+      return null;
     } catch (e) {
-      dev.log("Final error getting stream URL: $e", name: "YoutubeDownloadService");
+      dev.log(
+        "Final error getting stream URL: $e",
+        name: "YoutubeDownloadService",
+      );
       return null;
     }
   }

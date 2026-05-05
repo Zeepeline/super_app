@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:super_app/core/theme/app_theme.dart';
+import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-
 import 'package:super_app/core/services/books/book_store_service.dart';
+import 'package:super_app/core/theme/app_theme.dart';
 
 class RecommendationSection extends StatelessWidget {
   final List<BookRecommendation> recommendations;
@@ -40,18 +39,22 @@ class RecommendationSection extends StatelessWidget {
                       child: Container(
                         height: 200,
                         width: double.infinity,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: AppTheme.kSurfaceContainerLowColor,
                         ),
-                        child: book.coverUrl != null && book.coverUrl!.isNotEmpty
+                        child:
+                            book.coverUrl != null && book.coverUrl!.isNotEmpty
                             ? CachedNetworkImage(
                                 imageUrl: book.coverUrl!,
                                 fit: BoxFit.cover,
-                                placeholder: (context, url) => Shimmer.fromColors(
-                                  baseColor: AppTheme.kSurfaceContainerLowColor,
-                                  highlightColor: AppTheme.kSurfaceContainerHighColor,
-                                  child: Container(color: Colors.white),
-                                ),
+                                placeholder: (context, url) =>
+                                    Shimmer.fromColors(
+                                      baseColor:
+                                          AppTheme.kSurfaceContainerLowColor,
+                                      highlightColor:
+                                          AppTheme.kSurfaceContainerHighColor,
+                                      child: Container(color: Colors.white),
+                                    ),
                                 errorWidget: (context, url, error) {
                                   return _buildPlaceholder(context, book.title);
                                 },
@@ -92,7 +95,7 @@ class RecommendationSection extends StatelessWidget {
 
   Widget _buildPlaceholder(BuildContext context, String title) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,

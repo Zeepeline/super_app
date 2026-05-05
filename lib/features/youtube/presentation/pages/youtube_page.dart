@@ -19,8 +19,8 @@ class YouTubePage extends StatefulWidget {
 
 class _YouTubePageState extends State<YouTubePage> {
   late final WebViewController _webController;
-  bool _isLoading = true;
-  bool _isInitialLoad = true;
+  final RxBool _isLoading = true.obs;
+  final RxBool _isInitialLoad = true.obs;
   String? _lastPlayedId; // Avoid redundant play triggers
 
   @override
@@ -80,23 +80,16 @@ class _YouTubePageState extends State<YouTubePage> {
               }
             }
           },
-          onHttpAuthRequest: (HttpAuthRequest request) {
-            // Mitigate iOS null challenge crash by providing a handler
-            debugPrint('Auth request for \${request.host}');
-          },
+          // REMOVED onHttpAuthRequest as it causes URLAuthenticationChallenge cast error on some iOS versions
           onPageStarted: (String url) {
-            if (_isInitialLoad) {
-              setState(() {
-                _isLoading = true;
-              });
+            if (_isInitialLoad.value) {
+              _isLoading.value = true;
             }
           },
           onPageFinished: (String url) {
-            if (_isInitialLoad) {
-              setState(() {
-                _isLoading = false;
-                _isInitialLoad = false;
-              });
+            if (_isInitialLoad.value) {
+              _isLoading.value = false;
+              _isInitialLoad.value = false;
             }
             // Force Dark Mode, Prevent Zooming, and Block Ads
             _safeRunJavaScript('''
@@ -111,20 +104,28 @@ class _YouTubePageState extends State<YouTubePage> {
               style.innerHTML = `
                 html, body { 
                   background-color: #000000 !important; 
-                  overflow-x: hidden !important;
-                  padding-top: \${72 + MediaQuery.of(context).padding.top}px !important;    /* Dynamic Space for Header */
-                  padding-bottom: 200px !important; /* Space for MiniPlayer + Nav */
+                  margin: 0 !important;
+                  padding: 0 !important;
+                  height: 100% !important;
+                  width: 100% !important;
+                  overflow-y: auto !important;
+                  -webkit-overflow-scrolling: touch !important;
                 }
                 
-                /* Ad Blocking */
+                /* Force YouTube's main container to fill the screen */
+                ytm-app, #app, .app-container {
+                  height: 100% !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                }
+                
                 ytm-ad-slot, .ad-container, .ad-div, #player-ads, .ytp-ad-module, 
                 .ytp-ad-overlay-container, ytm-promoted-item-renderer, 
                 ytm-companion-ad-renderer, .ytm-video-ads { 
                   display: none !important; 
                 }
                 
-                /* Refined Fullscreen Prevention */
-                .fullscreen-overlay, .ytm-player-overlay { pointer-events: none !important; background: transparent !important; }
+                .ytm-player-overlay { background: transparent !important; }
               `;
               document.head.appendChild(style);
 
@@ -152,17 +153,28 @@ class _YouTubePageState extends State<YouTubePage> {
             ''');
           },
           onNavigationRequest: (NavigationRequest request) {
+            // Prevent potential null WKNavigationAction by being explicit
+            if (request.url.contains('googleads') || request.url.contains('doubleclick')) {
+              return NavigationDecision.prevent;
+            }
             return NavigationDecision.navigate;
           },
           onWebResourceError: (WebResourceError error) {
-            debugPrint('WebView Error: \${error.description}');
+            debugPrint('WebView Error: ${error.description}');
           },
         ),
-      )
-      ..loadRequest(Uri.parse('https://music.youtube.com'));
+      );
+
+    // Additional iOS fixes for stability
+    if (_webController.platform is WebKitWebViewController) {
+      final webKitController = _webController.platform as WebKitWebViewController;
+      webKitController.setInspectable(true);
+    }
+
+    _webController.loadRequest(Uri.parse('https://music.youtube.com'));
   }
 
-  bool _isSearching = false;
+  final RxBool _isSearching = false.obs;
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -176,10 +188,8 @@ class _YouTubePageState extends State<YouTubePage> {
     final searchUrl =
         'https://music.youtube.com/search?q=${Uri.encodeComponent(query)}';
     _webController.loadRequest(Uri.parse(searchUrl));
-    setState(() {
-      _isSearching = false;
-      _searchController.clear();
-    });
+    _isSearching.value = false;
+    _searchController.clear();
   }
 
   Future<void> _safeRunJavaScript(String script) async {
@@ -194,49 +204,49 @@ class _YouTubePageState extends State<YouTubePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.kBackgroundColor,
-      body: Stack(
-        children: [
-          // WebView Content - Fullscreen height
-          WebViewWidget(controller: _webController),
+      body: Obx(
+        () => Stack(
+          children: [
+            // 1. WebView Content - Base Layer
+            WebViewWidget(controller: _webController),
 
-          // Loading Overlay
-          if (_isLoading)
-            Positioned.fill(
-              child: Container(
-                color: AppTheme.kBackgroundColor,
-                child: const Center(
-                  child: CircularProgressIndicator(
-                    color: AppTheme.kPrimaryColor,
+            // 2. Loading Overlay - Only exists when loading
+            if (_isLoading.value)
+              Positioned.fill(
+                child: Container(
+                  color: AppTheme.kBackgroundColor,
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: AppTheme.kPrimaryColor,
+                    ),
                   ),
                 ),
               ),
-            ),
 
-          // Floating Blurred Header
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: _Header(
-              isSearching: _isSearching,
-              searchController: _searchController,
-              onSearchToggle: () {
-                setState(() {
-                  _isSearching = !_isSearching;
-                });
-              },
-              onSearchSubmit: _handleSearch,
-              onBack: () async {
-                if (await _webController.canGoBack()) {
-                  _webController.goBack();
-                }
-              },
-              onRefresh: () {
-                _webController.reload();
-              },
+            // 3. Floating Blurred Header - Always on top
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: _Header(
+                isSearching: _isSearching.value,
+                searchController: _searchController,
+                onSearchToggle: () {
+                  _isSearching.value = !_isSearching.value;
+                },
+                onSearchSubmit: _handleSearch,
+                onBack: () async {
+                  if (await _webController.canGoBack()) {
+                    _webController.goBack();
+                  }
+                },
+                onRefresh: () {
+                  _webController.reload();
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -88,6 +88,9 @@ PERTANYAAN USER: $query
         case 'search_library':
           final q = call.args['query'] as String;
           return await _aiToolsService.searchLibrary(q);
+        case 'search_books':
+          final q = call.args['query'] as String;
+          return await _aiToolsService.searchBooks(q);
         case 'get_lyrics':
           final q = call.args['query'] as String;
           return await _aiToolsService.getLyrics(q);

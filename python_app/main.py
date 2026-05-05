@@ -28,9 +28,11 @@ except Exception as e:
     print(f"Python Worker: IMPORT ERROR: {e}")
 
 from book_service import BookService
+from audiobook_service import AudiobookService
 
 # Global state
 book_service = BookService()
+audiobook_service = AudiobookService()
 dart_port = os.environ.get("DART_PORT")
 
 class WorkerHandler(BaseHTTPRequestHandler):
@@ -89,6 +91,40 @@ class WorkerHandler(BaseHTTPRequestHandler):
                 dart_port = data.get('port')
                 print(f"Python Worker: Dart port updated to: {dart_port}")
                 self._send_response({"status": "ok"})
+            
+            elif self.path == '/audiobook/info':
+                content_length = int(self.headers['Content-Length'])
+                post_data = self.rfile.read(content_length)
+                data = json.loads(post_data)
+                pdf_path = data.get('path')
+                info = audiobook_service.get_pdf_metadata(pdf_path)
+                self._send_response(info)
+
+            elif self.path == '/audiobook/read_page':
+                content_length = int(self.headers['Content-Length'])
+                post_data = self.rfile.read(content_length)
+                data = json.loads(post_data)
+                pdf_path = data.get('path')
+                page_num = data.get('page', 0)
+                voice = data.get('voice', 'id-ID-ArdiNeural')
+                
+                # 1. Extract text
+                text = audiobook_service.extract_text(pdf_path, page_num)
+                if not text:
+                    self._send_response({"error": "No text found on this page"}, status=400)
+                    return
+                
+                # 2. Generate Audio
+                filename = f"page_{page_num}_{os.path.basename(pdf_path)}.mp3"
+                audio_path = audiobook_service.process_page_sync(text, filename, voice)
+                
+                if audio_path:
+                    self._send_response({
+                        "audio_path": audio_path,
+                        "text": text[:200] + "..." # Return preview of text
+                    })
+                else:
+                    self._send_response({"error": "Failed to generate speech"}, status=500)
             
             else:
                 self._send_response({"error": "Not found"}, status=404)

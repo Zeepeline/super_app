@@ -1,3 +1,5 @@
+import 'dart:developer' as dev;
+
 import 'package:dartz/dartz.dart';
 import 'package:super_app/core/services/download/youtube_download_service.dart';
 
@@ -53,22 +55,34 @@ class MusicRepositoryImpl implements MusicRepository {
     });
   }
 
-  /// Ensures a track has a valid (non-expired) URL if it's a streaming track
-  Future<TrackEntity> _ensureValidAudioUrl(TrackEntity track) async {
-    // If it's a local file, no need to refresh URL
-    if (track.localPath != null && track.localPath!.isNotEmpty) {
-      return track;
+  /// Ensures a track has a valid (non-expired) URL if it's a streaming track,
+  /// OR ensures a backup URL exists for local tracks in case the file is inaccessible.
+  Future<TrackEntity> _ensureValidAudioUrl(
+    TrackEntity track, {
+    bool forceWorker = false,
+  }) async {
+    // If it's a YouTube ID (11 chars), always try to get/refresh a streaming URL
+    // as a fallback, even if it has a localPath. This prevents "silent" failures
+    // in the background if the local file path has changed or is inaccessible.
+    if (track.id.length == 11) {
+      // Only refresh if audioUrl is empty or we are forcing a worker refresh
+      if (track.audioUrl.isEmpty || forceWorker) {
+        try {
+          final newUrl = await youtubeDownloadService.getStreamUrl(
+            track.id,
+            forceWorker: forceWorker,
+          );
+          if (newUrl != null && newUrl.isNotEmpty) {
+            return track.copyWith(audioUrl: newUrl);
+          }
+        } catch (e) {
+          dev.log(
+            "MusicRepository: Failed to get fallback URL for ${track.id}: $e",
+          );
+        }
+      }
     }
 
-    // If it looks like a YouTube ID (11 chars) and has no local path, refresh it
-    if (track.id.length == 11) {
-      try {
-        final newUrl = await youtubeDownloadService.getStreamUrl(track.id);
-        if (newUrl != null && newUrl.isNotEmpty) {
-          return track.copyWith(audioUrl: newUrl);
-        }
-      } catch (e) {}
-    }
     return track;
   }
 
@@ -144,7 +158,7 @@ class MusicRepositoryImpl implements MusicRepository {
       }
 
       final currentTrack = localDataSource.getCurrentTrack();
-      
+
       // 2. Optimization: If the track is already loaded in the handler, just resume it
       final currentMediaItem = audioHandler.mediaItem.value;
       if (currentMediaItem != null && currentMediaItem.id == trackId) {
@@ -154,9 +168,24 @@ class MusicRepositoryImpl implements MusicRepository {
       }
 
       // 3. Otherwise, reload and play as a new track
-      final refreshedTrack = await _ensureValidAudioUrl(currentTrack);
-      await audioHandler.playTrack(refreshedTrack);
-      
+      try {
+        final refreshedTrack = await _ensureValidAudioUrl(currentTrack);
+        await audioHandler.playTrack(refreshedTrack);
+      } catch (e) {
+        // RETRY: If instant URL fails (PlatformException), try again with stable Python Worker
+        try {
+          final stableTrack = await _ensureValidAudioUrl(
+            currentTrack,
+            forceWorker: true,
+          );
+          await audioHandler.playTrack(stableTrack);
+        } catch (retryError) {
+          return const Left(
+            CacheFailure('Gagal memutar lagu. Link streaming tidak valid.'),
+          );
+        }
+      }
+
       final updatedTrack = localDataSource.updateTrackState(
         isPlaying: true,
         currentPosition: Duration.zero, // Start from beginning for new tracks
@@ -226,7 +255,16 @@ class MusicRepositoryImpl implements MusicRepository {
       );
 
       // Use the refreshed track for playback
-      await audioHandler.playTrack(refreshedTrack);
+      try {
+        await audioHandler.playTrack(refreshedTrack);
+      } catch (e) {
+        // RETRY with stable URL
+        final stableTrack = await _ensureValidAudioUrl(
+          nextTrack,
+          forceWorker: true,
+        );
+        await audioHandler.playTrack(stableTrack);
+      }
 
       return Right(updatedTrack);
     } catch (e) {
@@ -249,7 +287,16 @@ class MusicRepositoryImpl implements MusicRepository {
       );
 
       // Use the refreshed track for playback
-      await audioHandler.playTrack(refreshedTrack);
+      try {
+        await audioHandler.playTrack(refreshedTrack);
+      } catch (e) {
+        // RETRY with stable URL
+        final stableTrack = await _ensureValidAudioUrl(
+          prevTrack,
+          forceWorker: true,
+        );
+        await audioHandler.playTrack(stableTrack);
+      }
 
       return Right(updatedTrack);
     } catch (e) {

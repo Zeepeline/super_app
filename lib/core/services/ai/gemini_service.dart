@@ -7,14 +7,14 @@ class GeminiService {
 
   // Daftar model PERSIS sesuai urutan yang Anda berikan
   final List<String> _modelPriorityList = [
+    'gemini-3.1-flash-lite-preview',
+    'gemini-3.1-pro',
     'gemini-2.5-flash',
     'gemini-2.5-flash-lite',
     'gemini-2.5-pro',
     'gemini-2-flash',
     'gemini-2-flash-lite',
     'gemini-3-flash',
-    'gemini-3.1-flash-lite',
-    'gemini-3.1-pro',
     'gemini-2.5-flash-live',
     'gemini-3-flash-live',
   ];
@@ -53,12 +53,13 @@ class GeminiService {
               "1. SELALU hubungkan informasi baru. Jika user bilang suka artis X, panggil 'save_user_fact' (User, suka, X).\n"
               "2. Gunakan KONTEKS MEMORI (Graph) yang diberikan untuk mempersonalisasi jawaban.\n"
               "3. SINGKAT: Maksimal 2 kalimat, tanpa markdown."
-        : "Anda adalah SoundWave AI (Expert Mode).\n"
-              "SIFAT: Pakar musik dengan kemampuan Graph-Augmented RAG.\n"
-              "INSTRUKSI GRAPH:\n"
-              "1. ENTITY LINKING: Anda harus aktif membangun Knowledge Graph user. Gunakan 'save_user_fact' untuk menghubungkan User, Artist, Genre, dan Mood.\n"
-              "2. HYBRID RETRIEVAL: Anda diberikan data dari Vektor (Library) dan Graph (Memori). Gabungkan keduanya untuk jawaban yang komprehensif.\n"
-              "3. TUGAS: Jika user bertanya tentang rekomendasi, cek memori dulu, lalu cari di library, baru berikan jawaban.";
+        : "Anda adalah SoundWave AI (Super App Expert).\n"
+              "SIFAT: Asisten cerdas, pakar musik dan literasi dunia.\n"
+              "KEMAMPUAN:\n"
+              "1. PRIORITAS LOKAL: Jika user bertanya tentang lagu/buku, selalu cek library lokal dulu pakai 'search_library' atau 'search_books'.\n"
+              "2. PENGETAHUAN UMUM: Jika tidak ada di library, gunakan pengetahuan luas Anda untuk memberikan informasi, sinopsis, atau rekomendasi dari dunia luar.\n"
+              "3. TINDAKAN: Jika user tertarik pada lagu yang tidak ada di library, tawarkan untuk mendownloadnya menggunakan 'download_music'.\n"
+              "4. MEMORI: Simpan fakta preferensi user ke Graph Memory agar Anda makin kenal dengan selera mereka.";
 
     // Definisi Tools untuk Function Calling
     final List<Tool> availableTools = [
@@ -92,6 +93,20 @@ class GeminiService {
                 'query': Schema(
                   SchemaType.string,
                   description: 'Kata kunci pencarian.',
+                ),
+              },
+              requiredProperties: ['query'],
+            ),
+          ),
+          FunctionDeclaration(
+            'search_books',
+            'Mencari buku di library buku/e-book lokal user berdasarkan judul, penulis, atau sinopsis.',
+            Schema(
+              SchemaType.object,
+              properties: {
+                'query': Schema(
+                  SchemaType.string,
+                  description: 'Kata kunci pencarian buku.',
                 ),
               },
               requiredProperties: ['query'],
@@ -215,7 +230,11 @@ class GeminiService {
         } catch (e) {
           lastError = e.toString();
           print("GeminiService: Model $modelName failed - $lastError");
-          if (lastError.contains('429')) break;
+          final isQuotaExceeded =
+              lastError.contains('429') ||
+              lastError.toLowerCase().contains('quota exceeded') ||
+              lastError.toLowerCase().contains('exceeded your current quota');
+          if (isQuotaExceeded) break;
           continue;
         }
       }
@@ -249,8 +268,13 @@ class GeminiService {
           }
         } catch (e) {
           lastError = e.toString();
-          // If the error is 429 (limit), break inner loop and try next API Key
-          if (lastError.contains('429')) {
+          print("GeminiService Error [$modelName]: $lastError");
+          // If the error is 429 or quota exceeded, break inner loop and try next API Key
+          final isQuotaExceeded =
+              lastError.contains('429') ||
+              lastError.toLowerCase().contains('quota exceeded') ||
+              lastError.toLowerCase().contains('exceeded your current quota');
+          if (isQuotaExceeded) {
             break;
           }
           // For other errors, try next model with same API Key
@@ -260,10 +284,15 @@ class GeminiService {
     }
 
     if (lastError != null) {
+      final isQuotaExceeded =
+          lastError.contains('429') ||
+          lastError.toLowerCase().contains('quota exceeded') ||
+          lastError.toLowerCase().contains('exceeded your current quota');
+
       if (lastError.contains('503')) {
         return "Semua model Google sedang sibuk. Mohon coba lagi nanti.";
-      } else if (lastError.contains('429')) {
-        return "Batas limit SEMUA API Key Anda telah tercapai. Silakan tambah key baru atau tunggu beberapa saat.";
+      } else if (isQuotaExceeded) {
+        return "Batas limit (Quota) API Key Anda telah tercapai. Silakan tunggu sekitar 1 menit atau tambah API Key baru di Konfigurasi.";
       }
     }
     return "Waduh, semua model AI di list sedang kendala. Pastikan API Key Anda valid dan coba lagi ya!";

@@ -1,5 +1,6 @@
 import 'package:mobile_rag_engine/mobile_rag_engine.dart';
 import 'package:super_app/features/home/data/models/track_model.dart';
+import 'package:super_app/features/book_collection/data/models/local_book.dart';
 
 class RagIndexerService {
   bool _isInitialized = false;
@@ -26,16 +27,53 @@ class RagIndexerService {
     }
   }
 
-  /// Menghapus data lama dan melakukan re-index seluruh library.
-  Future<void> reindexLibrary(List<TrackModel> tracks) async {
+  Future<void> indexTrack(TrackModel track) async {
+    await initialize();
+    if (!_isInitialized) return;
+
+    final content = _buildSearchableContent(track);
+
+    try {
+      final augmentedContent = "[TRACK_ID: ${track.idField}] $content";
+      await MobileRag.instance.addDocument(augmentedContent);
+      print("RagIndexerService: Indexed track ${track.titleField}");
+    } catch (e) {
+      print("RagIndexerService: Failed to index track ${track.titleField}: $e");
+    }
+  }
+
+  Future<void> indexBook(LocalBook book) async {
+    await initialize();
+    if (!_isInitialized) return;
+
+    final content = _buildSearchableBookContent(book);
+
+    try {
+      final augmentedContent = "[BOOK_ID: ${book.id}] $content";
+      await MobileRag.instance.addDocument(augmentedContent);
+      print("RagIndexerService: Indexed book ${book.title}");
+    } catch (e) {
+      print("RagIndexerService: Failed to index book ${book.title}: $e");
+    }
+  }
+
+  /// Menghapus data lama dan melakukan re-index seluruh library (Musik & Buku).
+  Future<void> reindexLibrary({
+    List<TrackModel>? tracks,
+    List<LocalBook>? books,
+  }) async {
     await initialize();
 
-    // mobile_rag_engine handles deduplication by ID,
-    // but for a clean state we can rebuild.
-    // Note: If the package supports clear(), use it.
+    if (tracks != null) {
+      for (final track in tracks) {
+        await indexTrack(track);
+      }
+    }
 
-    for (final track in tracks) {
-      await indexTrack(track);
+    if (books != null) {
+      for (final book in books) {
+        await indexBook(book);
+      }
     }
 
     if (_isInitialized) {
@@ -44,27 +82,6 @@ class RagIndexerService {
       } catch (e) {
         print("RagIndexerService: Failed to rebuild index: $e");
       }
-    } else {
-      print(
-        "RagIndexerService: Skipping rebuild because engine is not initialized",
-      );
-    }
-  }
-
-  Future<void> indexTrack(TrackModel track) async {
-    await initialize();
-    if (!_isInitialized) return;
-
-    final content = _buildSearchableContent(track);
-
-    try {
-      // mobile_rag_engine 0.17.0 facade does not take metadata directly in addDocument.
-      // We prepend important metadata to the content to make it searchable.
-      final augmentedContent = "[ID: ${track.idField}] $content";
-      await MobileRag.instance.addDocument(augmentedContent);
-      print("RagIndexerService: Indexed track ${track.titleField}");
-    } catch (e) {
-      print("RagIndexerService: Failed to index track ${track.titleField}: $e");
     }
   }
 
@@ -94,6 +111,19 @@ class RagIndexerService {
     buffer.write("Album: ${track.albumField}. ");
     if (track.plainLyricsField != null && track.plainLyricsField!.isNotEmpty) {
       buffer.write("Lyrics: ${track.plainLyricsField}");
+    }
+    return buffer.toString();
+  }
+
+  String _buildSearchableBookContent(LocalBook book) {
+    final buffer = StringBuffer();
+    buffer.write("Book Title: ${book.title}. ");
+    buffer.write("Author: ${book.author}. ");
+    if (book.synopsis != null) {
+      buffer.write("Synopsis: ${book.synopsis}. ");
+    }
+    if (book.genreTags != null && book.genreTags!.isNotEmpty) {
+      buffer.write("Genres: ${book.genreTags!.join(', ')}. ");
     }
     return buffer.toString();
   }

@@ -100,7 +100,7 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   sl.registerLazySingleton<NativeDeviceService>(() => NativeDeviceService());
   sl.registerLazySingleton<RagIndexerService>(() => RagIndexerService());
   sl.registerLazySingleton<AiToolsService>(
-    () => AiToolsService(sl(), sl(), sl(), sl(), sl(), sl()),
+    () => AiToolsService(sl(), sl(), sl(), sl(), sl(), sl(), sl()),
   );
   sl.registerLazySingleton<RagService>(() => RagService(sl(), sl()));
 
@@ -195,6 +195,7 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
       localDataSource: sl(),
       deleteTrackUseCase: sl(),
       ragIndexerService: sl(),
+      bookLibraryService: sl(),
     ),
   );
   sl.registerFactory(

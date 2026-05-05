@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:super_app/core/services/books/book_library_service.dart';
 import 'package:super_app/core/services/books/book_store_service.dart';
 import 'package:super_app/core/theme/app_theme.dart';
 import 'package:super_app/features/book_collection/data/models/local_book.dart';
@@ -23,16 +25,16 @@ class BookDetailPage extends StatefulWidget {
 }
 
 class _BookDetailPageState extends State<BookDetailPage> {
-  late LocalBook currentBook;
-  bool isLoadingMetadata = false;
-  List<BookRecommendation> recommendations = [];
+  late final Rx<LocalBook> currentBook;
+  final RxBool isLoadingMetadata = false.obs;
+  final RxList<BookRecommendation> recommendations = <BookRecommendation>[].obs;
 
-  LocalBook get book => currentBook;
+  LocalBook get book => currentBook.value;
 
   @override
   void initState() {
     super.initState();
-    currentBook = widget.book;
+    currentBook = widget.book.obs;
     _fetchMetadata();
   }
 
@@ -40,41 +42,41 @@ class _BookDetailPageState extends State<BookDetailPage> {
     // Fetch similar books in parallel or after metadata
     _fetchRecommendations();
 
-    if (currentBook.synopsis != null) return;
+    if (currentBook.value.synopsis != null) return;
 
-    setState(() {
-      isLoadingMetadata = true;
-    });
+    isLoadingMetadata.value = true;
 
     try {
       final metadata = await sl<BookStoreService>().getBookMetadata(
-        currentBook.title,
-        currentBook.author,
+        currentBook.value.title,
+        currentBook.value.author,
       );
 
       if (mounted) {
-        setState(() {
-          currentBook = LocalBook(
-            id: currentBook.id,
-            title: currentBook.title,
-            author: currentBook.author,
-            path: currentBook.path,
-            format: currentBook.format,
-            coverPath: currentBook.coverPath,
-            dateAdded: currentBook.dateAdded,
-            lastReadPage: currentBook.lastReadPage,
-            synopsis: metadata['synopsis'],
-            genreTags: List<String>.from(metadata['genreTags'] ?? []),
-            publishDate: metadata['publishDate'],
-          );
-          isLoadingMetadata = false;
-        });
+        final updatedBook = LocalBook(
+          id: currentBook.value.id,
+          title: currentBook.value.title,
+          author: currentBook.value.author,
+          path: currentBook.value.path,
+          format: currentBook.value.format,
+          coverPath: currentBook.value.coverPath,
+          dateAdded: currentBook.value.dateAdded,
+          lastReadPage: currentBook.value.lastReadPage,
+          synopsis: metadata['synopsis'],
+          genreTags: List<String>.from(metadata['genreTags'] ?? []),
+          publishDate: metadata['publishDate'],
+        );
+
+        currentBook.value = updatedBook;
+
+        // SAVE TO DATABASE (Hive)
+        await sl<BookLibraryService>().updateBookMetadata(updatedBook);
+
+        isLoadingMetadata.value = false;
       }
     } catch (e) {
       if (mounted) {
-        setState(() {
-          isLoadingMetadata = false;
-        });
+        isLoadingMetadata.value = false;
       }
     }
   }
@@ -82,13 +84,11 @@ class _BookDetailPageState extends State<BookDetailPage> {
   Future<void> _fetchRecommendations() async {
     try {
       final recs = await sl<BookStoreService>().getSimilarBooks(
-        currentBook.title,
-        currentBook.author,
+        currentBook.value.title,
+        currentBook.value.author,
       );
       if (mounted) {
-        setState(() {
-          recommendations = recs;
-        });
+        recommendations.assignAll(recs);
       }
     } catch (e) {
       print("Error fetching recommendations: $e");
@@ -97,51 +97,55 @@ class _BookDetailPageState extends State<BookDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final book = currentBook;
-    return Scaffold(
-      backgroundColor: AppTheme.kBackgroundColor,
-      body: CustomScrollView(
-        slivers: [
-          _buildAppBar(context),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  _buildHeroImage(context),
-                  const SizedBox(height: 40),
-                  _buildTitleAuthor(context),
-                  const SizedBox(height: 16),
-                  _buildMetadata(context),
-                  const SizedBox(height: 40),
-                  BookDetailStatusCard(
-                    progress: 0.0,
-                    timeLeft: 'Ready to read',
-                    book: book,
-                  ),
-                  const SizedBox(height: 40),
-                  BookActionButtons(book: book),
-                  const SizedBox(height: 40),
-                  if (isLoadingMetadata)
-                    const Center(
-                      child: CircularProgressIndicator(
-                        color: AppTheme.kPrimaryColor,
-                      ),
-                    )
-                  else
-                    BookInfoSection(book: book),
-                  const SizedBox(height: 40),
-                  RecommendationSection(recommendations: recommendations),
-                  const SizedBox(height: 40),
-                ],
+    return Obx(() {
+      final book = currentBook.value;
+      return Scaffold(
+        backgroundColor: AppTheme.kBackgroundColor,
+        body: CustomScrollView(
+          slivers: [
+            _buildAppBar(context),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
+                    _buildHeroImage(context),
+                    const SizedBox(height: 40),
+                    _buildTitleAuthor(context),
+                    const SizedBox(height: 16),
+                    _buildMetadata(context),
+                    const SizedBox(height: 40),
+                    BookDetailStatusCard(
+                      progress: 0.0,
+                      timeLeft: 'Ready to read',
+                      book: book,
+                    ),
+                    const SizedBox(height: 40),
+                    BookActionButtons(book: book),
+                    const SizedBox(height: 40),
+                    if (isLoadingMetadata.value)
+                      const Center(
+                        child: CircularProgressIndicator(
+                          color: AppTheme.kPrimaryColor,
+                        ),
+                      )
+                    else
+                      BookInfoSection(book: book),
+                    const SizedBox(height: 40),
+                    RecommendationSection(
+                      recommendations: recommendations.toList(),
+                    ),
+                    const SizedBox(height: 40),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildAppBar(BuildContext context) {

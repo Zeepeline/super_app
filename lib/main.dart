@@ -7,9 +7,10 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:super_app/core/services/media/audio_handler.dart' as custom;
 import 'package:super_app/core/services/ai/rag_index_service.dart';
 import 'package:super_app/core/services/ai/user_memory_service.dart';
+import 'package:super_app/core/services/media/audio_handler.dart' as custom;
+import 'package:super_app/core/utils/hive_box_constants.dart';
 import 'package:super_app/features/ai_assistant/presentation/pages/ai_chat_page.dart';
 
 import 'core/services/infrastructure/python_worker_service.dart';
@@ -24,7 +25,6 @@ import 'features/home/presentation/bloc/home_bloc.dart';
 import 'features/home/presentation/bloc/home_event.dart';
 import 'features/home/presentation/pages/home_page.dart';
 import 'features/home/presentation/pages/obsidian_home_page.dart';
-import 'features/home/presentation/widgets/mini_player.dart';
 import 'features/library/presentation/pages/library_page.dart';
 import 'features/music_player/presentation/cubit/player_cubit.dart';
 import 'features/onboarding/presentation/pages/onboarding_page.dart';
@@ -47,6 +47,9 @@ void main() async {
   Hive.registerAdapter(TrackModelAdapter());
   Hive.registerAdapter(PlaylistModelAdapter());
   Hive.registerAdapter(ChatMessageModelAdapter());
+
+  // Open Boxes
+  await Hive.openBox(HiveBoxConstants.booksMetadataBox);
 
   // Initialize AudioService and AudioHandler
   final audioHandler = await AudioService.init(
@@ -201,10 +204,10 @@ class MainWrapper extends StatelessWidget {
             bottom: 0,
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: [const MiniPlayer(), _buildBottomNavigationBar()],
+              children: [_buildBottomNavigationBar()],
             ),
           ),
-          Positioned(top: 0, left: 0, right: 0, child: LiveActivityIsland()),
+          Positioned(top: 0, left: 10, child: LiveActivityIsland()),
         ],
       ),
     );

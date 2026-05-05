@@ -220,16 +220,18 @@ class _SearchResults extends StatelessWidget {
       }
 
       if (controller.searchResults.isEmpty && !controller.isSearching.value) {
-        return SingleChildScrollView(
+        return const SingleChildScrollView(
           child: Column(
             children: [
-              const _EmptyState(
+              SizedBox(height: 20),
+
+              _EmptyState(
                 icon: Icons.music_note_rounded,
                 title: 'Temukan Musikmu',
                 subtitle:
                     'Ketik judul lagu, nama artis, atau album di kolom pencarian',
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
             ],
           ),
         );

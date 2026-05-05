@@ -1,6 +1,8 @@
 import 'package:super_app/core/services/download/youtube_explode_service.dart';
 import 'package:super_app/core/services/infrastructure/native_device_service.dart';
 import 'package:super_app/core/services/download/youtube_download_service.dart';
+import 'package:super_app/core/services/books/book_library_service.dart';
+import 'package:super_app/features/book_collection/data/models/local_book.dart';
 import 'package:super_app/features/home/data/datasources/home_local_data_source.dart';
 import 'package:super_app/features/home/data/models/track_model.dart' as home;
 import 'package:super_app/features/music_player/data/models/track_model.dart'
@@ -16,6 +18,7 @@ class AiToolsService {
   final NativeDeviceService _nativeService;
   final YoutubeDownloadService _downloadService;
   final YouTubeExplodeService _ytService;
+  final BookLibraryService _bookService;
 
   AiToolsService(
     this._musicRepository,
@@ -24,6 +27,7 @@ class AiToolsService {
     this._nativeService,
     this._downloadService,
     this._ytService,
+    this._bookService,
   );
 
   UserMemoryService getMemoryService() => _memoryService;
@@ -108,7 +112,9 @@ class AiToolsService {
             (t) =>
                 t.titleField.toLowerCase().contains(query.toLowerCase()) ||
                 t.artistField.toLowerCase().contains(query.toLowerCase()) ||
-                t.albumField.toLowerCase().contains(query.toLowerCase()),
+                t.albumField.toLowerCase().contains(query.toLowerCase()) ||
+                (t.plainLyricsField?.toLowerCase().contains(query.toLowerCase()) ??
+                    false),
           )
           .toList();
 
@@ -122,6 +128,34 @@ class AiToolsService {
       return "Ditemukan beberapa lagu:\n$list";
     } catch (e) {
       return "Gagal mencari di library: $e";
+    }
+  }
+
+  /// Mencari buku di library lokal berdasarkan judul atau penulis.
+  Future<String> searchBooks(String query) async {
+    try {
+      final books = await _bookService.getDownloadedBooks();
+      final results = books
+          .where(
+            (b) =>
+                b.title.toLowerCase().contains(query.toLowerCase()) ||
+                b.author.toLowerCase().contains(query.toLowerCase()) ||
+                (b.synopsis?.toLowerCase().contains(query.toLowerCase()) ??
+                    false),
+          )
+          .toList();
+
+      if (results.isEmpty) {
+        return "Tidak ditemukan buku yang cocok dengan '$query' di koleksi Anda.";
+      }
+
+      final list = results
+          .take(5)
+          .map((b) => "- ${b.title} oleh ${b.author} (${b.format})")
+          .join("\n");
+      return "Ditemukan beberapa buku:\n$list";
+    } catch (e) {
+      return "Gagal mencari di koleksi buku: $e";
     }
   }
 
