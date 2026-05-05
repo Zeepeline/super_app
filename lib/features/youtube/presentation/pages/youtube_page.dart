@@ -128,25 +128,27 @@ class _YouTubePageState extends State<YouTubePage> {
               `;
               document.head.appendChild(style);
 
-              // 3. Persistent Ad Remover & Audio Muter
+              // 3. Persistent Ad Remover & Audio Muter (Optimized Interval)
+              var adSelector = 'ytm-ad-slot, .ad-container, #player-ads, .ytm-video-ads, ytm-promoted-item-renderer';
               setInterval(function() {
-                // Remove ad elements
-                var ads = document.querySelectorAll('ytm-ad-slot, .ad-container, #player-ads, .ytm-video-ads, ytm-promoted-item-renderer');
-                for (var i = 0; i < ads.length; i++) {
-                  ads[i].remove();
-                }
+                // Remove ad elements efficiently
+                var ads = document.querySelectorAll(adSelector);
+                ads.forEach(function(ad) { ad.remove(); });
                 
                 // Mute and Pause any video in WebView to prevent double audio/ads
+                // This is crucial because we play the audio via our native player
                 var videos = document.querySelectorAll('video');
-                for (var i = 0; i < videos.length; i++) {
-                  videos[i].muted = true;
-                  videos[i].pause();
-                }
+                videos.forEach(function(v) {
+                  if (!v.muted || !v.paused) {
+                    v.muted = true;
+                    v.pause();
+                  }
+                });
 
                 // Skip video ads if possible
                 var skipBtn = document.querySelector('.ytp-ad-skip-button, .ytp-ad-skip-button-modern');
                 if (skipBtn) skipBtn.click();
-              }, 500); // Check every 500ms for aggressive blocking
+              }, 1500); // Increased to 1500ms for better performance
             ''');
           },
           onNavigationRequest: (NavigationRequest request) {
@@ -263,7 +265,10 @@ class _Header extends StatelessWidget {
 
     return ClipRect(
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+        filter: ImageFilter.blur(
+          sigmaX: 8,
+          sigmaY: 8,
+        ), // Reduced sigma from 15 to 8 for performance
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
@@ -362,7 +367,9 @@ class _Header extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.1),
+                      ),
                     ),
                     child: TextField(
                       controller: searchController,

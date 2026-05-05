@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:super_app/core/services/book_library_service.dart';
+import 'package:super_app/core/services/books/book_library_service.dart';
 import 'package:super_app/core/theme/app_theme.dart';
 import 'package:super_app/features/book_collection/data/models/local_book.dart';
 import 'package:super_app/features/book_collection/presentation/pages/book_collection_page.dart';
 import 'package:super_app/features/book_reader/presentation/pages/book_reader_page.dart';
+import 'package:super_app/features/nfc/presentation/pages/nfc_scanner_page.dart';
 import 'package:super_app/injection_container.dart';
 import 'package:super_app/main.dart';
 
@@ -29,6 +30,26 @@ class ObsidianHomePage extends StatelessWidget {
                 const SizedBox(height: 40),
                 _buildGreeting(context),
                 const SizedBox(height: 40),
+                _buildQuickActions(context),
+                const SizedBox(height: 40),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'QUICK RESUME',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                    Text(
+                      'View All',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: AppTheme.kPrimaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+
                 FutureBuilder<List<LocalBook>>(
                   future: bookLibraryService.getDownloadedBooks(),
                   builder: (context, snapshot) {
@@ -48,22 +69,36 @@ class ObsidianHomePage extends StatelessWidget {
                           if (latestBook != null)
                             FutureBuilder<Map<String, int>>(
                               future: () async {
-                                final prefs = await SharedPreferences.getInstance();
-                                final current = prefs.getInt('book_progress_${latestBook.id}') ?? 0;
-                                final total = prefs.getInt('book_total_${latestBook.id}') ?? 0;
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+                                final current =
+                                    prefs.getInt(
+                                      'book_progress_${latestBook.id}',
+                                    ) ??
+                                    0;
+                                final total =
+                                    prefs.getInt(
+                                      'book_total_${latestBook.id}',
+                                    ) ??
+                                    0;
                                 return {'current': current, 'total': total};
                               }(),
                               builder: (context, progressSnapshot) {
-                                final current = progressSnapshot.data?['current'] ?? 0;
-                                final total = progressSnapshot.data?['total'] ?? 0;
-                                final percent = total > 0 ? (current / total) : 0.0;
+                                final current =
+                                    progressSnapshot.data?['current'] ?? 0;
+                                final total =
+                                    progressSnapshot.data?['total'] ?? 0;
+                                final percent = total > 0
+                                    ? (current / total)
+                                    : 0.0;
 
                                 return GestureDetector(
                                   onTap: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => BookReaderPage(book: latestBook),
+                                        builder: (context) =>
+                                            BookReaderPage(book: latestBook),
                                       ),
                                     );
                                   },
@@ -117,11 +152,10 @@ class ObsidianHomePage extends StatelessWidget {
                     );
                   },
                 ),
+
                 const SizedBox(height: 40),
-                _buildQuickActions(context),
-                const SizedBox(height: 40),
-                _buildQuickResume(context),
-                const SizedBox(height: 40),
+                // _buildQuickResume(context),
+                // const SizedBox(height: 40),
               ],
             ),
           ),
@@ -212,14 +246,21 @@ class ObsidianHomePage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label, style: Theme.of(context).textTheme.labelSmall),
+                  Text(
+                    label,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Text(
-                        title,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
+                      Flexible(
+                        child: Text(
+                          title,
+                          overflow: TextOverflow.ellipsis,
+
+                          style: Theme.of(context).textTheme.bodyLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),
                       if (subtitle != null)
@@ -255,12 +296,12 @@ class ObsidianHomePage extends StatelessWidget {
     final actions = [
       {'icon': Icons.music_note_outlined, 'label': 'Music'},
       {'icon': Icons.menu_book_outlined, 'label': 'Reader'},
+      {'icon': Icons.nfc_outlined, 'label': 'NFC'},
       {'icon': Icons.check_circle_outline, 'label': 'Tasks'},
       {'icon': Icons.psychology_outlined, 'label': 'AI'},
       {'icon': Icons.calendar_today_outlined, 'label': 'Calendar'},
       {'icon': Icons.memory_outlined, 'label': 'Neural'},
       {'icon': Icons.bar_chart_outlined, 'label': 'Stats'},
-      {'icon': Icons.more_horiz, 'label': 'More'},
     ];
 
     return Column(
@@ -294,6 +335,13 @@ class ObsidianHomePage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => const BookCollectionPage(),
+                    ),
+                  );
+                } else if (action['label'] == 'NFC') {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NfcScannerPage(),
                     ),
                   );
                 }

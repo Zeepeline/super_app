@@ -4,32 +4,36 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:super_app/core/services/rag_index_service.dart';
+import 'package:super_app/core/services/ai/gemini_service.dart';
+import 'package:super_app/core/services/ai/rag_index_service.dart';
+import 'package:super_app/core/services/ai/rag_service.dart';
+import 'package:super_app/core/services/ai/user_memory_service.dart';
+import 'package:super_app/core/services/ai/voice_service.dart';
+import 'package:super_app/core/services/books/book_store_service.dart';
+import 'package:super_app/core/services/download/download_service.dart';
+import 'package:super_app/core/services/download/youtube_explode_service.dart';
+import 'package:super_app/core/services/infrastructure/secure_storage_service.dart';
+import 'package:super_app/core/services/media/lyrics_service.dart';
+import 'package:super_app/core/services/media/media_import_service.dart';
 
 import 'core/network/network_info.dart';
-import 'core/services/ai_tools_service.dart';
-import 'core/services/audio_handler.dart' as custom_audio;
-import 'core/services/download_service.dart';
-import 'core/services/gemini_service.dart';
-import 'core/services/lyrics_service.dart';
-import 'core/services/media_import_service.dart';
-import 'core/services/native_device_service.dart';
-import 'core/services/rag_service.dart';
-import 'core/services/secure_storage_service.dart';
-import 'core/services/user_memory_service.dart';
-import 'core/services/voice_service.dart';
-import 'core/services/book_library_service.dart';
-import 'core/services/book_cover_service.dart';
-import 'core/services/python_worker_service.dart';
-import 'core/services/youtube_download_service.dart';
-import 'core/services/youtube_explode_service.dart';
-import 'core/services/book_store_service.dart';
+import 'core/services/ai/ai_tools_service.dart';
+import 'core/services/books/book_cover_service.dart';
+import 'core/services/books/book_library_service.dart';
+import 'core/services/download/youtube_download_service.dart';
+import 'core/services/infrastructure/native_device_service.dart';
+import 'core/services/infrastructure/python_worker_service.dart';
+import 'core/services/media/audio_handler.dart' as custom_audio;
 import 'features/ai_assistant/presentation/cubit/ai_chat_cubit.dart';
 import 'features/auth/data/datasources/auth_remote_datasource.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
 import 'features/auth/domain/repositories/auth_repository.dart';
 import 'features/auth/domain/usecases/login_usecase.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/book_search/data/datasources/book_remote_datasource.dart';
+import 'features/book_search/data/repositories/book_search_repository_impl.dart';
+import 'features/book_search/domain/repositories/book_search_repository.dart';
+import 'features/book_search/presentation/bloc/book_search_bloc.dart';
 import 'features/home/data/datasources/home_local_data_source.dart';
 import 'features/home/data/datasources/home_remote_datasource.dart';
 import 'features/home/data/repositories/home_repository_impl.dart';
@@ -60,10 +64,6 @@ import 'features/settings/domain/usecases/get_settings.dart';
 import 'features/settings/domain/usecases/logout.dart';
 import 'features/settings/domain/usecases/update_audio_quality.dart';
 import 'features/settings/presentation/bloc/settings_bloc.dart';
-import 'features/book_search/data/datasources/book_remote_datasource.dart';
-import 'features/book_search/data/repositories/book_search_repository_impl.dart';
-import 'features/book_search/domain/repositories/book_search_repository.dart';
-import 'features/book_search/presentation/bloc/book_search_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -89,7 +89,9 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   sl.registerSingleton<BookLibraryService>(BookLibraryService(sl()));
   sl.registerSingleton<DownloadService>(DownloadService());
   sl.registerSingleton<MediaImportService>(MediaImportService());
-  sl.registerSingleton<YoutubeDownloadService>(YoutubeDownloadService(sl(), sl()));
+  sl.registerSingleton<YoutubeDownloadService>(
+    YoutubeDownloadService(sl(), sl()),
+  );
   sl.registerSingleton<YouTubeExplodeService>(YouTubeExplodeService());
   sl.registerSingleton<SecureStorageService>(SecureStorageService());
   sl.registerSingleton<GeminiService>(GeminiService(sl()));
@@ -101,7 +103,7 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
     () => AiToolsService(sl(), sl(), sl(), sl(), sl(), sl()),
   );
   sl.registerLazySingleton<RagService>(() => RagService(sl(), sl()));
-  
+
   // Register Book Search before BookStoreService
   sl.registerSingleton<BookSearchRepository>(
     BookSearchRepositoryImpl(BookRemoteDataSourceImpl(sl())),

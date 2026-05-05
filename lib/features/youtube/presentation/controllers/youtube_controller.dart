@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:super_app/core/services/youtube_download_service.dart';
-import 'package:super_app/core/services/youtube_explode_service.dart';
+import 'package:super_app/core/services/download/youtube_download_service.dart';
+import 'package:super_app/core/services/download/youtube_explode_service.dart';
 import 'package:super_app/core/theme/app_theme.dart';
 import 'package:super_app/features/home/data/datasources/home_local_data_source.dart';
 import 'package:super_app/features/music_player/domain/entities/track_entity.dart';

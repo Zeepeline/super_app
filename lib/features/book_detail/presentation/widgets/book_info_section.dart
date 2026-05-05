@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:super_app/core/theme/app_theme.dart';
+import 'package:super_app/features/book_collection/data/models/local_book.dart';
 
 class BookInfoSection extends StatelessWidget {
-  const BookInfoSection({super.key});
+  final LocalBook book;
+
+  const BookInfoSection({super.key, required this.book});
 
   @override
   Widget build(BuildContext context) {
@@ -12,15 +15,7 @@ class BookInfoSection extends StatelessWidget {
         _buildSectionTitle(context, 'SYNOPSIS'),
         const SizedBox(height: 12),
         Text(
-          'In the silence of the obsidian fields, the rhythm of the old world still beats. "Obsidian Rhythm" explores the intersection of ancient geology and futuristic sonic landscapes, following a curator who uncovers a digital signal frozen in volcanic glass for over three millennia.',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            height: 1.6,
-            color: Colors.white.withValues(alpha: 0.8),
-          ),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          'As the protagonist delves deeper into the...',
+          book.synopsis ?? 'No synopsis available for this title.',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             height: 1.6,
             color: Colors.white.withValues(alpha: 0.8),
@@ -29,22 +24,18 @@ class BookInfoSection extends StatelessWidget {
         const SizedBox(height: 40),
         _buildSectionTitle(context, 'INFORMATION'),
         const SizedBox(height: 20),
-        _buildInfoRow(context, 'PUBLISHED', 'October 2023'),
+        _buildInfoRow(context, 'PUBLISHED', book.publishDate ?? 'Unknown'),
         const SizedBox(height: 16),
         _buildInfoRow(context, 'LANGUAGE', 'English (US)'),
         const SizedBox(height: 16),
-        _buildInfoRow(context, 'ISBN', '978-3-16-148410-0'),
+        _buildInfoRow(context, 'FORMAT', book.format),
         const SizedBox(height: 24),
         _buildSectionTitle(context, 'GENRE TAGS'),
         const SizedBox(height: 16),
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: const [
-            GenreTag(label: 'HARD SCIENCE'),
-            GenreTag(label: 'CYBERPUNK'),
-            GenreTag(label: 'EDITORIAL'),
-          ],
+          children: (book.genreTags ?? ['LOCAL']).map((tag) => GenreTag(label: tag.toUpperCase())).toList(),
         ),
       ],
     );

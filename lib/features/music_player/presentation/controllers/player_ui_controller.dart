@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:get/get.dart';
-import 'package:super_app/core/services/lyrics_service.dart';
+import 'package:super_app/core/services/media/lyrics_service.dart';
 import 'package:super_app/injection_container.dart';
 import 'package:super_app/features/music_player/domain/models/lyric_line.dart';
 import 'package:super_app/features/music_player/domain/entities/track_entity.dart';

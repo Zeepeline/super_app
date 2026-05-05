@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:super_app/core/services/gemini_service.dart';
+import 'package:super_app/core/services/ai/gemini_service.dart';
 import 'package:super_app/core/theme/app_theme.dart';
 import 'package:super_app/injection_container.dart';
 

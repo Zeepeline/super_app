@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:super_app/core/services/infrastructure/secure_storage_service.dart';
+import 'package:super_app/core/services/media/media_import_service.dart';
 
-import '../../../../core/services/media_import_service.dart';
-import '../../../../core/services/secure_storage_service.dart';
-import '../../../../core/services/youtube_download_service.dart';
+import '../../../../core/services/download/youtube_download_service.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../../../../features/home/data/datasources/home_local_data_source.dart';
 import '../../domain/usecases/get_current_user.dart';
@@ -129,8 +129,11 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       settings,
     ) {
       userResult.fold(
-        (failure) => emit(SettingsLoaded(settings: settings, geminiApiKey: apiKey)),
-        (user) => emit(SettingsLoaded(settings: settings, user: user, geminiApiKey: apiKey)),
+        (failure) =>
+            emit(SettingsLoaded(settings: settings, geminiApiKey: apiKey)),
+        (user) => emit(
+          SettingsLoaded(settings: settings, user: user, geminiApiKey: apiKey),
+        ),
       );
     });
   }

@@ -2,8 +2,18 @@ import os
 import sys
 import json
 import threading
-from http.server import BaseHTTPRequestHandler, HTTPServer
+try:
+    from http.server import BaseHTTPRequestHandler, HTTPServer, ThreadingHTTPServer
+except ImportError:
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    ThreadingHTTPServer = HTTPServer 
 import requests
+
+# Force unbuffered output for real-time logging
+try:
+    sys.stdout.reconfigure(line_buffering=True)
+except:
+    pass
 
 # Add paths for libraries and source
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -31,6 +41,7 @@ class WorkerHandler(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(data).encode('utf-8'))
 
     def do_POST(self):
+        print(f"Python Worker: Received POST {self.path}")
         try:
             if self.path == '/books/search':
                 content_length = int(self.headers['Content-Length'])
@@ -45,10 +56,30 @@ class WorkerHandler(BaseHTTPRequestHandler):
                 content_length = int(self.headers['Content-Length'])
                 post_data = self.rfile.read(content_length)
                 data = json.loads(post_data)
-                
-                # Start download in a background thread
                 threading.Thread(target=self._download_book_task, args=(data,)).start()
                 self._send_response({"status": "download_started"})
+
+            elif self.path == '/get_url':
+                content_length = int(self.headers['Content-Length'])
+                post_data = self.rfile.read(content_length)
+                data = json.loads(post_data)
+                video_id = data.get('video_id')
+                url = self._get_youtube_url(video_id)
+                if url:
+                    self._send_response({"url": url})
+                else:
+                    self._send_response({"error": "Failed to get URL"}, status=400)
+
+            elif self.path == '/download':
+                content_length = int(self.headers['Content-Length'])
+                post_data = self.rfile.read(content_length)
+                data = json.loads(post_data)
+                
+                # Send response immediately to unblock Flutter
+                self._send_response({"status": "ok"})
+                
+                # Start download in a separate thread
+                threading.Thread(target=self._download_youtube_task, args=(data,)).start()
 
             elif self.path == '/update_dart_port':
                 content_length = int(self.headers['Content-Length'])
@@ -64,6 +95,65 @@ class WorkerHandler(BaseHTTPRequestHandler):
         except Exception as e:
             print(f"Python Worker Error: {e}")
             self._send_response({"error": str(e)}, status=500)
+
+    def _get_youtube_url(self, video_id):
+        try:
+            import yt_dlp
+            url = f"https://www.youtube.com/watch?v={video_id}"
+            ydl_opts = {
+                'format': 'bestaudio[ext=m4a]/bestaudio/best', # Prefer m4a for iOS/Android compatibility
+                'quiet': True,
+                'no_warnings': True,
+            }
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(url, download=False)
+                return info.get('url')
+        except Exception as e:
+            print(f"YT-DLP Error getting URL: {e}")
+            return None
+
+    def _download_youtube_task(self, data):
+        url = data.get('url')
+        output_path = data.get('output_path')
+        video_id = data.get('video_id')
+        
+        print(f"Python Worker: Starting YT download for {video_id}")
+        print(f"Python Worker: Destination: {output_path}")
+
+        try:
+            import yt_dlp
+            
+            def progress_hook(d):
+                if d['status'] == 'downloading':
+                    p_str = d.get('_percent_str', '0%').replace('%', '').strip()
+                    try:
+                        progress = float(p_str) / 100
+                        print(f"Python Worker: Progress {video_id} -> {p_str}%")
+                        self._notify_dart_progress(video_id, "downloading", progress)
+                    except: pass
+                elif d['status'] == 'finished':
+                    print(f"Python Worker: Finished downloading {video_id}, now processing...")
+                    self._notify_dart_progress(video_id, "processing", 0.95)
+
+            ydl_opts = {
+                'format': 'bestaudio[ext=m4a]/bestaudio/best',
+                'outtmpl': output_path,
+                'progress_hooks': [progress_hook],
+                'quiet': False, # Set to False for better debugging in logs
+                'no_warnings': False,
+                'nocheckcertificate': True,
+            }
+            
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                print(f"Python Worker: Calling ydl.download for {url}")
+                ydl.download([url])
+                
+            print(f"Python Worker: YT Download task COMPLETED for {video_id}")
+            self._notify_dart_progress(video_id, "done", 1.0)
+        except Exception as e:
+            error_msg = f"YT-DLP Download Fatal Error: {str(e)}"
+            print(f"Python Worker: {error_msg}")
+            self._notify_dart_progress(video_id, "error", 0, error=error_msg)
 
     def _download_book_task(self, data):
         url = data.get('url')
@@ -110,28 +200,39 @@ class WorkerHandler(BaseHTTPRequestHandler):
             print(f"Python Worker Download Error: {e}")
             self._notify_dart_progress(book_id, "error", 0, error=str(e))
 
-    def _notify_dart_progress(self, book_id, status, progress, save_path=None, error=None):
+    def _notify_dart_progress(self, task_id, status, progress, save_path=None, error=None):
+        global dart_port
         if dart_port:
             try:
                 payload = {
-                    "videoId": book_id, # Reusing videoId field as taskId
+                    "videoId": task_id,
                     "status": status,
                     "progress": progress,
                     "save_path": save_path,
                     "error": error
                 }
-                requests.post(f"http://127.0.0.1:{dart_port}/progress", json=payload)
-            except:
-                pass
+                print(f"Python Worker: Notifying Dart (Port {dart_port}) -> Status: {status}, Progress: {progress}")
+                resp = requests.post(
+                    f"http://127.0.0.1:{dart_port}/progress", 
+                    json=payload, 
+                    timeout=2
+                )
+                if resp.status_code != 200:
+                    print(f"Python Worker: Dart returned status {resp.status_code}")
+            except Exception as e:
+                print(f"Python Worker: Failed to notify Dart: {e}")
+        else:
+            print("Python Worker: Cannot notify Dart - dart_port is NOT set!")
 
     def do_GET(self):
         if self.path == '/status':
-            self._send_response({"status": "ok", "worker": "ready"})
+            self._send_response({"status": "ok", "worker": "ready", "dart_port": dart_port})
         else:
             self._send_response({"error": "Not found"}, status=404)
 
 def notify_dart_ready(port):
-    print(f"Python Worker: Notifying Dart on port {dart_port} that we are ready on port {port}...")
+    global dart_port
+    print(f"Python Worker: Initializing handshake. Dart Port: {dart_port}")
     if dart_port:
         try:
             resp = requests.post(
@@ -139,13 +240,13 @@ def notify_dart_ready(port):
                 json={"status": "worker_ready", "port": port},
                 timeout=5
             )
-            print(f"Python Worker: Dart notification sent. Response: {resp.status_code}")
+            print(f"Python Worker: Handshake sent. Response: {resp.status_code}")
         except Exception as e:
-            print(f"Python Worker: Failed to notify Dart: {e}")
+            print(f"Python Worker: Handshake failed: {e}")
     else:
-        print("Python Worker: DART_PORT not set, cannot notify Dart.")
+        print("Python Worker: DART_PORT not set during startup.")
 
-def run(server_class=HTTPServer, handler_class=WorkerHandler, port=9000):
+def run(server_class=ThreadingHTTPServer, handler_class=WorkerHandler, port=9000):
     while port < 9100:
         try:
             server_address = ('127.0.0.1', port)

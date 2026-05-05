@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:super_app/core/services/lyrics_service.dart';
+import 'package:super_app/core/services/media/lyrics_service.dart';
 import 'package:super_app/features/music_player/domain/entities/track_entity.dart';
 import 'package:super_app/features/music_player/domain/repositories/music_repository.dart';
 import 'package:super_app/features/music_player/presentation/cubit/player_state.dart';

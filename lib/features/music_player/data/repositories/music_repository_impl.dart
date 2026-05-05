@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
-import 'package:super_app/core/services/youtube_download_service.dart';
+import 'package:super_app/core/services/download/youtube_download_service.dart';
 
 import '../../../../core/error/failures.dart';
-import '../../../../core/services/audio_handler.dart';
+import '../../../../core/services/media/audio_handler.dart';
 import '../../../home/data/datasources/home_local_data_source.dart';
 import '../../domain/entities/playlist_entity.dart';
 import '../../domain/entities/track_entity.dart';
@@ -138,20 +138,28 @@ class MusicRepositoryImpl implements MusicRepository {
     TrackEntity? track,
   }) async {
     try {
-      // If a full track is provided, set it as current first
+      // 1. If a full track is provided, set it as current first
       if (track != null) {
         localDataSource.setCurrentTrack(TrackModel.fromEntity(track));
       }
 
-      var trackToPlay = localDataSource.getCurrentTrack();
+      final currentTrack = localDataSource.getCurrentTrack();
+      
+      // 2. Optimization: If the track is already loaded in the handler, just resume it
+      final currentMediaItem = audioHandler.mediaItem.value;
+      if (currentMediaItem != null && currentMediaItem.id == trackId) {
+        await audioHandler.play();
+        final updatedTrack = localDataSource.updateTrackState(isPlaying: true);
+        return Right(updatedTrack);
+      }
 
-      // Refresh URL if needed before sending to handler
-      final refreshedTrack = await _ensureValidAudioUrl(trackToPlay);
-
+      // 3. Otherwise, reload and play as a new track
+      final refreshedTrack = await _ensureValidAudioUrl(currentTrack);
       await audioHandler.playTrack(refreshedTrack);
+      
       final updatedTrack = localDataSource.updateTrackState(
         isPlaying: true,
-        currentPosition: Duration.zero,
+        currentPosition: Duration.zero, // Start from beginning for new tracks
       );
       return Right(updatedTrack);
     } catch (e) {

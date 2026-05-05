@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:super_app/core/services/rag_index_service.dart';
+import 'package:super_app/core/services/ai/rag_index_service.dart';
+import 'package:super_app/core/services/media/media_import_service.dart';
 
-import '../../../../core/services/media_import_service.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../../data/datasources/home_local_data_source.dart';
 import '../../domain/usecases/delete_track.dart';

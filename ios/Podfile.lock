@@ -68,6 +68,8 @@ PODS:
   - just_audio (0.0.1):
     - Flutter
     - FlutterMacOS
+  - nfc_manager (0.0.1):
+    - Flutter
   - on_audio_query_ios (0.0.1):
     - Flutter
     - SwiftyBeaver
@@ -126,6 +128,7 @@ DEPENDENCIES:
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - flutter_tts (from `.symlinks/plugins/flutter_tts/ios`)
   - just_audio (from `.symlinks/plugins/just_audio/darwin`)
+  - nfc_manager (from `.symlinks/plugins/nfc_manager/ios`)
   - on_audio_query_ios (from `.symlinks/plugins/on_audio_query_ios/ios`)
   - onnxruntime (from `.symlinks/plugins/onnxruntime/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
@@ -178,6 +181,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_tts/ios"
   just_audio:
     :path: ".symlinks/plugins/just_audio/darwin"
+  nfc_manager:
+    :path: ".symlinks/plugins/nfc_manager/ios"
   on_audio_query_ios:
     :path: ".symlinks/plugins/on_audio_query_ios/ios"
   onnxruntime:
@@ -220,6 +225,7 @@ SPEC CHECKSUMS:
   flutter_secure_storage: 1ed9476fba7e7a782b22888f956cce43e2c62f13
   flutter_tts: 35ac3c7d42412733e795ea96ad2d7e05d0a75113
   just_audio: 4e391f57b79cad2b0674030a00453ca5ce817eed
+  nfc_manager: 9c40fe22528ab871ca11e52ea8b95790e9d92ca2
   on_audio_query_ios: 28a780e2d0d85d92d500ba6e12c6c8167022b2fa
   onnxruntime: 2ab1957eb029c71d47f7bb35cc4efc9f0d297828
   onnxruntime-c: ebdcfd8650bcbd10121c125262f99dea681b92a3

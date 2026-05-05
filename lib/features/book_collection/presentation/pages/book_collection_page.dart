@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:super_app/core/services/book_library_service.dart';
+import 'package:super_app/core/services/books/book_library_service.dart';
 import 'package:super_app/core/theme/app_theme.dart';
 import 'package:super_app/features/book_collection/data/models/local_book.dart';
 import 'package:super_app/injection_container.dart';

@@ -2,12 +2,12 @@ import 'package:audio_session/audio_session.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_generative_ai/google_generative_ai.dart' as ai;
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:super_app/core/services/ai/gemini_service.dart';
+import 'package:super_app/core/services/ai/rag_service.dart';
+import 'package:super_app/core/services/ai/voice_service.dart';
 import 'package:super_app/features/ai_assistant/data/models/chat_message_model.dart';
 
-import '../../../../core/services/audio_handler.dart';
-import '../../../../core/services/gemini_service.dart';
-import '../../../../core/services/rag_service.dart';
-import '../../../../core/services/voice_service.dart';
+import '../../../../core/services/media/audio_handler.dart';
 import '../../../../core/utils/hive_box_constants.dart';
 import '../../../../injection_container.dart';
 import 'ai_chat_state.dart';

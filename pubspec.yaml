@@ -80,6 +80,7 @@ dependencies:
   volume_controller: ^3.4.4
   flutter_epub_viewer: ^1.2.8
   pdfx: ^2.9.2
+  nfc_manager: ^3.3.0
 
 dev_dependencies:
   flutter_test:
@@ -107,6 +108,7 @@ flutter:
 
   assets:
     - assets/music/
+    - assets/rag/
     - app/app.zip
 
   # An image asset can refer to one or more resolution-specific "variants", see

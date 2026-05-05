@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:super_app/core/services/book_store_service.dart';
+import 'package:super_app/core/services/books/book_store_service.dart';
 import 'package:super_app/core/theme/app_theme.dart';
 import 'package:super_app/injection_container.dart';
 import '../bloc/book_search_bloc.dart';

@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:super_app/core/services/python_worker_service.dart';
+import 'package:super_app/core/services/infrastructure/python_worker_service.dart';
 import 'package:super_app/injection_container.dart';
 import '../models/book_search_result_model.dart';
 

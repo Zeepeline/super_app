@@ -7,12 +7,12 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:super_app/core/services/audio_handler.dart' as custom;
-import 'package:super_app/core/services/rag_index_service.dart';
-import 'package:super_app/core/services/user_memory_service.dart';
+import 'package:super_app/core/services/media/audio_handler.dart' as custom;
+import 'package:super_app/core/services/ai/rag_index_service.dart';
+import 'package:super_app/core/services/ai/user_memory_service.dart';
 import 'package:super_app/features/ai_assistant/presentation/pages/ai_chat_page.dart';
 
-import 'core/services/python_worker_service.dart';
+import 'core/services/infrastructure/python_worker_service.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widgets/live_activity_island.dart';
 import 'features/ai_assistant/data/models/chat_message_model.dart';

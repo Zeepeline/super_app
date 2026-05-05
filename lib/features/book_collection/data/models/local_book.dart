@@ -9,6 +9,9 @@ class LocalBook {
   final String? coverPath;
   final DateTime? dateAdded;
   final int lastReadPage;
+  final String? synopsis;
+  final List<String>? genreTags;
+  final String? publishDate;
 
   LocalBook({
     required this.id,
@@ -19,6 +22,9 @@ class LocalBook {
     this.coverPath,
     this.dateAdded,
     this.lastReadPage = 1,
+    this.synopsis,
+    this.genreTags,
+    this.publishDate,
   });
 
   factory LocalBook.fromFile(String path) {
