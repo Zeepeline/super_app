@@ -6,6 +6,7 @@ SoundWave is a modern, feature-rich music player application built with Flutter.
 
 ### 🎧 Core Playback & Audio
 - **High-Quality Playback:** Powered by `just_audio` and `audio_service` for robust background playback, lock screen controls, and system notification integration.
+- **Background Fallback Engine:** Smart fallback mechanism that seamlessly switches from local file playback to streaming URLs if the OS suspends local file access during deep sleep.
 - **Audio Optimization:** Uses `ffmpeg-kit` to automatically re-mux and fix metadata/duration issues for downloaded audio files.
 - **Synced Lyrics:** Real-time synchronized lyrics support powered by a robust external API (`lrclib`).
 
@@ -21,6 +22,16 @@ SoundWave is a modern, feature-rich music player application built with Flutter.
 - **Offline Support:** Full offline library management powered by `Hive`, a fast NoSQL local database.
 - **Smart Importer:** Scans device directories to automatically import local `.mp3`, `.m4a`, `.wav`, and `.flac` files into the app.
 - **Data De-duplication:** Intelligent grouping by album and artist to prevent duplicate entries and maintain a clean library.
+
+### 🤖 Agentic AI Assistant & Memory
+- **Function Calling Engine:** Powered by Google Gemini, the AI can actively control the app—play music, pause, search local libraries, download from YouTube, and fetch lyrics on command.
+- **Graph-Augmented RAG:** Uses a graph-based memory system to remember user preferences (e.g., "User likes Jazz") and uses this context to provide highly personalized responses and recommendations.
+- **Multi-Model Fallback:** Dynamic API key rotation and model fallback strategies (e.g., auto-switching between Gemini 2.0 Flash and 1.5 Pro) to bypass free-tier rate limits seamlessly.
+
+### 📚 RAG Book Library & Audiobook
+- **AI Book Store:** Analyzes your local `.pdf` and `.epub` files to automatically fetch and cache rich metadata (Synopsis, Genre Tags, Publish Date) from Gemini into the local Hive database.
+- **Native Audiobook Generator:** A dedicated Python worker utilizes `PyMuPDF` to extract text from documents and `edge-tts` to synthesize realistic AI voices, converting any PDF into a streamable audiobook on the fly.
+- **Semantic Search:** Vectorizes book content so users can chat with their documents or search their library based on context, not just exact titles.
 
 ### 🎨 Design & UI/UX
 - **Interactive Detail Pages:** Dedicated pages for Artists and Albums with dynamic headers and shuffle-play capabilities.
@@ -72,7 +83,9 @@ graph TD
 - **Dependency Injection:** [get_it](https://pub.dev/packages/get_it)
 - **Audio Playback:** [just_audio](https://pub.dev/packages/just_audio), [audio_service](https://pub.dev/packages/audio_service)
 - **Local Database:** [Hive](https://pub.dev/packages/hive)
+- **AI & RAG:** [google_generative_ai](https://pub.dev/packages/google_generative_ai)
 - **Background Services:** [serious_python](https://pub.dev/packages/serious_python)
+- **Python Backend Engine:** `yt-dlp` (Music Extraction), `PyMuPDF` (PDF Parser), `edge-tts` (Text-to-Speech)
 - **Networking:** [Dio](https://pub.dev/packages/dio), [youtube_explode_dart](https://pub.dev/packages/youtube_explode_dart)
 
 ## 📦 Getting Started
