@@ -12,6 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Validate Python Worker
+        run: |
+          chmod +x ./scripts/check_python_worker.sh
+          ./scripts/check_python_worker.sh
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'

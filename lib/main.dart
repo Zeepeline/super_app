@@ -207,7 +207,7 @@ class MainWrapper extends StatelessWidget {
               children: [_buildBottomNavigationBar()],
             ),
           ),
-          Positioned(top: 0, left: 10, child: LiveActivityIsland()),
+          const Positioned(top: 0, left: 10, child: LiveActivityIsland()),
         ],
       ),
     );

@@ -195,35 +195,101 @@ class YoutubeDownloadService {
     String videoId, {
     bool forceWorker = false,
   }) async {
+    const String separator =
+        "==================================================";
+    dev.log(separator, name: "YoutubeDownloadService");
+    dev.log(
+      "🎵 STARTING STREAM URL ACQUISITION",
+      name: "YoutubeDownloadService",
+    );
+    dev.log("📹 Video ID: $videoId", name: "YoutubeDownloadService");
+
+    String? videoTitle;
+    try {
+      // Pre-fetch video info for better logging (Title)
+      final video = await _yt.videos.get(videoId);
+      videoTitle = video.title;
+      dev.log("📝 Title: $videoTitle", name: "YoutubeDownloadService");
+    } catch (e) {
+      dev.log(
+        "📝 Title: (Metadata fetch failed)",
+        name: "YoutubeDownloadService",
+      );
+    }
+
+    dev.log("⚙️ Force Worker: $forceWorker", name: "YoutubeDownloadService");
+    dev.log(separator, name: "YoutubeDownloadService");
+
     try {
       if (!forceWorker) {
         // 1. Try youtube_explode_dart FIRST for instant playback (Zero delay)
         dev.log(
-          "Trying YouTubeExplode for instant stream URL...",
+          "⚡ Strategy 1: YouTubeExplode (Instant)",
           name: "YoutubeDownloadService",
         );
         try {
-          final manifest = await _yt.videos.streamsClient.getManifest(videoId);
-          final streamInfo = manifest.audioOnly.withHighestBitrate();
-          return streamInfo.url.toString();
+          // Set a strict timeout for Strategy 1 to avoid long delays
+          final manifest = await _yt.videos.streamsClient.getManifest(videoId).timeout(
+            const Duration(seconds: 3),
+          );
+
+          // Prefer m4a streams for better iOS compatibility
+          final m4aStreams = manifest.audioOnly.where(
+            (s) => s.container == StreamContainer.mp4,
+          );
+
+          final streamInfo = m4aStreams.isNotEmpty
+              ? m4aStreams.withHighestBitrate()
+              : manifest.audioOnly.withHighestBitrate();
+
+          final url = streamInfo.url.toString();
+          dev.log(
+            "✅ SUCCESS: YouTubeExplode retrieved URL",
+            name: "YoutubeDownloadService",
+          );
+          dev.log(
+            "📦 Container: ${streamInfo.container}",
+            name: "YoutubeDownloadService",
+          );
+          dev.log(
+            "🎧 Bitrate: ${streamInfo.bitrate}",
+            name: "YoutubeDownloadService",
+          );
+          dev.log("🔗 URL: $url", name: "YoutubeDownloadService");
+          dev.log(separator, name: "YoutubeDownloadService");
+          return url;
         } catch (e) {
           dev.log(
-            "YouTubeExplode failed: $e, falling back to Python Worker...",
+            "⚠️ YouTubeExplode Failed: $e",
+            name: "YoutubeDownloadService",
+          );
+          dev.log(
+            "🔄 Falling back to Strategy 2...",
             name: "YoutubeDownloadService",
           );
         }
       } else {
         dev.log(
-          "Forcing Python Worker for $videoId",
+          "🛠️ Strategy: Forced Python Worker",
           name: "YoutubeDownloadService",
         );
       }
 
       // 2. Fallback to Python Worker (yt-dlp) if YouTubeExplode fails or throttles
+      dev.log(
+        "🐍 Strategy 2: Python Worker (yt-dlp)",
+        name: "YoutubeDownloadService",
+      );
+
       await _workerService.initWorker().timeout(
         const Duration(seconds: 5),
-        onTimeout: () =>
-            dev.log("Worker init timeout", name: "YoutubeDownloadService"),
+        onTimeout: () {
+          dev.log(
+            "❌ ERROR: Python Worker initialization timed out",
+            name: "YoutubeDownloadService",
+          );
+          throw TimeoutException("Worker init timeout");
+        },
       );
 
       if (_workerService.isReady) {
@@ -236,18 +302,42 @@ class YoutubeDownloadService {
               .timeout(const Duration(seconds: 10));
 
           if (response.statusCode == 200 && response.data['url'] != null) {
-            return response.data['url'];
+            final url = response.data['url'];
+            dev.log(
+              "✅ SUCCESS: Python Worker retrieved URL",
+              name: "YoutubeDownloadService",
+            );
+            dev.log("🔗 URL: $url", name: "YoutubeDownloadService");
+            dev.log(separator, name: "YoutubeDownloadService");
+            return url;
+          } else {
+            dev.log(
+              "❌ ERROR: Worker returned invalid status: ${response.statusCode}",
+              name: "YoutubeDownloadService",
+            );
           }
         } catch (e) {
-          dev.log("Worker get_url failed: $e", name: "YoutubeDownloadService");
+          dev.log(
+            "❌ ERROR: Worker request failed: $e",
+            name: "YoutubeDownloadService",
+          );
         }
+      } else {
+        dev.log(
+          "❌ ERROR: Python Worker is NOT ready",
+          name: "YoutubeDownloadService",
+        );
       }
-      return null;
-    } catch (e) {
+
       dev.log(
-        "Final error getting stream URL: $e",
+        "🚫 FAILED: All strategies exhausted. No URL found.",
         name: "YoutubeDownloadService",
       );
+      dev.log(separator, name: "YoutubeDownloadService");
+      return null;
+    } catch (e) {
+      dev.log("🔥 FATAL ERROR: $e", name: "YoutubeDownloadService");
+      dev.log(separator, name: "YoutubeDownloadService");
       return null;
     }
   }

@@ -1,13 +1,11 @@
 import requests
-from libgen_api import LibgenSearch
-import internetarchive as ia
 import os
 import json
 from concurrent.futures import ThreadPoolExecutor
 
 class BookService:
     def __init__(self):
-        self.libgen = LibgenSearch()
+        pass
 
     def search_libgen(self, query):
         # mirrors = ["https://libgen.is", "https://libgen.rs", "https://libgen.st", "https://libgen.li"]
@@ -39,31 +37,44 @@ class BookService:
     def search_internet_archive(self, query):
         try:
             search_query = f"title:({query}) AND mediatype:texts"
-            results = ia.search_items(search_query)
-            formatted = []
-            count = 0
-            for r in results:
-                if count >= 15: break
-                try:
-                    item_id = r['identifier']
-                    item = ia.get_item(item_id)
-                    meta = item.metadata
-                    if not meta.get('title'): continue
+            url = "https://archive.org/advancedsearch.php"
+            params = {
+                'q': search_query,
+                'fl[]': 'identifier,title,creator,date',
+                'output': 'json',
+                'rows': 15,
+                'page': 1
+            }
+            response = requests.get(url, params=params, timeout=20)
+            if response.status_code == 200:
+                data = response.json()
+                docs = data.get('response', {}).get('docs', [])
+                formatted = []
+                for doc in docs:
+                    item_id = doc.get('identifier')
+                    if not item_id or not doc.get('title'): continue
+                    
+                    creator = doc.get('creator')
+                    if isinstance(creator, list): creator = ", ".join(creator)
+                    elif not creator: creator = 'Unknown'
+                    
+                    date_str = doc.get('date', '')
+                    year = date_str[:4] if isinstance(date_str, str) and len(date_str) >= 4 else None
                     
                     formatted.append({
                         "source": "Internet Archive",
                         "id": item_id,
-                        "title": meta.get('title'),
-                        "author": meta.get('creator') or 'Unknown',
-                        "year": meta.get('date'),
+                        "title": doc.get('title'),
+                        "author": creator,
+                        "year": year,
                         "format": "EPUB/PDF",
                         "cover_url": f"https://archive.org/services/img/{item_id}",
                         "mirror": f"https://archive.org/details/{item_id}"
                     })
-                    count += 1
-                except: continue
-            return formatted
-        except:
+                return formatted
+            return []
+        except Exception as e:
+            print(f"Error searching IA: {e}")
             return []
 
     def search_gutenberg(self, query):
@@ -109,16 +120,18 @@ class BookService:
     def get_download_link(self, source, book_id, mirror):
         if source == "Internet Archive":
             try:
-                item = ia.get_item(book_id)
-                # Look for PDF or EPUB files
-                files = item.files
-                pdf_file = next((f for f in files if f['name'].lower().endswith('.pdf')), None)
-                epub_file = next((f for f in files if f['name'].lower().endswith('.epub')), None)
-                
-                selected_file = pdf_file or epub_file
-                if selected_file:
-                    # Construct direct download URL
-                    return f"https://archive.org/download/{book_id}/{selected_file['name']}"
+                url = f"https://archive.org/metadata/{book_id}"
+                response = requests.get(url, timeout=10)
+                if response.status_code == 200:
+                    data = response.json()
+                    files = data.get('files', [])
+                    
+                    pdf_file = next((f for f in files if f.get('name', '').lower().endswith('.pdf')), None)
+                    epub_file = next((f for f in files if f.get('name', '').lower().endswith('.epub')), None)
+                    
+                    selected_file = pdf_file or epub_file
+                    if selected_file:
+                        return f"https://archive.org/download/{book_id}/{selected_file['name']}"
             except Exception as e:
                 print(f"Error getting IA download link: {e}")
         

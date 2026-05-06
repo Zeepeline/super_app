@@ -2,38 +2,77 @@ import os
 import sys
 import json
 import threading
-try:
-    from http.server import BaseHTTPRequestHandler, HTTPServer, ThreadingHTTPServer
-except ImportError:
-    from http.server import BaseHTTPRequestHandler, HTTPServer
-    ThreadingHTTPServer = HTTPServer 
-import requests
+import time
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
-# Force unbuffered output for real-time logging
+# Try to get ThreadingHTTPServer (Python 3.7+)
 try:
-    sys.stdout.reconfigure(line_buffering=True)
-except:
-    pass
+    from http.server import ThreadingHTTPServer
+except ImportError:
+    ThreadingHTTPServer = HTTPServer
+
+# Use urllib as fallback for logging to avoid dependency issues on startup
+import urllib.request
+import urllib.error
 
 # Add paths for libraries and source
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(current_dir, "site-packages"))
 sys.path.append(current_dir)
 
-# Import check for debugging
-try:
-    import internetarchive as ia
-    print("Python Worker: Libraries imported successfully.")
-except Exception as e:
-    print(f"Python Worker: IMPORT ERROR: {e}")
+dart_port = os.environ.get("DART_PORT")
 
-from book_service import BookService
-from audiobook_service import AudiobookService
+def log_to_dart(message):
+    """Relays logs to Dart console via urllib (standard library)"""
+    print(f"Python Worker: {message}")
+    if not dart_port:
+        return
+    try:
+        payload = json.dumps({
+            "status": "log",
+            "message": f"🐍 [Python Worker] {message}"
+        }).encode('utf-8')
+        
+        req = urllib.request.Request(
+            f"http://127.0.0.1:{dart_port}/progress",
+            data=payload,
+            headers={'Content-Type': 'application/json'}
+        )
+        with urllib.request.urlopen(req, timeout=1) as response:
+            pass
+    except:
+        pass
+
+log_to_dart("Process started. Checking libraries...")
+
+# Now safe to try importing heavy dependencies
+try:
+    import requests
+    log_to_dart("Library 'requests' loaded.")
+except ImportError:
+    log_to_dart("CRITICAL: 'requests' library NOT FOUND in site-packages!")
+
+# Pre-define classes to avoid NameError if import fails
+BookService = None
+AudiobookService = None
+
+try:
+    log_to_dart("Importing book_service...")
+    from book_service import BookService
+except Exception as e:
+    log_to_dart(f"ERROR importing book_service: {e}")
+
+try:
+    log_to_dart("Importing audiobook_service...")
+    from audiobook_service import AudiobookService
+except Exception as e:
+    log_to_dart(f"ERROR importing audiobook_service: {e}")
 
 # Global state
-book_service = BookService()
-audiobook_service = AudiobookService()
-dart_port = os.environ.get("DART_PORT")
+log_to_dart("Initializing global services...")
+book_service = BookService() if BookService else None
+audiobook_service = AudiobookService() if AudiobookService else None
+log_to_dart("Global services ready.")
 
 class WorkerHandler(BaseHTTPRequestHandler):
     def _send_response(self, data, status=200):
@@ -50,7 +89,12 @@ class WorkerHandler(BaseHTTPRequestHandler):
                 post_data = self.rfile.read(content_length)
                 data = json.loads(post_data)
                 query = data.get('query', '')
-                print(f"Python Worker: Searching books for: {query}")
+                log_to_dart(f"Searching books for: {query}")
+                
+                if not book_service:
+                    self._send_response({"error": "BookService is not available (Import failed)"}, status=503)
+                    return
+                    
                 results = book_service.search_all(query)
                 self._send_response({"results": results})
                 
@@ -58,6 +102,11 @@ class WorkerHandler(BaseHTTPRequestHandler):
                 content_length = int(self.headers['Content-Length'])
                 post_data = self.rfile.read(content_length)
                 data = json.loads(post_data)
+                
+                if not book_service:
+                    self._send_response({"error": "BookService is not available"}, status=503)
+                    return
+                    
                 threading.Thread(target=self._download_book_task, args=(data,)).start()
                 self._send_response({"status": "download_started"})
 
@@ -97,6 +146,11 @@ class WorkerHandler(BaseHTTPRequestHandler):
                 post_data = self.rfile.read(content_length)
                 data = json.loads(post_data)
                 pdf_path = data.get('path')
+                
+                if not audiobook_service:
+                    self._send_response({"error": "AudiobookService is not available (Import failed)"}, status=503)
+                    return
+                    
                 info = audiobook_service.get_pdf_metadata(pdf_path)
                 self._send_response(info)
 
@@ -104,6 +158,11 @@ class WorkerHandler(BaseHTTPRequestHandler):
                 content_length = int(self.headers['Content-Length'])
                 post_data = self.rfile.read(content_length)
                 data = json.loads(post_data)
+                
+                if not audiobook_service:
+                    self._send_response({"error": "AudiobookService is not available (Import failed)"}, status=503)
+                    return
+                    
                 pdf_path = data.get('path')
                 page_num = data.get('page', 0)
                 voice = data.get('voice', 'id-ID-ArdiNeural')
@@ -136,16 +195,22 @@ class WorkerHandler(BaseHTTPRequestHandler):
         try:
             import yt_dlp
             url = f"https://www.youtube.com/watch?v={video_id}"
+            log_to_dart(f"Strategy 2: Python Worker fetching URL for {video_id}...")
             ydl_opts = {
-                'format': 'bestaudio[ext=m4a]/bestaudio/best', # Prefer m4a for iOS/Android compatibility
+                'format': 'bestaudio[ext=m4a]/bestaudio/best',
                 'quiet': True,
                 'no_warnings': True,
+                'nocheckcertificate': True,
+                'user_agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Mobile/15E148 Safari/604.1',
             }
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(url, download=False)
-                return info.get('url')
+                final_url = info.get('url')
+                if final_url:
+                    log_to_dart(f"Strategy 2 SUCCESS: Found URL for {video_id}")
+                return final_url
         except Exception as e:
-            print(f"YT-DLP Error getting URL: {e}")
+            log_to_dart(f"Strategy 2 FAILED (yt-dlp error): {e}")
             return None
 
     def _download_youtube_task(self, data):
@@ -153,8 +218,8 @@ class WorkerHandler(BaseHTTPRequestHandler):
         output_path = data.get('output_path')
         video_id = data.get('video_id')
         
-        print(f"Python Worker: Starting YT download for {video_id}")
-        print(f"Python Worker: Destination: {output_path}")
+        log_to_dart(f"Starting YouTube download for {video_id}")
+        log_to_dart(f"Destination: {output_path}")
 
         try:
             import yt_dlp
@@ -164,31 +229,32 @@ class WorkerHandler(BaseHTTPRequestHandler):
                     p_str = d.get('_percent_str', '0%').replace('%', '').strip()
                     try:
                         progress = float(p_str) / 100
-                        print(f"Python Worker: Progress {video_id} -> {p_str}%")
+                        # Only log every 20% to avoid flooding
+                        if int(float(p_str)) % 20 == 0:
+                            log_to_dart(f"Download Progress {video_id}: {p_str}%")
                         self._notify_dart_progress(video_id, "downloading", progress)
                     except: pass
                 elif d['status'] == 'finished':
-                    print(f"Python Worker: Finished downloading {video_id}, now processing...")
+                    log_to_dart(f"Finished downloading {video_id}, now processing...")
                     self._notify_dart_progress(video_id, "processing", 0.95)
 
             ydl_opts = {
                 'format': 'bestaudio[ext=m4a]/bestaudio/best',
                 'outtmpl': output_path,
                 'progress_hooks': [progress_hook],
-                'quiet': False, # Set to False for better debugging in logs
-                'no_warnings': False,
+                'quiet': True,
+                'no_warnings': True,
                 'nocheckcertificate': True,
             }
             
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                print(f"Python Worker: Calling ydl.download for {url}")
                 ydl.download([url])
                 
-            print(f"Python Worker: YT Download task COMPLETED for {video_id}")
+            log_to_dart(f"YouTube Download COMPLETED for {video_id}")
             self._notify_dart_progress(video_id, "done", 1.0)
         except Exception as e:
             error_msg = f"YT-DLP Download Fatal Error: {str(e)}"
-            print(f"Python Worker: {error_msg}")
+            log_to_dart(error_msg)
             self._notify_dart_progress(video_id, "error", 0, error=error_msg)
 
     def _download_book_task(self, data):
@@ -237,28 +303,28 @@ class WorkerHandler(BaseHTTPRequestHandler):
             self._notify_dart_progress(book_id, "error", 0, error=str(e))
 
     def _notify_dart_progress(self, task_id, status, progress, save_path=None, error=None):
-        global dart_port
         if dart_port:
             try:
-                payload = {
+                payload = json.dumps({
                     "videoId": task_id,
                     "status": status,
                     "progress": progress,
                     "save_path": save_path,
                     "error": error
-                }
-                print(f"Python Worker: Notifying Dart (Port {dart_port}) -> Status: {status}, Progress: {progress}")
-                resp = requests.post(
-                    f"http://127.0.0.1:{dart_port}/progress", 
-                    json=payload, 
-                    timeout=2
+                }).encode('utf-8')
+                
+                req = urllib.request.Request(
+                    f"http://127.0.0.1:{dart_port}/progress",
+                    data=payload,
+                    headers={'Content-Type': 'application/json'}
                 )
-                if resp.status_code != 200:
-                    print(f"Python Worker: Dart returned status {resp.status_code}")
+                with urllib.request.urlopen(req, timeout=2) as response:
+                    if response.status != 200:
+                        log_to_dart(f"Dart returned status {response.status}")
             except Exception as e:
-                print(f"Python Worker: Failed to notify Dart: {e}")
+                log_to_dart(f"Failed to notify Dart: {e}")
         else:
-            print("Python Worker: Cannot notify Dart - dart_port is NOT set!")
+            log_to_dart("Cannot notify Dart - dart_port is NOT set!")
 
     def do_GET(self):
         if self.path == '/status':
@@ -267,20 +333,25 @@ class WorkerHandler(BaseHTTPRequestHandler):
             self._send_response({"error": "Not found"}, status=404)
 
 def notify_dart_ready(port):
-    global dart_port
-    print(f"Python Worker: Initializing handshake. Dart Port: {dart_port}")
+    log_to_dart(f"Initializing handshake. Dart Port: {dart_port}")
     if dart_port:
         try:
-            resp = requests.post(
+            payload = json.dumps({
+                "status": "worker_ready", 
+                "port": port
+            }).encode('utf-8')
+            
+            req = urllib.request.Request(
                 f"http://127.0.0.1:{dart_port}/progress",
-                json={"status": "worker_ready", "port": port},
-                timeout=5
+                data=payload,
+                headers={'Content-Type': 'application/json'}
             )
-            print(f"Python Worker: Handshake sent. Response: {resp.status_code}")
+            with urllib.request.urlopen(req, timeout=5) as response:
+                log_to_dart(f"Handshake sent. Response: {response.status}")
         except Exception as e:
-            print(f"Python Worker: Handshake failed: {e}")
+            log_to_dart(f"Handshake failed: {e}")
     else:
-        print("Python Worker: DART_PORT not set during startup.")
+        log_to_dart("DART_PORT not set during startup.")
 
 def run(server_class=ThreadingHTTPServer, handler_class=WorkerHandler, port=9000):
     while port < 9100:
@@ -295,4 +366,9 @@ def run(server_class=ThreadingHTTPServer, handler_class=WorkerHandler, port=9000
             port += 1
 
 if __name__ == "__main__":
-    run()
+    try:
+        run()
+    except Exception as e:
+        log_to_dart(f"FATAL STARTUP ERROR: {e}")
+        # Final attempt to print to stderr if logging fails
+        sys.stderr.write(f"FATAL: {e}\n")

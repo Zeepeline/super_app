@@ -267,8 +267,18 @@ class PythonWorkerService {
   void _handleProgressData(String content) {
     try {
       final data = jsonDecode(content);
-      final taskId = data['videoId'] as String?; // Could be bookId or videoId
       final status = data['status'] as String?;
+
+      // Handle direct log messages from Python
+      if (status == 'log') {
+        final message = data['message'] as String?;
+        if (message != null) {
+          dev.log(message, name: "PythonWorker");
+        }
+        return;
+      }
+
+      final taskId = data['videoId'] as String?; // Could be bookId or videoId
 
       if (taskId != null && _activeDownloadCompleters.containsKey(taskId)) {
         if (status == 'done' || status == 'error') {
