@@ -1,5 +1,6 @@
 import 'dart:developer' as dev;
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:audio_service/audio_service.dart';
@@ -30,10 +31,28 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
     // Handle completions and state changes
     _player.processingStateStream.listen((state) {
       if (state == ProcessingState.completed) {
+        dev.log("AudioHandler: ProcessingState.completed reached. Skipping...");
         skipToNext();
       }
-      // Trigger a state broadcast on every processing state change
       playbackState.add(_transformEvent(_player.playbackEvent));
+    });
+
+    // WATCHDOG: For streaming tracks, sometimes 'completed' state is never reached.
+    // We check if position is >= duration - 500ms to trigger next track.
+    _player.positionStream.listen((position) {
+      final duration = _player.duration;
+      if (duration != null && duration > Duration.zero) {
+        // If we are within 1 second of the end and still playing/buffering
+        if (position >= duration - const Duration(milliseconds: 1000)) {
+          if (_player.processingState != ProcessingState.completed &&
+              _player.playing) {
+            dev.log("AudioHandler: Watchdog detected end of stream. Forcing next...");
+            // Pause first to prevent multiple triggers
+            _player.pause();
+            skipToNext();
+          }
+        }
+      }
     });
 
     // Handle duration changes dynamically to ensure progress bar works,
@@ -137,11 +156,15 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
         source = AudioSource.file(resolvedLocalPath);
       } else if (track.audioUrl.isNotEmpty) {
         dev.log("AudioHandler: Local file missing or invalid, falling back to streaming");
-        source = AudioSource.uri(
+        dev.log("AudioHandler: Using LockCachingAudioSource for stable streaming");
+        
+        source = LockCachingAudioSource(
           Uri.parse(track.audioUrl),
           headers: {
             'User-Agent':
-                'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
+                'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Mobile/15E148 Safari/604.1',
+            'Referer': 'https://www.youtube.com/',
+            'Origin': 'https://www.youtube.com',
           },
         );
       }
@@ -152,10 +175,8 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
         throw Exception("No valid audio source (local or stream) for: ${track.title}");
       }
 
-      // 4. Set source and start playing immediately
-      // We set preload: false to prevent the player from hanging/awaiting 
-      // full metadata load while in background, which can cause OS suspension.
-      await _player.setAudioSource(source, preload: false);
+      // 4. Set source and start playing
+      await _player.setAudioSource(source);
 
       // 5. Prepare metadata
       final item = MediaItem(

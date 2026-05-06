@@ -1,6 +1,10 @@
 import os
 import asyncio
-import edge_tts
+try:
+    import edge_tts
+except ImportError:
+    edge_tts = None
+
 try:
     import fitz  # PyMuPDF
 except ImportError:
@@ -47,6 +51,9 @@ class AudiobookService:
 
     async def generate_speech(self, text, output_filename, voice="id-ID-ArdiNeural"):
         """Converts text to speech using Edge-TTS"""
+        if not edge_tts:
+            print("AudiobookService: edge_tts library not found.")
+            return None
         if not text:
             return None
             

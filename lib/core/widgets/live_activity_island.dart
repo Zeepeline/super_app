@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
@@ -5,13 +6,44 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:super_app/core/theme/app_theme.dart';
+import 'package:super_app/features/music_player/presentation/pages/music_player_page.dart';
 import 'package:super_app/injection_container.dart';
 
-class LiveActivityIsland extends StatelessWidget {
+class LiveActivityIsland extends StatefulWidget {
+  const LiveActivityIsland({super.key});
+
+  @override
+  State<LiveActivityIsland> createState() => _LiveActivityIslandState();
+}
+
+class _LiveActivityIslandState extends State<LiveActivityIsland> {
   final RxBool _isExpanded = false.obs;
   final AudioHandler _audioHandler = sl<AudioHandler>();
+  Timer? _collapseTimer;
 
-  LiveActivityIsland({super.key});
+  void _startCollapseTimer() {
+    _collapseTimer?.cancel();
+    _collapseTimer = Timer(const Duration(seconds: 3), () {
+      if (_isExpanded.value) {
+        _isExpanded.value = false;
+      }
+    });
+  }
+
+  void _toggleExpand() {
+    _isExpanded.value = !_isExpanded.value;
+    if (_isExpanded.value) {
+      _startCollapseTimer();
+    } else {
+      _collapseTimer?.cancel();
+    }
+  }
+
+  @override
+  void dispose() {
+    _collapseTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +59,23 @@ class LiveActivityIsland extends StatelessWidget {
             final playbackState = playbackSnapshot.data;
             final isPlaying = playbackState?.playing ?? false;
 
-            // Only show if media is loaded
             return SafeArea(
               child: Padding(
                 padding: const EdgeInsets.only(top: 12),
                 child: Align(
                   alignment: Alignment.topCenter,
                   child: GestureDetector(
-                    onTap: () => _isExpanded.value = !_isExpanded.value,
+                    onTap: _toggleExpand,
+                    onDoubleTap: () {
+                      _isExpanded.value = false;
+                      _collapseTimer?.cancel();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MusicPlayerPage(),
+                        ),
+                      );
+                    },
                     child: Obx(
                       () => AnimatedContainer(
                         duration: const Duration(milliseconds: 600),
@@ -48,7 +89,9 @@ class LiveActivityIsland extends StatelessWidget {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: AppTheme.kPrimaryColor.withValues(alpha: 0.15),
+                              color: AppTheme.kPrimaryColor.withValues(
+                                alpha: 0.15,
+                              ),
                               blurRadius: 20,
                               spreadRadius: -5,
                             ),
@@ -117,7 +160,6 @@ class LiveActivityIsland extends StatelessWidget {
     return Row(
       key: const ValueKey('collapsed'),
       children: [
-        // Album art circle
         Container(
           width: 24,
           height: 24,
@@ -212,6 +254,8 @@ class LiveActivityIsland extends StatelessWidget {
             ),
             IconButton(
               onPressed: () {
+                // Reset timer on interaction
+                _startCollapseTimer();
                 if (isPlaying) {
                   _audioHandler.pause();
                 } else {
