@@ -145,7 +145,9 @@ class OnboardingPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppTheme.kPrimaryColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.kPrimaryColor.withValues(alpha: 0.2)),
+        border: Border.all(
+          color: AppTheme.kPrimaryColor.withValues(alpha: 0.2),
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

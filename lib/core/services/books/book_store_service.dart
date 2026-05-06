@@ -69,28 +69,35 @@ class BookStoreService {
         author: "Cal Newport",
         genre: "Self-Help",
         reason: "A must-read for better focus in the digital age.",
-        coverUrl: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=400",
+        coverUrl:
+            "https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=400",
       ),
       BookRecommendation(
         title: "Atomic Habits",
         author: "James Clear",
         genre: "Psychology",
         reason: "The definitive guide to building good habits.",
-        coverUrl: "https://images.unsplash.com/photo-1589998059171-988d887df646?q=80&w=400",
+        coverUrl:
+            "https://images.unsplash.com/photo-1589998059171-988d887df646?q=80&w=400",
       ),
       BookRecommendation(
         title: "Sapiens",
         author: "Yuval Noah Harari",
         genre: "History",
         reason: "Explores the history and future of humanity.",
-        coverUrl: "https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=400",
+        coverUrl:
+            "https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=400",
       ),
     ];
   }
 
-  Future<Map<String, dynamic>> getBookMetadata(String title, String author) async {
+  Future<Map<String, dynamic>> getBookMetadata(
+    String title,
+    String author,
+  ) async {
     try {
-      final prompt = """
+      final prompt =
+          """
       You are a book metadata expert. Provide details for the book "$title" by "$author".
       Return the response ONLY as a JSON object with these keys: "synopsis", "genreTags" (list), "publishDate".
       If you don't know the exact book, provide a likely professional description based on the title/author.
@@ -112,14 +119,18 @@ class BookStoreService {
       return {
         "synopsis": "No description available for this local file.",
         "genreTags": ["LOCAL"],
-        "publishDate": "Unknown"
+        "publishDate": "Unknown",
       };
     }
   }
 
-  Future<List<BookRecommendation>> getSimilarBooks(String title, String author) async {
+  Future<List<BookRecommendation>> getSimilarBooks(
+    String title,
+    String author,
+  ) async {
     try {
-      final prompt = """
+      final prompt =
+          """
       You are a world-class librarian. Recommend 3 books similar to "$title" by "$author".
       Return the response ONLY as a JSON list of objects with these keys: "title", "author", "genre", "reason", "coverUrl".
       For "coverUrl", use a direct image URL of the book cover or a high-quality relevant Unsplash image.

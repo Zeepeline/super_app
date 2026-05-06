@@ -85,27 +85,37 @@ class BookSearchResultItem extends StatelessWidget {
             onPressed: () async {
               try {
                 final workerService = sl<PythonWorkerService>();
-                
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Downloading "${result.title}"...')),
                 );
-                
+
                 await workerService.downloadBook(result);
-                
+
                 final error = workerService.getTaskError(result.id);
                 if (error != null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error: $error'), backgroundColor: Colors.red),
+                    SnackBar(
+                      content: Text('Error: $error'),
+                      backgroundColor: Colors.red,
+                    ),
                   );
                   workerService.clearTaskError(result.id);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Download complete! Saved to Documents/SoundWave/Books')),
+                    SnackBar(
+                      content: Text(
+                        'Download complete! Saved to Documents/SoundWave/Books',
+                      ),
+                    ),
                   );
                 }
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Failed to start download: $e'), backgroundColor: Colors.red),
+                  SnackBar(
+                    content: Text('Failed to start download: $e'),
+                    backgroundColor: Colors.red,
+                  ),
                 );
               }
             },

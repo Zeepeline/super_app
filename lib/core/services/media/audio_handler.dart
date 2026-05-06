@@ -136,7 +136,9 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
         dev.log("AudioHandler: Playing from local file: $resolvedLocalPath");
         source = AudioSource.file(resolvedLocalPath);
       } else if (track.audioUrl.isNotEmpty) {
-        dev.log("AudioHandler: Local file missing or invalid, falling back to streaming");
+        dev.log(
+          "AudioHandler: Local file missing or invalid, falling back to streaming",
+        );
         source = AudioSource.uri(
           Uri.parse(track.audioUrl),
           headers: {
@@ -149,11 +151,13 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
       if (source == null) {
         // Last resort: If it's a YouTube ID, we might need one more refresh attempt
         // but for now we throw to trigger the Repository's retry logic
-        throw Exception("No valid audio source (local or stream) for: ${track.title}");
+        throw Exception(
+          "No valid audio source (local or stream) for: ${track.title}",
+        );
       }
 
       // 4. Set source and start playing immediately
-      // We set preload: false to prevent the player from hanging/awaiting 
+      // We set preload: false to prevent the player from hanging/awaiting
       // full metadata load while in background, which can cause OS suspension.
       await _player.setAudioSource(source, preload: false);
 

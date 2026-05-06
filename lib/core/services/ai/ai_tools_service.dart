@@ -113,7 +113,9 @@ class AiToolsService {
                 t.titleField.toLowerCase().contains(query.toLowerCase()) ||
                 t.artistField.toLowerCase().contains(query.toLowerCase()) ||
                 t.albumField.toLowerCase().contains(query.toLowerCase()) ||
-                (t.plainLyricsField?.toLowerCase().contains(query.toLowerCase()) ??
+                (t.plainLyricsField?.toLowerCase().contains(
+                      query.toLowerCase(),
+                    ) ??
                     false),
           )
           .toList();

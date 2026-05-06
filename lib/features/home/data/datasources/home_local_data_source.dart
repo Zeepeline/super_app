@@ -84,9 +84,7 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
         // 2. If no duplicate path, use id as key
         await box.put(track.id, track);
       }
-
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   @override
@@ -147,8 +145,7 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
           await box.putAt(trackIndex, updatedTrack);
         }
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   @override
@@ -166,8 +163,7 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
           await box.putAt(trackIndex, updatedTrack);
         }
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   @override
@@ -192,8 +188,7 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
           await box.putAt(trackIndex, updatedTrack);
         }
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   @override

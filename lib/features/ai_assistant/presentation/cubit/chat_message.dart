@@ -4,8 +4,5 @@ class ChatMessage {
   final ai.Content content;
   final DateTime timestamp;
 
-  ChatMessage({
-    required this.content,
-    required this.timestamp,
-  });
+  ChatMessage({required this.content, required this.timestamp});
 }

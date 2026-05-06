@@ -54,8 +54,13 @@ class _NfcScannerPageState extends State<NfcScannerPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('NFC ACCESS SCANNER', 
-          style: TextStyle(letterSpacing: 2, fontSize: 14, fontWeight: FontWeight.bold)
+        title: const Text(
+          'NFC ACCESS SCANNER',
+          style: TextStyle(
+            letterSpacing: 2,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       body: Container(
@@ -66,9 +71,9 @@ class _NfcScannerPageState extends State<NfcScannerPage> {
           children: [
             // Animasi / Ikon NFC
             _buildNfcIcon(),
-            
+
             const SizedBox(height: 48),
-            
+
             // Status Text
             Text(
               _status,
@@ -79,14 +84,14 @@ class _NfcScannerPageState extends State<NfcScannerPage> {
                 fontWeight: FontWeight.w300,
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Result Card
             if (_scannedUid != null) _buildResultCard(),
-            
+
             const Spacer(),
-            
+
             // Action Button
             _buildActionButton(),
           ],
@@ -101,7 +106,9 @@ class _NfcScannerPageState extends State<NfcScannerPage> {
       height: 200,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: _isScanning ? Colors.cyanAccent.withOpacity(0.1) : Colors.white.withOpacity(0.05),
+        color: _isScanning
+            ? Colors.cyanAccent.withOpacity(0.1)
+            : Colors.white.withOpacity(0.05),
         border: Border.all(
           color: _isScanning ? Colors.cyanAccent : Colors.white24,
           width: 2,
@@ -133,7 +140,14 @@ class _NfcScannerPageState extends State<NfcScannerPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("CARD UID", style: TextStyle(color: Colors.white38, fontSize: 12, letterSpacing: 1.5)),
+              const Text(
+                "CARD UID",
+                style: TextStyle(
+                  color: Colors.white38,
+                  fontSize: 12,
+                  letterSpacing: 1.5,
+                ),
+              ),
               const SizedBox(height: 8),
               Text(
                 _scannedUid!,
@@ -147,7 +161,14 @@ class _NfcScannerPageState extends State<NfcScannerPage> {
               const SizedBox(height: 16),
               const Divider(color: Colors.white10),
               const SizedBox(height: 16),
-              const Text("TECH INFO", style: TextStyle(color: Colors.white38, fontSize: 12, letterSpacing: 1.5)),
+              const Text(
+                "TECH INFO",
+                style: TextStyle(
+                  color: Colors.white38,
+                  fontSize: 12,
+                  letterSpacing: 1.5,
+                ),
+              ),
               const SizedBox(height: 8),
               Text(
                 "Standard: ${_rawTagData?.keys.join(', ').toUpperCase() ?? 'Unknown'}",
@@ -169,12 +190,17 @@ class _NfcScannerPageState extends State<NfcScannerPage> {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.cyanAccent,
           foregroundColor: Colors.black,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
           disabledBackgroundColor: Colors.white10,
         ),
         child: Text(
           _isScanning ? "SCANNING..." : "START SCANNING",
-          style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.5),
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.5,
+          ),
         ),
       ),
     );

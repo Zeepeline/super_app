@@ -48,7 +48,9 @@ class LiveActivityIsland extends StatelessWidget {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: AppTheme.kPrimaryColor.withValues(alpha: 0.15),
+                              color: AppTheme.kPrimaryColor.withValues(
+                                alpha: 0.15,
+                              ),
                               blurRadius: 20,
                               spreadRadius: -5,
                             ),

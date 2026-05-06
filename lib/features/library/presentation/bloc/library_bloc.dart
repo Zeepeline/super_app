@@ -77,10 +77,9 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
       result.fold(
         (failure) => emit(const LibraryError('Failed to fetch tracks')),
         (tracks) {
-          final currentCategory =
-              state is LibraryLoaded
-                  ? (state as LibraryLoaded).selectedCategory
-                  : LibraryCategory.playlists;
+          final currentCategory = state is LibraryLoaded
+              ? (state as LibraryLoaded).selectedCategory
+              : LibraryCategory.playlists;
           emit(
             LibraryLoaded(tracks: tracks, selectedCategory: currentCategory),
           );

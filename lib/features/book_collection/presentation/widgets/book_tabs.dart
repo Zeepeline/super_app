@@ -5,11 +5,7 @@ class BookTabs extends StatelessWidget {
   final List<String> tabs;
   final String selectedTab;
 
-  const BookTabs({
-    super.key,
-    required this.tabs,
-    this.selectedTab = 'All',
-  });
+  const BookTabs({super.key, required this.tabs, this.selectedTab = 'All'});
 
   @override
   Widget build(BuildContext context) {

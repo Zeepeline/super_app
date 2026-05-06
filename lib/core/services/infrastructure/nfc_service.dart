@@ -56,9 +56,12 @@ class NfcService {
     }
 
     if (identifier != null) {
-      return identifier.map((e) => e.toRadixString(16).padLeft(2, '0')).join(':').toUpperCase();
+      return identifier
+          .map((e) => e.toRadixString(16).padLeft(2, '0'))
+          .join(':')
+          .toUpperCase();
     }
-    
+
     return "UID tidak terbaca";
   }
 }

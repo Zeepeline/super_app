@@ -57,24 +57,23 @@ class _BookCollectionPageState extends State<BookCollectionPage> {
           ],
         ),
       ),
-      floatingActionButton:
-          _currentIndex == 0
-              ? Padding(
-                padding: const EdgeInsets.only(bottom: 100),
-                child: FloatingActionButton(
-                  onPressed: () {},
-                  backgroundColor: AppTheme.kPrimaryColor,
-                  shape: const CircleBorder(),
-                  child: const Icon(Icons.add, color: Colors.black, size: 32),
-                ),
-              )
-              : null,
+      floatingActionButton: _currentIndex == 0
+          ? Padding(
+              padding: const EdgeInsets.only(bottom: 100),
+              child: FloatingActionButton(
+                onPressed: () {},
+                backgroundColor: AppTheme.kPrimaryColor,
+                shape: const CircleBorder(),
+                child: const Icon(Icons.add, color: Colors.black, size: 32),
+              ),
+            )
+          : null,
     );
   }
 
   Widget _buildLibraryView(BuildContext context) {
     final bookLibraryService = sl<BookLibraryService>();
-    
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
