@@ -4,88 +4,90 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:super_app/core/network/network_info.dart';
+import 'package:super_app/core/services/ai/ai_tools_service.dart';
 import 'package:super_app/core/services/ai/gemini_service.dart';
 import 'package:super_app/core/services/ai/rag_index_service.dart';
 import 'package:super_app/core/services/ai/rag_service.dart';
 import 'package:super_app/core/services/ai/user_memory_service.dart';
 import 'package:super_app/core/services/ai/voice_service.dart';
+import 'package:super_app/core/services/books/book_cover_service.dart';
+import 'package:super_app/core/services/books/book_library_service.dart';
 import 'package:super_app/core/services/books/book_store_service.dart';
 import 'package:super_app/core/services/download/download_service.dart';
+import 'package:super_app/core/services/download/youtube_download_service.dart';
 import 'package:super_app/core/services/download/youtube_explode_service.dart';
+import 'package:super_app/core/services/infrastructure/native_device_service.dart';
+import 'package:super_app/core/services/infrastructure/python_worker_service.dart';
 import 'package:super_app/core/services/infrastructure/secure_storage_service.dart';
+import 'package:super_app/core/services/media/audio_handler.dart'
+    as custom_audio;
 import 'package:super_app/core/services/media/lyrics_service.dart';
 import 'package:super_app/core/services/media/media_import_service.dart';
-
-import 'core/network/network_info.dart';
-import 'core/services/ai/ai_tools_service.dart';
-import 'core/services/books/book_cover_service.dart';
-import 'core/services/books/book_library_service.dart';
-import 'core/services/download/youtube_download_service.dart';
-import 'core/services/infrastructure/native_device_service.dart';
-import 'core/services/infrastructure/python_worker_service.dart';
-import 'core/services/media/audio_handler.dart' as custom_audio;
-import 'features/ai_assistant/presentation/cubit/ai_chat_cubit.dart';
-import 'features/auth/data/datasources/auth_remote_datasource.dart';
-import 'features/auth/data/repositories/auth_repository_impl.dart';
-import 'features/auth/domain/repositories/auth_repository.dart';
-import 'features/auth/domain/usecases/login_usecase.dart';
-import 'features/auth/presentation/bloc/auth_bloc.dart';
-import 'features/book_search/data/datasources/book_remote_datasource.dart';
-import 'features/book_search/data/repositories/book_search_repository_impl.dart';
-import 'features/book_search/domain/repositories/book_search_repository.dart';
-import 'features/book_search/presentation/bloc/book_search_bloc.dart';
-import 'features/home/data/datasources/home_local_data_source.dart';
-import 'features/home/data/datasources/home_remote_datasource.dart';
-import 'features/home/data/repositories/home_repository_impl.dart';
-import 'features/home/domain/repositories/home_repository.dart';
-import 'features/home/domain/usecases/delete_track.dart';
-import 'features/home/domain/usecases/get_favorite_tracks.dart';
-import 'features/home/domain/usecases/get_featured_playlists.dart';
-import 'features/home/domain/usecases/get_popular_tracks.dart';
-import 'features/home/presentation/bloc/home_bloc.dart';
-import 'features/library/presentation/bloc/library_bloc.dart';
-import 'features/music_player/data/datasources/music_local_datasource.dart';
-import 'features/music_player/data/repositories/music_repository_impl.dart';
-import 'features/music_player/domain/repositories/music_repository.dart';
-import 'features/music_player/domain/usecases/get_current_track.dart';
-import 'features/music_player/domain/usecases/player_usecases.dart';
-import 'features/music_player/presentation/cubit/player_cubit.dart';
-import 'features/search/data/datasources/search_remote_datasource.dart';
-import 'features/search/data/repositories/search_repository_impl.dart';
-import 'features/search/domain/repositories/search_repository.dart';
-import 'features/search/domain/usecases/get_categories.dart';
-import 'features/search/presentation/bloc/search_bloc.dart';
-import 'features/settings/data/datasources/settings_local_datasource.dart';
-import 'features/settings/data/datasources/settings_local_datasource_impl.dart';
-import 'features/settings/data/repositories/settings_repository_impl.dart';
-import 'features/settings/domain/repositories/settings_repository.dart';
-import 'features/settings/domain/usecases/get_current_user.dart';
-import 'features/settings/domain/usecases/get_settings.dart';
-import 'features/settings/domain/usecases/logout.dart';
-import 'features/settings/domain/usecases/update_audio_quality.dart';
-import 'features/settings/presentation/bloc/settings_bloc.dart';
-import 'features/dashboard/data/datasources/dashboard_remote_datasource.dart';
-import 'features/dashboard/data/repositories/dashboard_repository_impl.dart';
-import 'features/schedule/domain/repositories/schedule_repository.dart';
-import 'features/schedule/domain/usecases/get_sessions.dart';
-import 'features/schedule/data/datasources/schedule_remote_datasource.dart';
-import 'features/schedule/data/repositories/schedule_repository_impl.dart';
-import 'features/schedule/presentation/bloc/schedule_bloc.dart';
-import 'features/holidays/domain/repositories/holiday_repository.dart';
-import 'features/holidays/domain/usecases/get_holidays.dart';
-import 'features/holidays/data/datasources/holiday_remote_datasource.dart';
-import 'features/holidays/data/datasources/holiday_local_datasource.dart';
-import 'features/holidays/data/repositories/holiday_repository_impl.dart';
-import 'features/dashboard/domain/repositories/dashboard_repository.dart';
-import 'features/dashboard/domain/usecases/get_dashboard_data.dart';
-import 'features/dashboard/presentation/bloc/dashboard_bloc.dart';
-import 'features/tasks/data/datasources/task_local_datasource.dart';
-import 'features/tasks/data/models/task_model.dart';
-import 'features/tasks/data/repositories/task_repository_impl.dart';
-import 'features/tasks/domain/repositories/task_repository.dart';
-import 'features/tasks/domain/usecases/add_task.dart';
-import 'features/tasks/presentation/bloc/task_bloc.dart';
-import 'core/utils/hive_box_constants.dart';
+import 'package:super_app/core/utils/hive_box_constants.dart';
+import 'package:super_app/features/ai_assistant/presentation/cubit/ai_chat_cubit.dart';
+import 'package:super_app/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:super_app/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:super_app/features/auth/domain/repositories/auth_repository.dart';
+import 'package:super_app/features/auth/domain/usecases/login_usecase.dart';
+import 'package:super_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:super_app/features/book_search/data/datasources/book_remote_datasource.dart';
+import 'package:super_app/features/book_search/data/repositories/book_search_repository_impl.dart';
+import 'package:super_app/features/book_search/domain/repositories/book_search_repository.dart';
+import 'package:super_app/features/book_search/presentation/bloc/book_search_bloc.dart';
+import 'package:super_app/features/dashboard/data/datasources/dashboard_remote_datasource.dart';
+import 'package:super_app/features/dashboard/data/repositories/dashboard_repository_impl.dart';
+import 'package:super_app/features/dashboard/domain/repositories/dashboard_repository.dart';
+import 'package:super_app/features/dashboard/domain/usecases/get_dashboard_data.dart';
+import 'package:super_app/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:super_app/features/holidays/data/datasources/holiday_local_datasource.dart';
+import 'package:super_app/features/holidays/data/datasources/holiday_remote_datasource.dart';
+import 'package:super_app/features/holidays/data/repositories/holiday_repository_impl.dart';
+import 'package:super_app/features/holidays/domain/repositories/holiday_repository.dart';
+import 'package:super_app/features/holidays/domain/usecases/get_holidays.dart';
+import 'package:super_app/features/home/data/datasources/home_local_data_source.dart';
+import 'package:super_app/features/home/data/datasources/home_remote_datasource.dart';
+import 'package:super_app/features/home/data/repositories/home_repository_impl.dart';
+import 'package:super_app/features/home/domain/repositories/home_repository.dart';
+import 'package:super_app/features/home/domain/usecases/delete_track.dart';
+import 'package:super_app/features/home/domain/usecases/get_favorite_tracks.dart';
+import 'package:super_app/features/home/domain/usecases/get_featured_playlists.dart';
+import 'package:super_app/features/home/domain/usecases/get_popular_tracks.dart';
+import 'package:super_app/features/home/presentation/bloc/home_bloc.dart';
+import 'package:super_app/features/library/presentation/bloc/library_bloc.dart';
+import 'package:super_app/features/music_player/data/datasources/music_local_datasource.dart';
+import 'package:super_app/features/music_player/data/repositories/music_repository_impl.dart';
+import 'package:super_app/features/music_player/domain/repositories/music_repository.dart';
+import 'package:super_app/features/music_player/domain/usecases/get_current_track.dart';
+import 'package:super_app/features/music_player/domain/usecases/player_usecases.dart';
+import 'package:super_app/features/music_player/presentation/cubit/player_cubit.dart';
+import 'package:super_app/features/schedule/data/datasources/schedule_remote_datasource.dart';
+import 'package:super_app/features/schedule/data/repositories/schedule_repository_impl.dart';
+import 'package:super_app/features/schedule/domain/repositories/schedule_repository.dart';
+import 'package:super_app/features/schedule/domain/usecases/get_sessions.dart';
+import 'package:super_app/features/schedule/presentation/bloc/schedule_bloc.dart';
+import 'package:super_app/features/search/data/datasources/search_remote_datasource.dart';
+import 'package:super_app/features/search/data/repositories/search_repository_impl.dart';
+import 'package:super_app/features/search/domain/repositories/search_repository.dart';
+import 'package:super_app/features/search/domain/usecases/get_categories.dart';
+import 'package:super_app/features/search/presentation/bloc/search_bloc.dart';
+import 'package:super_app/features/settings/data/datasources/settings_local_datasource.dart';
+import 'package:super_app/features/settings/data/datasources/settings_local_datasource_impl.dart';
+import 'package:super_app/features/settings/data/repositories/settings_repository_impl.dart';
+import 'package:super_app/features/settings/domain/repositories/settings_repository.dart';
+import 'package:super_app/features/settings/domain/usecases/get_current_user.dart';
+import 'package:super_app/features/settings/domain/usecases/get_settings.dart';
+import 'package:super_app/features/settings/domain/usecases/logout.dart';
+import 'package:super_app/features/settings/domain/usecases/update_audio_quality.dart';
+import 'package:super_app/features/settings/presentation/bloc/settings_bloc.dart';
+import 'package:super_app/features/tasks/data/datasources/task_local_datasource.dart';
+import 'package:super_app/features/tasks/data/models/task_model.dart';
+import 'package:super_app/features/tasks/data/repositories/task_repository_impl.dart';
+import 'package:super_app/features/tasks/domain/repositories/task_repository.dart';
+import 'package:super_app/features/tasks/domain/usecases/add_task.dart';
+import 'package:super_app/features/tasks/domain/usecases/delete_task.dart';
+import 'package:super_app/features/tasks/domain/usecases/update_task.dart';
+import 'package:super_app/features/tasks/presentation/bloc/task_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -94,10 +96,8 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   final customHandler = audioHandler as custom_audio.AudioHandler;
 
   // ===== EXTERNAL =====
-  // SharedPreferences - initialize synchronously first because other services depend on it
   final prefs = await SharedPreferences.getInstance();
   sl.registerSingleton<SharedPreferences>(prefs);
-
   sl.registerSingleton<Connectivity>(Connectivity());
   sl.registerSingleton<HiveInterface>(Hive);
   sl.registerSingleton<Dio>(Dio());
@@ -121,9 +121,20 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   sl.registerLazySingleton<UserMemoryService>(() => UserMemoryService());
   sl.registerLazySingleton<NativeDeviceService>(() => NativeDeviceService());
   sl.registerLazySingleton<RagIndexerService>(() => RagIndexerService());
+
   sl.registerLazySingleton<AiToolsService>(
-    () => AiToolsService(sl(), sl(), sl(), sl(), sl(), sl(), sl()),
+    () => AiToolsService(
+      sl<MusicRepository>(),
+      sl<HomeLocalDataSource>(),
+      sl<UserMemoryService>(),
+      sl<NativeDeviceService>(),
+      sl<YoutubeDownloadService>(),
+      sl<YouTubeExplodeService>(),
+      sl<BookLibraryService>(),
+      sl<GeminiService>(),
+    ),
   );
+
   sl.registerLazySingleton<RagService>(() => RagService(sl(), sl()));
 
   // Register Book Search before BookStoreService
@@ -131,12 +142,6 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
     BookSearchRepositoryImpl(BookRemoteDataSourceImpl(sl())),
   );
   sl.registerSingleton<BookStoreService>(BookStoreService(sl(), sl(), sl()));
-
-  // ===== EXTERNAL =====
-  // sl.registerSingleton<Connectivity>(Connectivity()); (moved up)
-  // sl.registerSingleton<HiveInterface>(Hive); (moved up)
-
-  // SharedPreferences - initialize synchronously (moved up)
 
   // ===== DATA SOURCES =====
   sl.registerSingleton<AuthRemoteDataSource>(MockAuthRemoteDataSourceImpl());
@@ -146,7 +151,7 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
     MockSearchRemoteDataSourceImpl(),
   );
   sl.registerSingleton<DashboardRemoteDataSource>(
-    DashboardRemoteDataSourceImpl(),
+    DashboardRemoteDataSourceImpl(dio: sl<Dio>()),
   );
   sl.registerSingleton<ScheduleRemoteDataSource>(
     ScheduleRemoteDataSourceImpl(),
@@ -198,11 +203,21 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   sl.registerSingleton<AuthRepository>(
     AuthRepositoryImpl(remoteDataSource: sl<AuthRemoteDataSource>()),
   );
+  sl.registerSingleton<TaskRepository>(
+    TaskRepositoryImpl(localDataSource: sl<TaskLocalDataSource>()),
+  );
+
   sl.registerSingleton<DashboardRepository>(
-    DashboardRepositoryImpl(remoteDataSource: sl<DashboardRemoteDataSource>()),
+    DashboardRepositoryImpl(
+      remoteDataSource: sl<DashboardRemoteDataSource>(),
+      taskRepository: sl<TaskRepository>(),
+    ),
   );
   sl.registerSingleton<ScheduleRepository>(
-    ScheduleRepositoryImpl(remoteDataSource: sl<ScheduleRemoteDataSource>()),
+    ScheduleRepositoryImpl(
+      remoteDataSource: sl<ScheduleRemoteDataSource>(),
+      taskRepository: sl<TaskRepository>(),
+    ),
   );
   sl.registerLazySingleton<HolidayRepository>(
     () => HolidayRepositoryImpl(
@@ -210,9 +225,6 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
       localDataSource: sl(),
       networkInfo: sl(),
     ),
-  );
-  sl.registerLazySingleton<TaskRepository>(
-    () => TaskRepositoryImpl(localDataSource: sl()),
   );
 
   // ===== USE CASES =====
@@ -226,6 +238,8 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   sl.registerLazySingleton(() => GetSessions(sl()));
   sl.registerLazySingleton(() => GetHolidays(sl()));
   sl.registerLazySingleton(() => AddTask(sl()));
+  sl.registerLazySingleton(() => UpdateTask(sl()));
+  sl.registerLazySingleton(() => DeleteTask(sl()));
   sl.registerLazySingleton(() => GetSettings(sl()));
   sl.registerLazySingleton(() => GetCurrentUser(sl()));
   sl.registerLazySingleton(() => UpdateAudioQuality(sl()));
@@ -273,7 +287,9 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   sl.registerFactory(() => BookSearchBloc(sl()));
   sl.registerFactory(() => DashboardBloc(getDashboardData: sl()));
   sl.registerFactory(() => ScheduleBloc(getSessions: sl(), getHolidays: sl()));
-  sl.registerFactory(() => TaskBloc(addTask: sl()));
+  sl.registerFactory(
+    () => TaskBloc(addTask: sl(), updateTask: sl(), deleteTask: sl()),
+  );
 
   // Music Player - register as singleton (needs repository already registered)
   sl.registerSingleton<PlayerCubit>(

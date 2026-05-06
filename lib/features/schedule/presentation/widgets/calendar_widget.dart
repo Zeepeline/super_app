@@ -102,7 +102,7 @@ class CalendarWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     border: isSelected
                         ? Border.all(
-                            color: AppTheme.kPrimaryColor.withValues(alpha: 0.3),
+                            color: AppTheme.kPrimaryColor.withOpacity(0.3),
                           )
                         : null,
                   ),

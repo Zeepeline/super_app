@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:super_app/features/tasks/domain/entities/task_entity.dart';
+import 'package:super_app/features/tasks/presentation/bloc/task_bloc.dart';
+import 'package:super_app/features/tasks/presentation/pages/add_task_page.dart';
+import 'package:super_app/features/tasks/presentation/pages/task_detail_page.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../injection_container.dart';
@@ -20,6 +24,7 @@ class SchedulePage extends StatelessWidget {
         backgroundColor: AppTheme.kBackgroundColor,
         body: SafeArea(
           child: CustomScrollView(
+            physics: const BouncingScrollPhysics(),
             slivers: [
               // Bagian Kalender & Navigasi Bulan
               // Hanya rebuild jika bulan/tahun berubah atau saat inisialisasi
@@ -85,17 +90,81 @@ class SchedulePage extends StatelessWidget {
                           ),
                         )
                       else if (state is ScheduleLoaded)
-                        SliverPadding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
-                          sliver: SliverList(
-                            delegate: SliverChildBuilderDelegate((
-                              context,
-                              index,
-                            ) {
-                              return SessionTimelineCard(
-                                session: state.sessions[index],
-                              );
-                            }, childCount: state.sessions.length),
+                        state.sessions.isEmpty
+                            ? const SliverFillRemaining(
+                                hasScrollBody: false,
+                                child: Center(
+                                  child: Text(
+                                    'No activities planned for this day.',
+                                    style: TextStyle(color: Colors.white54),
+                                  ),
+                                ),
+                              )
+                            : SliverPadding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                ),
+                                sliver: SliverList(
+                                  delegate: SliverChildBuilderDelegate((
+                                    context,
+                                    index,
+                                  ) {
+                                    return SessionTimelineCard(
+                                      session: state.sessions[index],
+                                      onTap: () {
+                                        final session = state.sessions[index];
+                                        // Navigasi ke detail jika id-nya bukan id dummy (1, 2, 3)
+                                        if (session.id != '1' &&
+                                            session.id != '2' &&
+                                            session.id != '3') {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TaskDetailPage(
+                                                    task: TaskEntity(
+                                                      id: session.id,
+                                                      title: session.title,
+                                                      description:
+                                                          session.description,
+                                                      category: session.tag,
+                                                      priority: TaskPriority
+                                                          .medium, // Fallback
+                                                      dueDate:
+                                                          state.selectedDate,
+                                                      time: session.time,
+                                                      isCompleted:
+                                                          false, // Default
+                                                      subTasks: const [],
+                                                    ),
+                                                  ),
+                                            ),
+                                          ).then((refresh) {
+                                            if (refresh == true &&
+                                                context.mounted) {
+                                              context.read<ScheduleBloc>().add(
+                                                LoadScheduleEvent(
+                                                  state.selectedDate,
+                                                ),
+                                              );
+                                            }
+                                          });
+                                        }
+                                      },
+                                    );
+                                  }, childCount: state.sessions.length),
+                                ),
+                              )
+                      else if (state is ScheduleError)
+                        SliverToBoxAdapter(
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(40.0),
+                              child: Text(
+                                state.message,
+                                style: const TextStyle(color: Colors.redAccent),
+                              ),
+                            ),
                           ),
                         ),
                     ],
@@ -106,7 +175,31 @@ class SchedulePage extends StatelessWidget {
             ],
           ),
         ),
-        bottomNavigationBar: _buildBottomNav(context),
+        floatingActionButton: Builder(
+          builder: (context) => FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BlocProvider(
+                    create: (context) => sl<TaskBloc>(),
+                    child: const AddTaskPage(),
+                  ),
+                ),
+              ).then((_) {
+                if (context.mounted) {
+                  final state = context.read<ScheduleBloc>().state;
+                  context.read<ScheduleBloc>().add(
+                    LoadScheduleEvent(state.selectedDate),
+                  );
+                }
+              });
+            },
+            backgroundColor: AppTheme.kPrimaryColor,
+            elevation: 4,
+            child: const Icon(Icons.add, color: Colors.black, size: 28),
+          ),
+        ),
       ),
     );
   }
@@ -131,10 +224,9 @@ class SchedulePage extends StatelessWidget {
               children: [
                 Text(
                   DateFormat('MMMM yyyy').format(selectedDate),
-                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                    fontSize: 32,
-                    fontStyle: FontStyle.italic,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.displayLarge?.copyWith(fontSize: 32),
                 ),
                 Row(
                   children: [
@@ -251,21 +343,21 @@ class SchedulePage extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.redAccent.withValues(alpha: 0.2),
-            Colors.redAccent.withValues(alpha: 0.05),
+            Colors.redAccent.withOpacity(0.2),
+            Colors.redAccent.withOpacity(0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.redAccent.withValues(alpha: 0.2)),
+        border: Border.all(color: Colors.redAccent.withOpacity(0.2)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.redAccent.withValues(alpha: 0.2),
+              color: Colors.redAccent.withOpacity(0.2),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -307,7 +399,7 @@ class SchedulePage extends StatelessWidget {
     return Container(
       height: 90,
       decoration: BoxDecoration(
-        color: AppTheme.kSurfaceContainerHighColor.withValues(alpha: 0.8),
+        color: AppTheme.kSurfaceContainerHighColor.withOpacity(0.8),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
       ),
       child: Row(

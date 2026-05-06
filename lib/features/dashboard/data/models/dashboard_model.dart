@@ -39,28 +39,55 @@ class TaskModel extends TaskEntity {
   const TaskModel({
     required super.id,
     required super.title,
+    required super.description,
+    required super.category,
     required super.priority,
-    required super.estimatedTime,
+    required super.dueDate,
+    required super.time,
     required super.isCompleted,
+    required super.subTasks,
   });
 
   factory TaskModel.fromJson(Map<String, dynamic> json) {
     return TaskModel(
       id: json['id'],
       title: json['title'],
-      priority: json['priority'],
-      estimatedTime: json['estimated_time'],
-      isCompleted: json['is_completed'],
+      description: json['description'] ?? '',
+      category: json['category'] ?? 'Work',
+      priority: _parsePriority(json['priority']),
+      dueDate: json['due_date'] != null 
+          ? DateTime.parse(json['due_date']) 
+          : DateTime.now(),
+      time: json['time'] ?? '00:00',
+      isCompleted: json['is_completed'] ?? false,
+      subTasks: json['sub_tasks'] != null 
+          ? List<String>.from(json['sub_tasks']) 
+          : [],
     );
+  }
+
+  static TaskPriority _parsePriority(dynamic priority) {
+    if (priority is String) {
+      switch (priority.toLowerCase()) {
+        case 'high': return TaskPriority.high;
+        case 'low': return TaskPriority.low;
+        default: return TaskPriority.medium;
+      }
+    }
+    return TaskPriority.medium;
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'title': title,
-      'priority': priority,
-      'estimated_time': estimatedTime,
+      'description': description,
+      'category': category,
+      'priority': priority.toString().split('.').last,
+      'due_date': dueDate.toIso8601String(),
+      'time': time,
       'is_completed': isCompleted,
+      'sub_tasks': subTasks,
     };
   }
 }

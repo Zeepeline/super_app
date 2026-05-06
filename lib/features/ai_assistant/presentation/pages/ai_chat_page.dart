@@ -266,43 +266,6 @@ class _AiChatPageState extends State<AiChatPage> {
     );
   }
 
-  Widget _buildCallActionButton({
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-    double size = 56,
-    String? label,
-  }) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        GestureDetector(
-          onTap: onTap,
-          child: Container(
-            width: size,
-            height: size,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-            child: Icon(icon, color: Colors.white, size: size * 0.45),
-          ),
-        ),
-        if (label != null) ...[
-          const SizedBox(height: 8),
-          Text(
-            label.toUpperCase(),
-            style: GoogleFonts.inter(
-              color: color == Colors.redAccent
-                  ? color
-                  : AppTheme.kOnSurfaceVariantColor,
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-
   Widget _buildBackground() {
     return Positioned.fill(
       child: Stack(

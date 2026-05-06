@@ -1,3 +1,6 @@
+import 'package:dio/dio.dart';
+
+import '../../../../core/error/exceptions.dart';
 import '../models/dashboard_model.dart';
 
 abstract class DashboardRemoteDataSource {
@@ -5,59 +8,43 @@ abstract class DashboardRemoteDataSource {
 }
 
 class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
+  final Dio dio;
+
+  DashboardRemoteDataSourceImpl({required this.dio});
+
   @override
   Future<DashboardModel> getDashboardData() async {
-    // Simulasi delay network
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final response = await dio.get(
+        'https://api.sonic-superapp.com/v1/dashboard',
+        // In a real app, you would add headers like Authorization here
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ),
+      );
 
-    return const DashboardModel(
-      dailyStatus: [
-        StatusModel(
-          id: '1',
-          type: 'next_up',
-          title: 'NEXT UP',
-          value: 'Mastering Session',
-        ),
-        StatusModel(
-          id: '2',
-          type: 'meeting',
-          title: 'MEETING',
-          value: 'Sync Mix',
-        ),
-        StatusModel(
-          id: '3',
-          type: 'readiness',
-          title: 'READINESS',
-          value: '92/100',
-          progress: 0.92,
-        ),
-      ],
-      activeTasks: [
-        TaskModel(
-          id: '1',
-          title: 'Mastering Session',
-          priority: 'high',
-          estimatedTime: '2.5h est.',
-          isCompleted: false,
-        ),
-        TaskModel(
-          id: '2',
-          title: 'Vocal Layering Analysis',
-          priority: 'medium',
-          estimatedTime: '1.7h est.',
-          isCompleted: false,
-        ),
-        TaskModel(
-          id: '3',
-          title: 'Library Indexing',
-          priority: 'low',
-          estimatedTime: 'Completed 08:30 AM',
-          isCompleted: true,
-        ),
-      ],
-      trend: TrendModel(growth: '+14%', dataPoints: [0.2, 0.4, 0.6, 1.0, 0.7]),
-      insightMessage:
-          'Your focus peaked 2 hours earlier than yesterday. Maintain this morning momentum.',
-    );
+      if (response.statusCode == 200) {
+        return DashboardModel.fromJson(response.data);
+      } else {
+        throw ServerException(
+          'Failed to load dashboard data: ${response.statusCode}',
+        );
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        // The server responded with a non-2xx status code
+        throw ServerException(
+          e.response?.data['message'] ?? 'Server error occurred',
+        );
+      } else {
+        // Something happened in setting up or sending the request
+        throw ServerException('Connection error: ${e.message}');
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
   }
 }

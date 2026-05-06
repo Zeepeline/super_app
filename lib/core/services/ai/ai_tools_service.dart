@@ -1,3 +1,6 @@
+import 'dart:developer';
+import 'package:flutter/services.dart';
+import 'package:super_app/core/services/ai/gemini_service.dart';
 import 'package:super_app/core/services/books/book_library_service.dart';
 import 'package:super_app/core/services/download/youtube_download_service.dart';
 import 'package:super_app/core/services/download/youtube_explode_service.dart';
@@ -18,6 +21,7 @@ class AiToolsService {
   final YoutubeDownloadService _downloadService;
   final YouTubeExplodeService _ytService;
   final BookLibraryService _bookService;
+  final GeminiService _geminiService;
 
   AiToolsService(
     this._musicRepository,
@@ -27,6 +31,7 @@ class AiToolsService {
     this._downloadService,
     this._ytService,
     this._bookService,
+    this._geminiService,
   );
 
   UserMemoryService getMemoryService() => _memoryService;
@@ -265,6 +270,29 @@ class AiToolsService {
       return "Mulai mendownload: $trackTitle. Lagu akan muncul di library setelah selesai.";
     } catch (e) {
       return "Gagal inisialisasi download: $e";
+    }
+  }
+
+  /// Mendapatkan rekomendasi tugas berdasarkan KB dan waktu saat ini.
+  Future<String> recommendTask() async {
+    try {
+      final kbContent = await rootBundle.loadString(
+        'assets/knowledge/productivity_kb.md',
+      );
+      final now = DateTime.now();
+      final currentTime =
+          "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+
+      // Ambil memori user untuk personalisasi tambahan
+      final userContext = await getUserMemories();
+
+      return await _geminiService.getTaskRecommendation(
+        kbContent: kbContent,
+        currentTime: currentTime,
+        userContext: userContext,
+      );
+    } catch (e) {
+      return "Error recommending task: $e";
     }
   }
 }

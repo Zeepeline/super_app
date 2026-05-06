@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:super_app/core/services/ai/ai_tools_service.dart';
+import 'package:super_app/injection_container.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/entities/task_entity.dart';
@@ -22,8 +26,10 @@ class _AddTaskPageState extends State<AddTaskPage> {
   String _selectedCategory = 'Work';
   TaskPriority _selectedPriority = TaskPriority.medium;
   DateTime _selectedDate = DateTime.now();
-  TimeOfDay _selectedTime = TimeOfDay.now();
+  TimeOfDay _selectedStartTime = TimeOfDay.now();
+  TimeOfDay? _selectedEndTime;
   final List<String> _subTasks = [];
+  bool _isGenerating = false;
 
   final List<Map<String, dynamic>> _categories = [
     {'name': 'Work', 'icon': Icons.work_outline},
@@ -31,6 +37,16 @@ class _AddTaskPageState extends State<AddTaskPage> {
     {'name': 'Fitness', 'icon': Icons.fitness_center_outlined},
     {'name': 'Reading', 'icon': Icons.menu_book_outlined},
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Default end time to 1 hour after start time
+    _selectedEndTime = TimeOfDay(
+      hour: (_selectedStartTime.hour + 1) % 24,
+      minute: _selectedStartTime.minute,
+    );
+  }
 
   @override
   void dispose() {
@@ -43,8 +59,13 @@ class _AddTaskPageState extends State<AddTaskPage> {
   void _submitTask() {
     if (_titleController.text.isEmpty) return;
 
-    final timeStr =
-        "${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}";
+    final startTimeStr =
+        "${_selectedStartTime.hour.toString().padLeft(2, '0')}:${_selectedStartTime.minute.toString().padLeft(2, '0')}";
+    
+    String? endTimeStr;
+    if (_selectedEndTime != null) {
+      endTimeStr = "${_selectedEndTime!.hour.toString().padLeft(2, '0')}:${_selectedEndTime!.minute.toString().padLeft(2, '0')}";
+    }
 
     context.read<TaskBloc>().add(
       AddTaskEvent(
@@ -53,10 +74,64 @@ class _AddTaskPageState extends State<AddTaskPage> {
         category: _selectedCategory,
         priority: _selectedPriority,
         dueDate: _selectedDate,
-        time: timeStr,
+        time: startTimeStr,
+        endTime: endTimeStr,
         subTasks: _subTasks,
       ),
     );
+  }
+
+  Future<void> _generateAiRecommendation() async {
+    setState(() => _isGenerating = true);
+    try {
+      final aiTools = sl<AiToolsService>();
+      final result = await aiTools.recommendTask();
+
+      // Extract JSON if AI wrapped it in markdown
+      String jsonStr = result;
+      if (result.contains('```json')) {
+        jsonStr = result.split('```json')[1].split('```')[0].trim();
+      } else if (result.contains('```')) {
+        jsonStr = result.split('```')[1].split('```')[0].trim();
+      }
+
+      final data = jsonDecode(jsonStr);
+
+      setState(() {
+        _titleController.text = data['title'] ?? '';
+        _descController.text = data['description'] ?? '';
+        _selectedCategory = data['category'] ?? 'Work';
+
+        final priorityStr = (data['priority'] as String?)?.toLowerCase();
+        if (priorityStr == 'high') {
+          _selectedPriority = TaskPriority.high;
+        } else if (priorityStr == 'low') {
+          _selectedPriority = TaskPriority.low;
+        } else {
+          _selectedPriority = TaskPriority.medium;
+        }
+
+        if (data['subtasks'] != null) {
+          _subTasks.clear();
+          for (var st in data['subtasks']) {
+            _subTasks.add(st.toString());
+          }
+        }
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('AI magic complete! Form filled based on context.'),
+          backgroundColor: AppTheme.kPrimaryColor,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('AI Error: $e')));
+    } finally {
+      setState(() => _isGenerating = false);
+    }
   }
 
   @override
@@ -64,7 +139,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
     return BlocListener<TaskBloc, TaskState>(
       listener: (context, state) {
         if (state is TaskSuccess) {
-          Navigator.pop(context);
+          Navigator.pop(context, true); // Return true to trigger refresh
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Task synchronized successfully')),
           );
@@ -96,20 +171,15 @@ class _AddTaskPageState extends State<AddTaskPage> {
                       const SizedBox(height: 12),
                       _buildDescriptionInput(),
                       const SizedBox(height: 32),
-
                       _buildCategorySection(),
                       const SizedBox(height: 24),
-
                       _buildPrioritySection(),
                       const SizedBox(height: 24),
                       _buildScheduleSection(),
-
                       const SizedBox(height: 24),
                       _buildSubTasksSection(),
-
                       const SizedBox(height: 32),
                       _buildHeroAsset(),
-
                       const SizedBox(height: 32),
                       _buildFooterAction(),
                       const SizedBox(height: 32),
@@ -148,9 +218,31 @@ class _AddTaskPageState extends State<AddTaskPage> {
               ),
             ],
           ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.more_vert, color: Colors.white70),
+          Row(
+            children: [
+              if (_isGenerating)
+                const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppTheme.kPrimaryColor,
+                  ),
+                )
+              else
+                IconButton(
+                  onPressed: _generateAiRecommendation,
+                  icon: const Icon(
+                    Icons.auto_awesome,
+                    color: AppTheme.kPrimaryColor,
+                  ),
+                  tooltip: 'Magic AI Fill',
+                ),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.more_vert, color: Colors.white70),
+              ),
+            ],
           ),
         ],
       ),
@@ -161,7 +253,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
     return Text(
       text.toUpperCase(),
       style: GoogleFonts.inter(
-        color: AppTheme.kPrimaryColor.withValues(alpha: 0.8),
+        color: AppTheme.kPrimaryColor.withOpacity(0.8),
         fontWeight: FontWeight.w700,
         fontSize: 11,
         letterSpacing: 1.5,
@@ -175,7 +267,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
       decoration: BoxDecoration(
         color: const Color(0xFF131313),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: TextField(
         controller: _titleController,
@@ -186,7 +278,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
         ),
         decoration: InputDecoration(
           hintText: 'Enter task name...',
-          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.15)),
+          hintStyle: TextStyle(color: Colors.white.withOpacity(0.15)),
           border: InputBorder.none,
           contentPadding: EdgeInsets.zero,
         ),
@@ -200,18 +292,18 @@ class _AddTaskPageState extends State<AddTaskPage> {
       decoration: BoxDecoration(
         color: const Color(0xFF131313),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: TextField(
         controller: _descController,
         maxLines: 4,
         style: GoogleFonts.inter(
-          color: Colors.white.withValues(alpha: 0.7),
+          color: Colors.white.withOpacity(0.7),
           fontSize: 14,
         ),
         decoration: InputDecoration(
           hintText: 'Add more details about this task...',
-          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.15)),
+          hintStyle: TextStyle(color: Colors.white.withOpacity(0.15)),
           border: InputBorder.none,
           contentPadding: EdgeInsets.zero,
         ),
@@ -223,9 +315,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF131313).withValues(alpha: 0.8),
+        color: const Color(0xFF131313).withOpacity(0.8),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -246,13 +338,13 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   ),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? AppTheme.kPrimaryColor.withValues(alpha: 0.1)
+                        ? AppTheme.kPrimaryColor.withOpacity(0.1)
                         : Colors.black26,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isSelected
-                          ? AppTheme.kPrimaryColor.withValues(alpha: 0.4)
-                          : Colors.white.withValues(alpha: 0.1),
+                          ? AppTheme.kPrimaryColor.withOpacity(0.4)
+                          : Colors.white.withOpacity(0.1),
                     ),
                   ),
                   child: Row(
@@ -291,9 +383,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF131313).withValues(alpha: 0.8),
+        color: const Color(0xFF131313).withOpacity(0.8),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -325,7 +417,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
     if (isSelected) {
       textColor = Colors.white;
     } else if (priority == TaskPriority.high) {
-      textColor = Colors.redAccent.withValues(alpha: 0.5);
+      textColor = Colors.redAccent.withOpacity(0.5);
     }
 
     return Expanded(
@@ -356,9 +448,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0xFF131313).withValues(alpha: 0.8),
+        color: const Color(0xFF131313).withOpacity(0.8),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Column(
         children: [
@@ -371,7 +463,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   _buildSmallLabel(Icons.alarm, 'Configuration'),
                   const SizedBox(height: 4),
                   Text(
-                    'Time & Reminders',
+                    'Time & Duration',
                     style: GoogleFonts.plusJakartaSans(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
@@ -384,41 +476,63 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 value: true,
                 onChanged: (_) {},
                 activeThumbColor: AppTheme.kPrimaryColor,
-                activeTrackColor: AppTheme.kPrimaryColor.withValues(alpha: 0.3),
+                activeTrackColor: AppTheme.kPrimaryColor.withOpacity(0.3),
               ),
             ],
           ),
           const SizedBox(height: 24),
+          _buildScheduleTile(
+            Icons.calendar_today,
+            'Date',
+            DateFormat('EEEE, MMM d, yyyy').format(_selectedDate),
+            () async {
+              final date = await showDatePicker(
+                context: context,
+                initialDate: _selectedDate,
+                firstDate: DateTime.now(),
+                lastDate: DateTime.now().add(const Duration(days: 365)),
+              );
+              if (date != null) setState(() => _selectedDate = date);
+            },
+          ),
+          const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
                 child: _buildScheduleTile(
-                  Icons.calendar_today,
-                  'Date',
-                  DateFormat('EEEE, MMM d').format(_selectedDate),
+                  Icons.schedule,
+                  'Start Time',
+                  _selectedStartTime.format(context),
                   () async {
-                    final date = await showDatePicker(
+                    final time = await showTimePicker(
                       context: context,
-                      initialDate: _selectedDate,
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime.now().add(const Duration(days: 365)),
+                      initialTime: _selectedStartTime,
                     );
-                    if (date != null) setState(() => _selectedDate = date);
+                    if (time != null) {
+                      setState(() {
+                        _selectedStartTime = time;
+                        // Automatically set end time to 1 hour after
+                        _selectedEndTime = TimeOfDay(
+                          hour: (time.hour + 1) % 24,
+                          minute: time.minute,
+                        );
+                      });
+                    }
                   },
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: _buildScheduleTile(
-                  Icons.schedule,
-                  'Time',
-                  _selectedTime.format(context),
+                  Icons.timer_outlined,
+                  'End Time',
+                  _selectedEndTime?.format(context) ?? 'Set End',
                   () async {
                     final time = await showTimePicker(
                       context: context,
-                      initialTime: _selectedTime,
+                      initialTime: _selectedEndTime ?? _selectedStartTime,
                     );
-                    if (time != null) setState(() => _selectedTime = time);
+                    if (time != null) setState(() => _selectedEndTime = time);
                   },
                 ),
               ),
@@ -442,7 +556,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
         decoration: BoxDecoration(
           color: Colors.black,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+          border: Border.all(color: Colors.white.withOpacity(0.05)),
         ),
         child: Row(
           children: [
@@ -475,7 +589,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
             ),
             Icon(
               Icons.expand_more,
-              color: Colors.white.withValues(alpha: 0.3),
+              color: Colors.white.withOpacity(0.3),
               size: 18,
             ),
           ],
@@ -488,9 +602,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0xFF131313).withValues(alpha: 0.8),
+        color: const Color(0xFF131313).withOpacity(0.8),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -513,8 +627,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                     decoration: InputDecoration(
                       hintText: 'Add a sub-task...',
                       hintStyle: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        fontSize: 13,
+                        color: Colors.white.withOpacity(0.2),
                       ),
                       border: InputBorder.none,
                     ),
@@ -540,14 +653,14 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF262626).withValues(alpha: 0.3),
+                      color: const Color(0xFF262626).withOpacity(0.3),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
                       children: [
                         Icon(
                           Icons.radio_button_unchecked,
-                          color: Colors.white.withValues(alpha: 0.3),
+                          color: Colors.white.withOpacity(0.3),
                           size: 16,
                         ),
                         const SizedBox(width: 12),
@@ -581,16 +694,12 @@ class _AddTaskPageState extends State<AddTaskPage> {
   Widget _buildSmallLabel(IconData icon, String text) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 14,
-          color: AppTheme.kPrimaryColor.withValues(alpha: 0.8),
-        ),
+        Icon(icon, size: 14, color: AppTheme.kPrimaryColor.withOpacity(0.8)),
         const SizedBox(width: 8),
         Text(
           text.toUpperCase(),
           style: GoogleFonts.inter(
-            color: AppTheme.kPrimaryColor.withValues(alpha: 0.8),
+            color: AppTheme.kPrimaryColor.withOpacity(0.8),
             fontWeight: FontWeight.w700,
             fontSize: 10,
             letterSpacing: 1.2,
@@ -621,10 +730,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
               gradient: LinearGradient(
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
-                colors: [
-                  Colors.black.withValues(alpha: 0.8),
-                  Colors.transparent,
-                ],
+                colors: [Colors.black.withOpacity(0.8), Colors.transparent],
               ),
             ),
           ),
@@ -634,10 +740,10 @@ class _AddTaskPageState extends State<AddTaskPage> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: AppTheme.kPrimaryColor.withValues(alpha: 0.2),
+                color: AppTheme.kPrimaryColor.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(100),
                 border: Border.all(
-                  color: AppTheme.kPrimaryColor.withValues(alpha: 0.3),
+                  color: AppTheme.kPrimaryColor.withOpacity(0.3),
                 ),
               ),
               child: Text(
@@ -667,15 +773,14 @@ class _AddTaskPageState extends State<AddTaskPage> {
               onTap: isLoading ? null : _submitTask,
               child: Container(
                 height: 64,
+                width: double.infinity,
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [AppTheme.kPrimaryColor, Color(0xFF1CB853)],
-                  ),
+                  color: AppTheme.kPrimaryColor,
                   borderRadius: BorderRadius.circular(100),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.kPrimaryColor.withValues(alpha: 0.3),
-                      blurRadius: 30,
+                      color: AppTheme.kPrimaryColor.withOpacity(0.3),
+                      blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
                   ],
@@ -683,35 +788,24 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 child: Center(
                   child: isLoading
                       ? const CircularProgressIndicator(color: Colors.black)
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.sync_alt,
-                              color: Colors.black,
-                              size: 24,
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              'SYNCHRONIZE TASK',
-                              style: GoogleFonts.plusJakartaSans(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w900,
-                                fontSize: 18,
-                                letterSpacing: 1.5,
-                              ),
-                            ),
-                          ],
+                      : Text(
+                          'SYNCHRONIZE TASK',
+                          style: GoogleFonts.plusJakartaSans(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 16,
+                            letterSpacing: 1,
+                          ),
                         ),
                 ),
               ),
             ),
             const SizedBox(height: 16),
             Text(
-              'This task will be curated into your global sonic workflow.',
+              'This task will be synced to your schedule',
               style: GoogleFonts.inter(
-                color: Colors.white.withValues(alpha: 0.3),
-                fontSize: 10,
+                color: Colors.white38,
+                fontSize: 11,
                 fontWeight: FontWeight.w500,
               ),
             ),

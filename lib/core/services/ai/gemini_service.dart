@@ -299,18 +299,37 @@ class GeminiService {
     return "Waduh, semua model AI di list sedang kendala. Pastikan API Key Anda valid dan coba lagi ya!";
   }
 
-  Future<String> getRecommendation(String userContext) async {
+  Future<String> getTaskRecommendation({
+    required String kbContent,
+    required String currentTime,
+    required String userContext,
+  }) async {
     final apiKeys = await getApiKeys();
     if (apiKeys.isEmpty) return "API Key missing.";
 
-    final prompt =
-        """
-    You are a music expert assistant. Based on the following user music context, 
-    provide 3 personalized song recommendations. 
-    Explain why you chose each one briefly.
-    
-    User Context: $userContext
-    """;
+    final prompt = """
+Anda adalah AI Produktivitas Pakar. Gunakan Knowledge Base (KB) di bawah ini untuk memberikan 1 rekomendasi tugas yang paling relevan untuk user saat ini.
+
+KNOWLEDGE BASE:
+$kbContent
+
+KONTEKS SAAT INI:
+- Jam: $currentTime
+- Status User: $userContext
+
+TUGAS ANDA:
+Berikan rekomendasi tugas dalam format JSON berikut agar aplikasi bisa otomatis mengisi form:
+{
+  "title": "Judul Tugas",
+  "description": "Deskripsi singkat dan motivasi",
+  "category": "Work/Personal/Fitness/Reading",
+  "priority": "low/medium/high",
+  "estimated_minutes": 30,
+  "subtasks": ["subtask 1", "subtask 2"]
+}
+
+Hanya berikan JSON, tanpa teks tambahan.
+""";
 
     for (String apiKey in apiKeys) {
       for (String modelName in _modelPriorityList) {
@@ -326,7 +345,7 @@ class GeminiService {
         }
       }
     }
-    return "Gagal mengambil rekomendasi. Coba lagi nanti.";
+    return "Gagal mengambil rekomendasi.";
   }
 
   Future<void> deleteApiKey(String key) async {

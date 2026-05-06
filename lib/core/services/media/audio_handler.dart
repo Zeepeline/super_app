@@ -1,6 +1,5 @@
 import 'dart:developer' as dev;
 import 'dart:io';
-import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:audio_service/audio_service.dart';
@@ -46,7 +45,9 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
         if (position >= duration - const Duration(milliseconds: 1000)) {
           if (_player.processingState != ProcessingState.completed &&
               _player.playing) {
-            dev.log("AudioHandler: Watchdog detected end of stream. Forcing next...");
+            dev.log(
+              "AudioHandler: Watchdog detected end of stream. Forcing next...",
+            );
             // Pause first to prevent multiple triggers
             _player.pause();
             skipToNext();
@@ -155,9 +156,13 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
         dev.log("AudioHandler: Playing from local file: $resolvedLocalPath");
         source = AudioSource.file(resolvedLocalPath);
       } else if (track.audioUrl.isNotEmpty) {
-        dev.log("AudioHandler: Local file missing or invalid, falling back to streaming");
-        dev.log("AudioHandler: Using LockCachingAudioSource for stable streaming");
-        
+        dev.log(
+          "AudioHandler: Local file missing or invalid, falling back to streaming",
+        );
+        dev.log(
+          "AudioHandler: Using LockCachingAudioSource for stable streaming",
+        );
+
         source = LockCachingAudioSource(
           Uri.parse(track.audioUrl),
           headers: {
@@ -172,7 +177,9 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
       if (source == null) {
         // Last resort: If it's a YouTube ID, we might need one more refresh attempt
         // but for now we throw to trigger the Repository's retry logic
-        throw Exception("No valid audio source (local or stream) for: ${track.title}");
+        throw Exception(
+          "No valid audio source (local or stream) for: ${track.title}",
+        );
       }
 
       // 4. Set source and start playing

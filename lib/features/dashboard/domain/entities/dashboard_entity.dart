@@ -1,22 +1,44 @@
 import 'package:equatable/equatable.dart';
+import 'package:super_app/features/tasks/domain/entities/task_entity.dart' as real_task;
+
+// Re-export or use the same structure
+typedef TaskPriority = real_task.TaskPriority;
 
 class TaskEntity extends Equatable {
   final String id;
   final String title;
-  final String priority; // 'high', 'medium', 'low'
-  final String estimatedTime;
+  final String description;
+  final String category;
+  final TaskPriority priority;
+  final DateTime dueDate;
+  final String time;
   final bool isCompleted;
+  final List<String> subTasks;
 
   const TaskEntity({
     required this.id,
     required this.title,
+    required this.description,
+    required this.category,
     required this.priority,
-    required this.estimatedTime,
+    required this.dueDate,
+    required this.time,
     required this.isCompleted,
+    required this.subTasks,
   });
 
   @override
-  List<Object?> get props => [id, title, priority, estimatedTime, isCompleted];
+  List<Object?> get props => [
+        id,
+        title,
+        description,
+        category,
+        priority,
+        dueDate,
+        time,
+        isCompleted,
+        subTasks,
+      ];
 }
 
 class StatusEntity extends Equatable {

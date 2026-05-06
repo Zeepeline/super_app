@@ -1,5 +1,6 @@
-import 'package:nfc_manager/nfc_manager.dart';
 import 'dart:typed_data';
+
+import 'package:nfc_manager/nfc_manager.dart';
 
 class NfcService {
   // Cek apakah NFC tersedia di perangkat ini
@@ -42,7 +43,7 @@ class NfcService {
     // Coba ambil dari berbagai standar kartu (Mifare, IsoDep, NfcA, dll)
     final nfca = data['nfca'];
     final mfare = data['mifareultralight'];
-    final ndef = data['ndef'];
+    // final ndef = data['ndef'];
     final isodep = data['isodep'];
 
     Uint8List? identifier;
@@ -56,9 +57,12 @@ class NfcService {
     }
 
     if (identifier != null) {
-      return identifier.map((e) => e.toRadixString(16).padLeft(2, '0')).join(':').toUpperCase();
+      return identifier
+          .map((e) => e.toRadixString(16).padLeft(2, '0'))
+          .join(':')
+          .toUpperCase();
     }
-    
+
     return "UID tidak terbaca";
   }
 }

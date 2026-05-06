@@ -4,8 +4,11 @@ import 'package:super_app/features/dashboard/presentation/widgets/bottom_cards.d
 import 'package:super_app/features/dashboard/presentation/widgets/status_card.dart';
 import 'package:super_app/features/dashboard/presentation/widgets/task_card.dart';
 import 'package:super_app/features/schedule/presentation/pages/schedule_page.dart';
+import 'package:super_app/features/tasks/domain/entities/task_entity.dart'
+    as real_task;
 import 'package:super_app/features/tasks/presentation/bloc/task_bloc.dart';
 import 'package:super_app/features/tasks/presentation/pages/add_task_page.dart';
+import 'package:super_app/features/tasks/presentation/pages/task_detail_page.dart';
 
 import '../../../../injection_container.dart';
 import '../bloc/dashboard_bloc.dart';
@@ -183,9 +186,29 @@ class DashboardPage extends StatelessWidget {
             ...tasks.map(
               (task) => DashboardTaskCard(
                 title: task.title,
-                priority: task.priority,
-                estimatedTime: task.estimatedTime,
+                priority: task.priority.toString().split('.').last,
+                estimatedTime: task.time,
                 isCompleted: task.isCompleted,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TaskDetailPage(
+                        task: real_task.TaskEntity(
+                          id: task.id,
+                          title: task.title,
+                          description: task.description,
+                          category: task.category,
+                          priority: task.priority,
+                          dueDate: task.dueDate,
+                          time: task.time,
+                          isCompleted: task.isCompleted,
+                          subTasks: task.subTasks,
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
             const SizedBox(height: 24),
@@ -234,7 +257,11 @@ class DashboardPage extends StatelessWidget {
               child: const AddTaskPage(),
             ),
           ),
-        );
+        ).then((_) {
+          if (context.mounted) {
+            context.read<DashboardBloc>().add(LoadDashboardDataEvent());
+          }
+        });
       },
       child: Container(
         width: 64,

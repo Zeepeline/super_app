@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:super_app/core/theme/app_theme.dart';
 
 class ReaderHeader extends StatelessWidget implements PreferredSizeWidget {
   final String title;
