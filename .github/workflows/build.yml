@@ -46,8 +46,14 @@ jobs:
         run: flutter pub get
       - name: Run build_runner
         run: flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Install Python Dependencies
+        run: |
+          cd python_app
+          pip install -r requirements.txt -t site-packages
       - name: Build APK
         run: flutter build apk --release
+        env:
+          SERIOUS_PYTHON_SITE_PACKAGES: ${{ github.workspace }}/python_app/site-packages
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
@@ -69,8 +75,14 @@ jobs:
         run: flutter pub get
       - name: Run build_runner
         run: flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Install Python Dependencies
+        run: |
+          cd python_app
+          pip install -r requirements.txt -t site-packages
       - name: Build iOS (No Codesign)
         run: flutter build ios --release --no-codesign
+        env:
+          SERIOUS_PYTHON_SITE_PACKAGES: ${{ github.workspace }}/python_app/site-packages
       - name: Create Unsigned IPA
         run: |
           mkdir -p Payload
