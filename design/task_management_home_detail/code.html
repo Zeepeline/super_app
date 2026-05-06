@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "surface-container-highest": "#262626",
+                  "surface-tint": "#72fe8f",
+                  "secondary-dim": "#6deca8",
+                  "primary-fixed": "#72fe8f",
+                  "on-primary-fixed": "#004a1c",
+                  "on-tertiary-fixed": "#003840",
+                  "on-error": "#450900",
+                  "on-primary-fixed-variant": "#006a2b",
+                  "tertiary-fixed": "#0fe3ff",
+                  "on-tertiary-fixed-variant": "#005763",
+                  "tertiary-fixed-dim": "#00d4ee",
+                  "primary": "#72fe8f",
+                  "outline": "#767575",
+                  "on-secondary-container": "#e2ffe9",
+                  "inverse-primary": "#006e2d",
+                  "secondary": "#7cfbb5",
+                  "primary-dim": "#63ef82",
+                  "surface": "#0e0e0e",
+                  "background": "#0e0e0e",
+                  "surface-dim": "#0e0e0e",
+                  "surface-bright": "#2c2c2c",
+                  "surface-variant": "#262626",
+                  "on-tertiary-container": "#004d58",
+                  "surface-container-high": "#20201f",
+                  "tertiary-dim": "#00d4ee",
+                  "tertiary-container": "#0fe3ff",
+                  "outline-variant": "#484847",
+                  "error-dim": "#d53d18",
+                  "error-container": "#b92902",
+                  "surface-container-low": "#131313",
+                  "tertiary": "#88ebff",
+                  "on-surface": "#ffffff",
+                  "on-secondary-fixed": "#00492b",
+                  "on-primary-container": "#002a0c",
+                  "surface-container": "#1a1a1a",
+                  "on-background": "#ffffff",
+                  "on-tertiary": "#005762",
+                  "on-secondary": "#005e39",
+                  "secondary-fixed": "#7cfbb5",
+                  "on-surface-variant": "#adaaaa",
+                  "primary-container": "#1cb853",
+                  "inverse-surface": "#fcf9f8",
+                  "surface-container-lowest": "#000000",
+                  "secondary-fixed-dim": "#6deca8",
+                  "on-error-container": "#ffd2c8",
+                  "on-primary": "#005f26",
+                  "on-secondary-fixed-variant": "#006940",
+                  "inverse-on-surface": "#565555",
+                  "secondary-container": "#006d42",
+                  "error": "#ff7351",
+                  "primary-fixed-dim": "#63ef82"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "fontFamily": {
+                  "headline": ["Plus Jakarta Sans"],
+                  "display": ["Plus Jakarta Sans"],
+                  "body": ["Inter"],
+                  "label": ["Inter"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    ::-webkit-scrollbar { width: 0px; background: transparent; }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body min-h-screen selection:bg-primary selection:text-on-primary">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#0e0e0e]/60 backdrop-blur-xl flex justify-between items-center px-6 h-16 bg-gradient-to-b from-[#0e0e0e] to-transparent">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/30">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A close-up portrait of a sophisticated digital music curator with stylish eyewear, set against a dark studio background with soft neon green rim lighting. The aesthetic is ultra-modern and editorial, featuring deep blacks and high contrast. The lighting highlights the contours of the face with a subtle tech-inspired glow, maintaining a premium and professional atmosphere consistent with a high-end music platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLaoT6wfjCxa26VJ3DMYHpjfsMPwYB3iZ7y0p-40rSxoDFwE9QMAmJdtciC8lgcylMa3PZdImYZP7coMESVicp4Pbw0hT2Wo8k4IFsG0pA0lS4xCb0zVHv_ypaCKAtM_Ie8JkQ2p8nnhZHleCBl4WEQQq3-dlJD5iUIJY8lEACjAzTA1fftLGnfxBEVRHbi8q-2mMy3DnvEqkcRma1YTa7O1Tx_DuCvuoAXqQtvOdrXs4sPalnzDBpBX1RzyaqEEtJMU4DbybFIew"/>
+</div>
+<span class="text-lg font-black tracking-tighter text-white font-headline">SONIC CURATOR</span>
+</div>
+<button class="text-[#adaaaa] hover:text-white transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</header>
+<main class="pt-20 pb-32 px-6 max-w-2xl mx-auto">
+<!-- Calendar Section -->
+<section class="mb-10">
+<div class="flex justify-between items-end mb-8">
+<div>
+<p class="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant mb-1">Schedule</p>
+<h1 class="font-headline text-3xl font-bold tracking-tight text-white italic">October 2024</h1>
+</div>
+<div class="flex gap-2">
+<button class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface hover:bg-surface-bright transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface hover:bg-surface-bright transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-3xl p-6">
+<div class="grid grid-cols-7 gap-y-6 text-center">
+<!-- Weekdays -->
+<div class="font-label text-[10px] font-bold text-outline uppercase tracking-widest">Mo</div>
+<div class="font-label text-[10px] font-bold text-outline uppercase tracking-widest">Tu</div>
+<div class="font-label text-[10px] font-bold text-outline uppercase tracking-widest">We</div>
+<div class="font-label text-[10px] font-bold text-outline uppercase tracking-widest">Th</div>
+<div class="font-label text-[10px] font-bold text-outline uppercase tracking-widest">Fr</div>
+<div class="font-label text-[10px] font-bold text-outline uppercase tracking-widest">Sa</div>
+<div class="font-label text-[10px] font-bold text-outline uppercase tracking-widest">Su</div>
+<!-- Calendar Days (Mocking partial month) -->
+<div class="h-12 flex flex-col items-center justify-center text-outline-variant/40">26</div>
+<div class="h-12 flex flex-col items-center justify-center text-outline-variant/40">27</div>
+<div class="h-12 flex flex-col items-center justify-center text-outline-variant/40">28</div>
+<div class="h-12 flex flex-col items-center justify-center text-outline-variant/40">29</div>
+<div class="h-12 flex flex-col items-center justify-center text-outline-variant/40">30</div>
+<div class="h-12 flex flex-col items-center justify-center text-on-surface-variant">1</div>
+<div class="h-12 flex flex-col items-center justify-center text-on-surface-variant">2</div>
+<!-- Active Days Row -->
+<div class="h-12 flex flex-col items-center justify-center text-on-surface">3</div>
+<div class="h-12 flex flex-col items-center justify-center relative text-on-surface">
+            4
+            <span class="absolute bottom-1 w-1 h-1 bg-primary rounded-full shadow-[0_0_8px_#72fe8f]"></span>
+</div>
+<div class="h-12 flex flex-col items-center justify-center text-on-surface">5</div>
+<div class="h-12 flex flex-col items-center justify-center relative text-on-surface">
+            6
+            <span class="absolute bottom-1 w-1 h-1 bg-primary rounded-full shadow-[0_0_8px_#72fe8f]"></span>
+</div>
+<div class="h-12 flex flex-col items-center justify-center text-on-surface">7</div>
+<div class="h-12 flex flex-col items-center justify-center text-on-surface">8</div>
+<div class="h-12 flex flex-col items-center justify-center text-on-surface">9</div>
+<!-- Selection Example -->
+<div class="h-12 flex flex-col items-center justify-center relative text-on-surface font-bold">
+<div class="absolute inset-0 bg-primary/10 rounded-xl border border-primary/20"></div>
+            10
+            <span class="absolute bottom-1 w-1 h-1 bg-primary rounded-full shadow-[0_0_8px_#72fe8f]"></span>
+</div>
+<div class="h-12 flex flex-col items-center justify-center text-on-surface">11</div>
+<div class="h-12 flex flex-col items-center justify-center relative text-on-surface">
+            12
+            <span class="absolute bottom-1 w-1 h-1 bg-primary rounded-full shadow-[0_0_8px_#72fe8f]"></span>
+</div>
+<div class="h-12 flex flex-col items-center justify-center text-on-surface">13</div>
+<div class="h-12 flex flex-col items-center justify-center text-on-surface">14</div>
+<div class="h-12 flex flex-col items-center justify-center text-on-surface">15</div>
+<div class="h-12 flex flex-col items-center justify-center text-on-surface">16</div>
+</div>
+</div>
+</section>
+<!-- Activity Timeline -->
+<section>
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline text-xl font-bold text-white tracking-tight">Today's Sessions</h2>
+<span class="font-label text-[10px] text-on-surface-variant uppercase tracking-widest bg-surface-container px-3 py-1 rounded-full">Thursday, Oct 10</span>
+</div>
+<div class="space-y-4">
+<!-- Timeline Item 1 -->
+<div class="flex gap-6 group">
+<div class="flex flex-col items-center pt-1">
+<span class="font-label text-[12px] font-bold text-primary mb-2">09:00</span>
+<div class="w-[2px] h-full bg-gradient-to-b from-primary/40 to-transparent"></div>
+</div>
+<div class="flex-1 bg-surface-container rounded-2xl p-5 hover:bg-surface-container-highest transition-colors cursor-pointer group-active:scale-[0.98] duration-200">
+<div class="flex justify-between items-start mb-4">
+<div class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded-md border border-primary/20">Editorial</div>
+<span class="material-symbols-outlined text-on-surface-variant text-sm">more_vert</span>
+</div>
+<h3 class="font-headline text-lg font-bold text-white mb-1">Vinyl Archive Curation</h3>
+<p class="text-on-surface-variant text-sm mb-4 leading-relaxed">Reviewing the new 1970s jazz acquisitions for the "Midnight Blue" playlist collection.</p>
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded-full overflow-hidden border border-outline-variant">
+<img alt="Collaborator" class="w-full h-full object-cover" data-alt="A portrait of a minimalist art gallery assistant with a calm expression, wearing a high-neck dark sweater. The background is a blurred studio with cool tonal lighting and deep shadows, maintaining a consistent high-end digital aesthetic in shades of deep charcoal and soft emerald accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC18JsoOw-lloF2GAEaBaJNh_RoXDTXNSeha5ANa-3EFlnR5pvlzWmjkIpCOIrKIBa2OqSGYCB42MeHXiWGe0nKI3UyGLZxOu2Mp5vH2ZtPZRyzKmKd5yCDzN7DfHiy4tLwvjCK91AVkN5Yt4Cxw3mdsmctWsuGW4MadLwzqg6XNW3QaBVBuGV77TEEIqtG5RNJcUaDtRjGMHUoJQ1XM0KdVtnB5d8ZpHk7sEwHFq9nFHuT-k397hKlOZdI5TpjtVqD0bqbrLIsW6U"/>
+</div>
+<span class="text-xs text-on-surface-variant font-medium">+ Sarah Jenkins</span>
+</div>
+</div>
+</div>
+<!-- Timeline Item 2 -->
+<div class="flex gap-6 group">
+<div class="flex flex-col items-center pt-1">
+<span class="font-label text-[12px] font-bold text-on-surface-variant mb-2">14:30</span>
+<div class="w-[2px] h-full bg-surface-container-highest"></div>
+</div>
+<div class="flex-1 bg-surface-container rounded-2xl p-5 hover:bg-surface-container-highest transition-colors cursor-pointer group-active:scale-[0.98] duration-200">
+<div class="flex justify-between items-start mb-4">
+<div class="px-2 py-1 bg-surface-variant text-on-surface-variant text-[10px] font-bold uppercase rounded-md">Live Stream</div>
+<span class="material-symbols-outlined text-on-surface-variant text-sm">more_vert</span>
+</div>
+<h3 class="font-headline text-lg font-bold text-white mb-1">The Digital Pulse #42</h3>
+<p class="text-on-surface-variant text-sm mb-0 leading-relaxed">Monthly community live stream focusing on upcoming electronic music releases and gear reviews.</p>
+</div>
+</div>
+<!-- Timeline Item 3 (Small variant) -->
+<div class="flex gap-6 group">
+<div class="flex flex-col items-center pt-1">
+<span class="font-label text-[12px] font-bold text-on-surface-variant mb-2">18:00</span>
+<div class="w-[2px] h-12 bg-surface-container-highest"></div>
+</div>
+<div class="flex-1 bg-surface-container rounded-2xl p-5 hover:bg-surface-container-highest transition-colors cursor-pointer group-active:scale-[0.98] duration-200">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">headphones</span>
+</div>
+<div>
+<h3 class="font-headline text-md font-bold text-white">Album Deep-Dive</h3>
+<p class="text-on-surface-variant text-xs">Analysis of "Echoes of Silence"</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pt-3 pb-6 bg-[#262626]/60 backdrop-blur-xl rounded-t-[24px] shadow-[0_-20px_40px_rgba(0,0,0,0.4)]">
+<a class="flex flex-col items-center justify-center text-[#adaaaa] hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-['Inter'] text-[10px] font-medium uppercase tracking-widest">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#72fe8f] drop-shadow-[0_0_8px_rgba(114,254,143,0.5)] scale-110 transition-transform duration-300" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">calendar_month</span>
+<span class="font-['Inter'] text-[10px] font-medium uppercase tracking-widest">Calendar</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#adaaaa] hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined mb-1">list_alt</span>
+<span class="font-['Inter'] text-[10px] font-medium uppercase tracking-widest">Tasks</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#adaaaa] hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined mb-1">settings</span>
+<span class="font-['Inter'] text-[10px] font-medium uppercase tracking-widest">Settings</span>
+</a>
+</nav>
+</body></html>

@@ -4,9 +4,11 @@ class HiveBoxConstants {
   static const String chatBox = 'chat_box';
 
   static const String booksMetadataBox = 'books_metadata_box';
+  static const String tasksBox = 'tasks_box';
  
   // Type IDs for adapters
   static const int trackTypeId = 0;
   static const int playlistTypeId = 1;
   static const int chatMessageTypeId = 2;
+  static const int taskTypeId = 3;
 }

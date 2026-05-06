@@ -1,4 +1,5 @@
 import 'package:mobile_rag_engine/mobile_rag_engine.dart';
+import 'package:flutter/foundation.dart';
 import 'package:super_app/features/home/data/models/track_model.dart';
 import 'package:super_app/features/book_collection/data/models/local_book.dart';
 
@@ -21,9 +22,9 @@ class RagIndexerService {
       }
 
       _isInitialized = true;
-      print("RagIndexerService: Initialized successfully");
+      debugPrint("RagIndexerService: Initialized successfully");
     } catch (e) {
-      print("RagIndexerService: Initialization failed: $e");
+      debugPrint("RagIndexerService: Initialization failed: $e");
     }
   }
 
@@ -36,9 +37,9 @@ class RagIndexerService {
     try {
       final augmentedContent = "[TRACK_ID: ${track.idField}] $content";
       await MobileRag.instance.addDocument(augmentedContent);
-      print("RagIndexerService: Indexed track ${track.titleField}");
+      debugPrint("RagIndexerService: Indexed track ${track.titleField}");
     } catch (e) {
-      print("RagIndexerService: Failed to index track ${track.titleField}: $e");
+      debugPrint("RagIndexerService: Failed to index track ${track.titleField}: $e");
     }
   }
 
@@ -51,9 +52,9 @@ class RagIndexerService {
     try {
       final augmentedContent = "[BOOK_ID: ${book.id}] $content";
       await MobileRag.instance.addDocument(augmentedContent);
-      print("RagIndexerService: Indexed book ${book.title}");
+      debugPrint("RagIndexerService: Indexed book ${book.title}");
     } catch (e) {
-      print("RagIndexerService: Failed to index book ${book.title}: $e");
+      debugPrint("RagIndexerService: Failed to index book ${book.title}: $e");
     }
   }
 
@@ -80,7 +81,7 @@ class RagIndexerService {
       try {
         await MobileRag.instance.rebuildIndex();
       } catch (e) {
-        print("RagIndexerService: Failed to rebuild index: $e");
+        debugPrint("RagIndexerService: Failed to rebuild index: $e");
       }
     }
   }
@@ -100,7 +101,7 @@ class RagIndexerService {
       final augmentedContent = "[$metadataStr] $content";
       await MobileRag.instance.addDocument(augmentedContent);
     } catch (e) {
-      print("RagIndexerService: Failed to index external data: $e");
+      debugPrint("RagIndexerService: Failed to index external data: $e");
     }
   }
 

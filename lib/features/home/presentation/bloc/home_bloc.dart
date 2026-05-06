@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:super_app/core/services/ai/rag_index_service.dart';
 import 'package:super_app/core/services/books/book_library_service.dart';
@@ -125,7 +126,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 }
               }
             } catch (e) {
-              print(
+              debugPrint(
                 "HomeBloc: Failed to migrate duration for ${track.title}: $e",
               );
             }
@@ -150,7 +151,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           // RE-INDEX RAG (Offline)
           _indexDataToRag();
         }
-      } catch (e) {}
+      } catch (e) {
+        // Ignore sync error
+      }
     });
     on<DeleteTrackEvent>((event, emit) async {
       try {
@@ -175,19 +178,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final allBooks = await bookLibraryService.getDownloadedBooks();
 
       if (allTracks.isNotEmpty || allBooks.isNotEmpty) {
-        print(
+        debugPrint(
           "HomeBloc: Indexing ${allTracks.length} tracks and ${allBooks.length} books to RAG...",
         );
         await ragIndexerService.reindexLibrary(
           tracks: allTracks,
           books: allBooks,
         );
-        print("HomeBloc: RAG indexing complete ✓");
+        debugPrint("HomeBloc: RAG indexing complete ✓");
       } else {
-        print("HomeBloc: No data to index to RAG");
+        debugPrint("HomeBloc: No data to index to RAG");
       }
     } catch (e) {
-      print("HomeBloc: RAG indexing failed: $e");
+      debugPrint("HomeBloc: RAG indexing failed: $e");
     }
   }
 }

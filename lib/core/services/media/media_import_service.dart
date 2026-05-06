@@ -156,10 +156,6 @@ class MediaImportService {
         );
       }
     }
-
-    print(
-      "MediaImportService: Successfully imported ${importedTracks.length} tracks",
-    );
     return importedTracks;
   }
 
@@ -218,9 +214,7 @@ class MediaImportService {
         );
       }
 
-      print(
-        "MediaImportService: Loaded ${importedTracks.length} bundled tracks",
-      );
+   
       return importedTracks;
     } catch (e) {
       return [];
@@ -304,9 +298,7 @@ class MediaImportService {
         }
       }
 
-      print(
-        "MediaImportService: Discovered ${discoveredTracks.length} tracks in downloads folder.",
-      );
+    
       return discoveredTracks;
     } catch (e) {
       return [];

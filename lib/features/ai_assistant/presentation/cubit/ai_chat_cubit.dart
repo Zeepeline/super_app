@@ -1,4 +1,5 @@
 import 'package:audio_session/audio_session.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_generative_ai/google_generative_ai.dart' as ai;
 import 'package:hive_flutter/hive_flutter.dart';
@@ -118,9 +119,9 @@ class AiChatCubit extends Cubit<AiChatState> {
         ),
       );
       await session.setActive(true);
-      print("AiChatCubit: AudioSession → playAndRecord ✓");
+      debugPrint("AiChatCubit: AudioSession → playAndRecord ✓");
     } catch (e) {
-      print("AiChatCubit: AudioSession config gagal: $e");
+      debugPrint("AiChatCubit: AudioSession config gagal: $e");
     }
   }
 
@@ -129,9 +130,9 @@ class AiChatCubit extends Cubit<AiChatState> {
       final session = await AudioSession.instance;
       await session.configure(const AudioSessionConfiguration.music());
       await session.setActive(true);
-      print("AiChatCubit: AudioSession → music ✓");
+      debugPrint("AiChatCubit: AudioSession → music ✓");
     } catch (e) {
-      print("AiChatCubit: AudioSession restore gagal: $e");
+      debugPrint("AiChatCubit: AudioSession restore gagal: $e");
     }
   }
 

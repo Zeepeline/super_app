@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:super_app/core/services/books/book_library_service.dart';
 import 'package:super_app/core/theme/app_theme.dart';
+import 'package:super_app/features/ai_assistant/presentation/pages/ai_chat_page.dart';
 import 'package:super_app/features/book_collection/data/models/local_book.dart';
 import 'package:super_app/features/book_collection/presentation/pages/book_collection_page.dart';
 import 'package:super_app/features/book_reader/presentation/pages/book_reader_page.dart';
+import 'package:super_app/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:super_app/features/nfc/presentation/pages/nfc_scanner_page.dart';
 import 'package:super_app/injection_container.dart';
 import 'package:super_app/main.dart';
@@ -344,6 +346,18 @@ class ObsidianHomePage extends StatelessWidget {
                       builder: (context) => const NfcScannerPage(),
                     ),
                   );
+                } else if (action['label'] == 'Tasks') {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DashboardPage(),
+                    ),
+                  );
+                } else if (action['label'] == 'AI') {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AiChatPage()),
+                  );
                 }
               },
               child: Column(
@@ -374,138 +388,6 @@ class ObsidianHomePage extends StatelessWidget {
           },
         ),
       ],
-    );
-  }
-
-  Widget _buildQuickResume(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('QUICK RESUME', style: Theme.of(context).textTheme.labelSmall),
-            Text(
-              'View All',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: AppTheme.kPrimaryColor,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-        Container(
-          decoration: BoxDecoration(
-            color: AppTheme.kSurfaceContainerLowColor,
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Column(
-            children: [
-              _buildResumeItem(
-                context,
-                icon: Icons.play_arrow_rounded,
-                title: 'Ambient Obsidian',
-                subtitle: 'Now Playing • 04:22 remaining',
-                trailing: 'Resume',
-                isAction: true,
-              ),
-              const SizedBox(height: 12),
-              GestureDetector(
-                onTap: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) =>  BookReaderPage(
-                  //       book: latestBook!,
-                  //     ),
-                  //   ),
-                  // );
-                },
-                child: _buildResumeItem(
-                  context,
-                  icon: Icons.menu_book_outlined,
-                  title: 'Digital Minimalism',
-                  subtitle: 'Last read 2h ago • Ch. 4',
-                  trailing: 'Page 142',
-                ),
-              ),
-              const SizedBox(height: 12),
-              _buildResumeItem(
-                context,
-                icon: Icons.history,
-                title: 'Creative Session Completed',
-                subtitle: 'Daily task finished • 1h ago',
-                trailing: '+12 XP',
-                isXP: true,
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildResumeItem(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required String trailing,
-    bool isAction = false,
-    bool isXP = false,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: AppTheme.kSurfaceContainerHighestColor,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: AppTheme.kPrimaryColor, size: 24),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-          Text(
-            trailing,
-            style: TextStyle(
-              color: isAction
-                  ? AppTheme.kPrimaryColor
-                  : isXP
-                  ? AppTheme.kPrimaryColor
-                  : AppTheme.kOnSurfaceVariantColor,
-              fontWeight: isAction || isXP
-                  ? FontWeight.bold
-                  : FontWeight.normal,
-              fontSize: 12,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

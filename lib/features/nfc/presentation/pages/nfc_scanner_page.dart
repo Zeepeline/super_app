@@ -101,7 +101,9 @@ class _NfcScannerPageState extends State<NfcScannerPage> {
       height: 200,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: _isScanning ? Colors.cyanAccent.withOpacity(0.1) : Colors.white.withOpacity(0.05),
+        color: _isScanning
+            ? Colors.cyanAccent.withValues(alpha: 0.1)
+            : Colors.white.withValues(alpha: 0.05),
         border: Border.all(
           color: _isScanning ? Colors.cyanAccent : Colors.white24,
           width: 2,
@@ -126,7 +128,7 @@ class _NfcScannerPageState extends State<NfcScannerPage> {
           width: double.infinity,
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
+            color: Colors.white.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: Colors.white10),
           ),

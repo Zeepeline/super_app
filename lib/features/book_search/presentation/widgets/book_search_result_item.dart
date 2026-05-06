@@ -84,28 +84,42 @@ class BookSearchResultItem extends StatelessWidget {
             ),
             onPressed: () async {
               try {
+                final messenger = ScaffoldMessenger.of(context);
                 final workerService = sl<PythonWorkerService>();
-                
-                ScaffoldMessenger.of(context).showSnackBar(
+
+                messenger.showSnackBar(
                   SnackBar(content: Text('Downloading "${result.title}"...')),
                 );
-                
+
                 await workerService.downloadBook(result);
-                
+
+                if (!context.mounted) return;
+
                 final error = workerService.getTaskError(result.id);
                 if (error != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error: $error'), backgroundColor: Colors.red),
+                  messenger.showSnackBar(
+                    SnackBar(
+                      content: Text('Error: $error'),
+                      backgroundColor: Colors.red,
+                    ),
                   );
                   workerService.clearTaskError(result.id);
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Download complete! Saved to Documents/SoundWave/Books')),
+                  messenger.showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Download complete! Saved to Documents/SoundWave/Books',
+                      ),
+                    ),
                   );
                 }
               } catch (e) {
+                if (!context.mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Failed to start download: $e'), backgroundColor: Colors.red),
+                  SnackBar(
+                    content: Text('Failed to start download: $e'),
+                    backgroundColor: Colors.red,
+                  ),
                 );
               }
             },

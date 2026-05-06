@@ -91,7 +91,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
         recommendations.assignAll(recs);
       }
     } catch (e) {
-      print("Error fetching recommendations: $e");
+      debugPrint("Error fetching recommendations: $e");
     }
   }
 
@@ -171,7 +171,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
   }
 
   Widget _buildHeroImage(BuildContext context) {
-    print(book.coverPath);
+    debugPrint(book.coverPath);
     return Center(
       child: Container(
         height: 320,

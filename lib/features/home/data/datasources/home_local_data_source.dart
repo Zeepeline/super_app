@@ -84,8 +84,8 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
         // 2. If no duplicate path, use id as key
         await box.put(track.id, track);
       }
-
     } catch (e) {
+      // Failed to cache tracks, ignore for now
     }
   }
 
@@ -148,6 +148,7 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
         }
       }
     } catch (e) {
+      // Ignore favorite update error
     }
   }
 
@@ -167,6 +168,7 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
         }
       }
     } catch (e) {
+      // Ignore duration update error
     }
   }
 
@@ -193,6 +195,7 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
         }
       }
     } catch (e) {
+      // Ignore lyrics update error
     }
   }
 

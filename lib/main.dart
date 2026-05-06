@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:ui';
 
 import 'package:audio_service/audio_service.dart';
@@ -19,6 +20,7 @@ import 'core/widgets/live_activity_island.dart';
 import 'features/ai_assistant/data/models/chat_message_model.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/bloc/auth_state.dart';
+import 'features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'features/home/data/models/playlist_model.dart';
 import 'features/home/data/models/track_model.dart';
 import 'features/home/presentation/bloc/home_bloc.dart';
@@ -31,6 +33,7 @@ import 'features/onboarding/presentation/pages/onboarding_page.dart';
 import 'features/search/presentation/pages/search_page.dart';
 import 'features/settings/presentation/pages/settings_page.dart';
 import 'features/splash/presentation/pages/splash_page.dart';
+import 'features/tasks/data/models/task_model.dart';
 import 'features/youtube/presentation/controllers/youtube_controller.dart';
 import 'features/youtube/presentation/pages/youtube_page.dart';
 import 'injection_container.dart' as di;
@@ -47,9 +50,11 @@ void main() async {
   Hive.registerAdapter(TrackModelAdapter());
   Hive.registerAdapter(PlaylistModelAdapter());
   Hive.registerAdapter(ChatMessageModelAdapter());
+  Hive.registerAdapter(TaskModelAdapter());
 
   // Open Boxes
   await Hive.openBox(HiveBoxConstants.booksMetadataBox);
+  await Hive.openBox<TaskModel>(HiveBoxConstants.tasksBox);
 
   // Initialize AudioService and AudioHandler
   final audioHandler = await AudioService.init(
@@ -69,14 +74,14 @@ void main() async {
     await di.sl<RagIndexerService>().initialize();
     await di.sl<UserMemoryService>().initialize();
   } catch (e) {
-    print("Failed to initialize AI Services: $e");
+    log("Failed to initialize AI Services: $e");
   }
 
   // Initialize Python Worker early
   try {
     sl<PythonWorkerService>().initWorker();
   } catch (e) {
-    print("Failed to start Python Worker: $e");
+    log("Failed to start Python Worker: $e");
   }
 
   // Get SharedPreferences from GetIt
@@ -110,6 +115,7 @@ class _SoundWaveAppState extends State<SoundWaveApp> {
         BlocProvider(
           create: (context) => sl<HomeBloc>()..add(LoadHomeDataEvent()),
         ),
+        BlocProvider(create: (context) => sl<DashboardBloc>()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -64,6 +64,28 @@ import 'features/settings/domain/usecases/get_settings.dart';
 import 'features/settings/domain/usecases/logout.dart';
 import 'features/settings/domain/usecases/update_audio_quality.dart';
 import 'features/settings/presentation/bloc/settings_bloc.dart';
+import 'features/dashboard/data/datasources/dashboard_remote_datasource.dart';
+import 'features/dashboard/data/repositories/dashboard_repository_impl.dart';
+import 'features/schedule/domain/repositories/schedule_repository.dart';
+import 'features/schedule/domain/usecases/get_sessions.dart';
+import 'features/schedule/data/datasources/schedule_remote_datasource.dart';
+import 'features/schedule/data/repositories/schedule_repository_impl.dart';
+import 'features/schedule/presentation/bloc/schedule_bloc.dart';
+import 'features/holidays/domain/repositories/holiday_repository.dart';
+import 'features/holidays/domain/usecases/get_holidays.dart';
+import 'features/holidays/data/datasources/holiday_remote_datasource.dart';
+import 'features/holidays/data/datasources/holiday_local_datasource.dart';
+import 'features/holidays/data/repositories/holiday_repository_impl.dart';
+import 'features/dashboard/domain/repositories/dashboard_repository.dart';
+import 'features/dashboard/domain/usecases/get_dashboard_data.dart';
+import 'features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'features/tasks/data/datasources/task_local_datasource.dart';
+import 'features/tasks/data/models/task_model.dart';
+import 'features/tasks/data/repositories/task_repository_impl.dart';
+import 'features/tasks/domain/repositories/task_repository.dart';
+import 'features/tasks/domain/usecases/add_task.dart';
+import 'features/tasks/presentation/bloc/task_bloc.dart';
+import 'core/utils/hive_box_constants.dart';
 
 final sl = GetIt.instance;
 
@@ -123,6 +145,23 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   sl.registerSingleton<SearchRemoteDataSource>(
     MockSearchRemoteDataSourceImpl(),
   );
+  sl.registerSingleton<DashboardRemoteDataSource>(
+    DashboardRemoteDataSourceImpl(),
+  );
+  sl.registerSingleton<ScheduleRemoteDataSource>(
+    ScheduleRemoteDataSourceImpl(),
+  );
+  sl.registerLazySingleton<HolidayRemoteDataSource>(
+    () => HolidayRemoteDataSourceImpl(dio: sl()),
+  );
+  sl.registerLazySingleton<HolidayLocalDataSource>(
+    () => HolidayLocalDataSourceImpl(hive: sl()),
+  );
+  sl.registerLazySingleton<TaskLocalDataSource>(
+    () => TaskLocalDataSourceImpl(
+      taskBox: Hive.box<TaskModel>(HiveBoxConstants.tasksBox),
+    ),
+  );
 
   sl.registerSingleton<NetworkInfo>(NetworkInfoImpl(sl<Connectivity>()));
 
@@ -159,6 +198,22 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   sl.registerSingleton<AuthRepository>(
     AuthRepositoryImpl(remoteDataSource: sl<AuthRemoteDataSource>()),
   );
+  sl.registerSingleton<DashboardRepository>(
+    DashboardRepositoryImpl(remoteDataSource: sl<DashboardRemoteDataSource>()),
+  );
+  sl.registerSingleton<ScheduleRepository>(
+    ScheduleRepositoryImpl(remoteDataSource: sl<ScheduleRemoteDataSource>()),
+  );
+  sl.registerLazySingleton<HolidayRepository>(
+    () => HolidayRepositoryImpl(
+      remoteDataSource: sl(),
+      localDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+  sl.registerLazySingleton<TaskRepository>(
+    () => TaskRepositoryImpl(localDataSource: sl()),
+  );
 
   // ===== USE CASES =====
   sl.registerLazySingleton(() => LoginUseCase(sl()));
@@ -167,6 +222,10 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   sl.registerLazySingleton(() => GetFavoriteTracks(sl()));
   sl.registerLazySingleton(() => GetFeaturedPlaylists(sl()));
   sl.registerLazySingleton(() => DeleteTrackUseCase(sl()));
+  sl.registerLazySingleton(() => GetDashboardData(sl()));
+  sl.registerLazySingleton(() => GetSessions(sl()));
+  sl.registerLazySingleton(() => GetHolidays(sl()));
+  sl.registerLazySingleton(() => AddTask(sl()));
   sl.registerLazySingleton(() => GetSettings(sl()));
   sl.registerLazySingleton(() => GetCurrentUser(sl()));
   sl.registerLazySingleton(() => UpdateAudioQuality(sl()));
@@ -212,6 +271,9 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   );
   sl.registerFactory(() => AiChatCubit(sl(), sl()));
   sl.registerFactory(() => BookSearchBloc(sl()));
+  sl.registerFactory(() => DashboardBloc(getDashboardData: sl()));
+  sl.registerFactory(() => ScheduleBloc(getSessions: sl(), getHolidays: sl()));
+  sl.registerFactory(() => TaskBloc(addTask: sl()));
 
   // Music Player - register as singleton (needs repository already registered)
   sl.registerSingleton<PlayerCubit>(

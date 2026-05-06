@@ -1,7 +1,8 @@
 import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../../../../core/usecases/usecase.dart';
+
 import '../../../home/domain/entities/track_entity.dart';
 import '../../../home/domain/repositories/home_repository.dart';
 import '../../../home/domain/usecases/get_favorite_tracks.dart';
@@ -77,10 +78,9 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
       result.fold(
         (failure) => emit(const LibraryError('Failed to fetch tracks')),
         (tracks) {
-          final currentCategory =
-              state is LibraryLoaded
-                  ? (state as LibraryLoaded).selectedCategory
-                  : LibraryCategory.playlists;
+          final currentCategory = state is LibraryLoaded
+              ? (state as LibraryLoaded).selectedCategory
+              : LibraryCategory.playlists;
           emit(
             LibraryLoaded(tracks: tracks, selectedCategory: currentCategory),
           );

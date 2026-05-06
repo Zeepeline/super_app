@@ -1,8 +1,7 @@
+import 'package:super_app/core/services/books/book_library_service.dart';
+import 'package:super_app/core/services/download/youtube_download_service.dart';
 import 'package:super_app/core/services/download/youtube_explode_service.dart';
 import 'package:super_app/core/services/infrastructure/native_device_service.dart';
-import 'package:super_app/core/services/download/youtube_download_service.dart';
-import 'package:super_app/core/services/books/book_library_service.dart';
-import 'package:super_app/features/book_collection/data/models/local_book.dart';
 import 'package:super_app/features/home/data/datasources/home_local_data_source.dart';
 import 'package:super_app/features/home/data/models/track_model.dart' as home;
 import 'package:super_app/features/music_player/data/models/track_model.dart'
@@ -113,7 +112,9 @@ class AiToolsService {
                 t.titleField.toLowerCase().contains(query.toLowerCase()) ||
                 t.artistField.toLowerCase().contains(query.toLowerCase()) ||
                 t.albumField.toLowerCase().contains(query.toLowerCase()) ||
-                (t.plainLyricsField?.toLowerCase().contains(query.toLowerCase()) ??
+                (t.plainLyricsField?.toLowerCase().contains(
+                      query.toLowerCase(),
+                    ) ??
                     false),
           )
           .toList();

@@ -1,4 +1,5 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:flutter/foundation.dart';
 
 import '../infrastructure/secure_storage_service.dart';
 
@@ -229,7 +230,7 @@ class GeminiService {
           return await chat.sendMessage(Content.text(prompt));
         } catch (e) {
           lastError = e.toString();
-          print("GeminiService: Model $modelName failed - $lastError");
+          debugPrint("GeminiService: Model $modelName failed - $lastError");
           final isQuotaExceeded =
               lastError.contains('429') ||
               lastError.toLowerCase().contains('quota exceeded') ||
@@ -239,7 +240,7 @@ class GeminiService {
         }
       }
     }
-    print("GeminiService: All agentic models failed. Last error: $lastError");
+    debugPrint("GeminiService: All agentic models failed. Last error: $lastError");
     return null;
   }
 
@@ -268,7 +269,7 @@ class GeminiService {
           }
         } catch (e) {
           lastError = e.toString();
-          print("GeminiService Error [$modelName]: $lastError");
+          debugPrint("GeminiService Error [$modelName]: $lastError");
           // If the error is 429 or quota exceeded, break inner loop and try next API Key
           final isQuotaExceeded =
               lastError.contains('429') ||

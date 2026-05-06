@@ -1,5 +1,6 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:mobile_rag_engine/mobile_rag_engine.dart';
+import 'package:flutter/foundation.dart';
 
 import 'ai_tools_service.dart';
 import 'gemini_service.dart';
@@ -36,11 +37,11 @@ class RagService {
         graphContext = relatedFacts.map((f) => "- $f").join("\n");
       }
     } catch (e) {
-      print("RagService: Search failed: $e");
+      debugPrint("RagService: Search failed: $e");
     }
 
     // 2. Tools sudah didefinisikan secara global di GeminiService
-    final List<Tool>? tools = null; 
+    const List<Tool>? tools = null; 
 
     // 3. Prepare Prompt with Augmented Context (Hybrid RAG)
     final prompt =
@@ -70,7 +71,7 @@ PERTANYAAN USER: $query
     if (functionCalls.isNotEmpty) {
       final call = functionCalls.first;
 
-      print(
+      debugPrint(
         "RagService: Gemini triggered tool: ${call.name} with args: ${call.args}",
       );
 
