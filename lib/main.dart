@@ -53,10 +53,6 @@ void main() async {
   Hive.registerAdapter(TaskModelAdapter());
 
   // Open Boxes
-  // Temporary: Clear boxes to resolve "unknown typeId: 35" error
-  await Hive.deleteBoxFromDisk(HiveBoxConstants.tasksBox);
-  await Hive.deleteBoxFromDisk(HiveBoxConstants.booksMetadataBox);
-  
   await Hive.openBox(HiveBoxConstants.booksMetadataBox);
   await Hive.openBox<TaskModel>(HiveBoxConstants.tasksBox);
 

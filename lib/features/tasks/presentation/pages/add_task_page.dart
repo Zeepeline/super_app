@@ -61,10 +61,11 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
     final startTimeStr =
         "${_selectedStartTime.hour.toString().padLeft(2, '0')}:${_selectedStartTime.minute.toString().padLeft(2, '0')}";
-    
+
     String? endTimeStr;
     if (_selectedEndTime != null) {
-      endTimeStr = "${_selectedEndTime!.hour.toString().padLeft(2, '0')}:${_selectedEndTime!.minute.toString().padLeft(2, '0')}";
+      endTimeStr =
+          "${_selectedEndTime!.hour.toString().padLeft(2, '0')}:${_selectedEndTime!.minute.toString().padLeft(2, '0')}";
     }
 
     context.read<TaskBloc>().add(

@@ -6,6 +6,7 @@
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
+      "preLaunchTask": "Bundle Python Worker",
       "args": []
     },
     {
@@ -13,6 +14,7 @@
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
+      "preLaunchTask": "Bundle Python Worker",
       "args": ["--flavor", "development"]
     },
     {
@@ -20,6 +22,7 @@
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
+      "preLaunchTask": "Bundle Python Worker",
       "args": ["--flavor", "staging"]
     },
     {
@@ -27,6 +30,7 @@
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
+      "preLaunchTask": "Bundle Python Worker",
       "args": ["--flavor", "production"]
     },
     {
@@ -34,20 +38,41 @@
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
+      "preLaunchTask": "Bundle Python Worker",
       "flutterMode": "profile"
+    },
+    {
+      "name": "super_app (profile) - development",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "preLaunchTask": "Bundle Python Worker",
+      "flutterMode": "profile",
+      "args": ["--flavor", "development"]
     },
     {
       "name": "super_app (release)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
+      "preLaunchTask": "Bundle Python Worker",
       "flutterMode": "release"
+    },
+    {
+      "name": "super_app (release) - development",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "preLaunchTask": "Bundle Python Worker",
+      "flutterMode": "release",
+      "args": ["--flavor", "development"]
     },
     {
       "name": "super_app (debug) - Android",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
+      "preLaunchTask": "Bundle Python Worker",
       "deviceId": "android"
     },
     {
@@ -55,6 +80,7 @@
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
+      "preLaunchTask": "Bundle Python Worker",
       "deviceId": "iphone"
     }
   ],

@@ -101,9 +101,22 @@ class YoutubeDownloadService {
                 final progress = (data['progress'] as num?)?.toDouble() ?? 0.0;
                 final status = data['status'] as String?;
 
-                if (status == 'processing') {
+                if (status == 'done') {
+                  onProgress?.call('Download complete!', 0.96);
+                  if (!currentDownloadCompleter.isCompleted) {
+                    currentDownloadCompleter.complete();
+                  }
+                } else if (status == 'error') {
+                  final errorMsg =
+                      data['error']?.toString() ??
+                      data['message']?.toString() ??
+                      'Unknown download error';
+                  if (!currentDownloadCompleter.isCompleted) {
+                    currentDownloadCompleter.completeError(Exception(errorMsg));
+                  }
+                } else if (status == 'processing') {
                   onProgress?.call('Finalizing file...', 0.95);
-                } else if (status != 'done' && status != 'error') {
+                } else {
                   onProgress?.call(
                     'Downloading: ${(progress * 100).toInt()}%',
                     0.15 + (progress * 0.8),
@@ -117,6 +130,10 @@ class YoutubeDownloadService {
         });
 
         await _workerService.initWorker();
+
+        if (!_workerService.isReady) {
+          throw Exception('Python Worker is not ready. Cannot download.');
+        }
 
         onProgress?.call('Starting download...', 0.15);
         final response =
@@ -229,9 +246,9 @@ class YoutubeDownloadService {
         );
         try {
           // Set a strict timeout for Strategy 1 to avoid long delays
-          final manifest = await _yt.videos.streamsClient.getManifest(videoId).timeout(
-            const Duration(seconds: 3),
-          );
+          final manifest = await _yt.videos.streamsClient
+              .getManifest(videoId)
+              .timeout(const Duration(seconds: 3));
 
           // Prefer m4a streams for better iOS compatibility
           final m4aStreams = manifest.audioOnly.where(
@@ -292,7 +309,7 @@ class YoutubeDownloadService {
         },
       );
 
-      if (_workerService.isReady) {
+      if (_workerService.isReady && _workerService.workerPort != null) {
         try {
           final response = await Dio()
               .post(

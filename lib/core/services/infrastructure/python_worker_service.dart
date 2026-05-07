@@ -82,7 +82,17 @@ class PythonWorkerService {
           "SeriousPython.run was already called. Re-checking status...",
           name: "PythonWorker",
         );
-        if (savedPort != null && await _pingWorker(savedPort)) {
+
+        // Check if the late handshake already set the port
+        if (_workerPort != null && await _pingWorker(_workerPort!)) {
+          _isWorkerStarted = true;
+          await _prefs.setInt('python_worker_port', _workerPort!);
+          await _setupNewProgressServer();
+          dev.log(
+            "Reconnected to late-started worker on port $_workerPort",
+            name: "PythonWorker",
+          );
+        } else if (savedPort != null && await _pingWorker(savedPort)) {
           _workerPort = savedPort;
           _isWorkerStarted = true;
           await _setupNewProgressServer();
@@ -115,9 +125,10 @@ class PythonWorkerService {
       if (!_initCompleter!.isCompleted) {
         _initCompleter!.completeError(e);
       }
-      _initCompleter = null;
     } finally {
       _isInitializing = false;
+      // Always reset so future calls can re-check worker state
+      _initCompleter = null;
     }
   }
 
@@ -173,6 +184,12 @@ class PythonWorkerService {
   Future<void> downloadBook(BookSearchResult book) async {
     if (!isReady) await initWorker();
 
+    if (_workerPort == null) {
+      throw Exception(
+        'Python Worker is not ready (port is null). Cannot download.',
+      );
+    }
+
     final taskId = book.id;
     final completer = Completer<void>();
     registerTaskCompleter(taskId, completer);
@@ -216,6 +233,7 @@ class PythonWorkerService {
 
   Future<void> _startFreshWorker() async {
     HttpServer? progressServer;
+    bool timedOut = false;
     try {
       progressServer = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
       final progressPort = progressServer.port;
@@ -228,16 +246,35 @@ class PythonWorkerService {
       progressServer.listen((HttpRequest request) async {
         if (request.uri.path == '/progress') {
           final content = await utf8.decoder.bind(request).join();
-          final data = jsonDecode(content);
-          if (data['status'] == 'worker_ready') {
-            _workerPort = (data['port'] as num).toInt();
+          try {
+            final data = jsonDecode(content);
+            if (data['status'] == 'worker_ready') {
+              _workerPort = (data['port'] as num).toInt();
+              _isWorkerStarted = true;
+              dev.log(
+                "Received worker port from Python: $_workerPort",
+                name: "PythonWorker",
+              );
+              if (!completer.isCompleted) completer.complete();
+
+              // If this arrived after timeout, set up the progress server now
+              if (timedOut) {
+                dev.log(
+                  "Late handshake accepted! Worker is alive on port $_workerPort",
+                  name: "PythonWorker",
+                );
+                await _prefs.setInt('python_worker_port', _workerPort!);
+                await _setupNewProgressServer();
+              }
+            } else {
+              _handleProgressData(content);
+            }
+          } catch (e) {
             dev.log(
-              "Received worker port from Python: $_workerPort",
+              "Error parsing handshake data: $e",
               name: "PythonWorker",
+              error: e,
             );
-            if (!completer.isCompleted) completer.complete();
-          } else {
-            _handleProgressData(content);
           }
           request.response.statusCode = HttpStatus.ok;
           await request.response.close();
@@ -254,10 +291,25 @@ class PythonWorkerService {
         environmentVariables: {"DART_PORT": progressPort.toString()},
       );
 
-      await completer.future.timeout(const Duration(seconds: 120));
+      // iOS can be very slow to unpack and start Python (>2 min observed).
+      // Give it 5 minutes to be safe.
+      await completer.future.timeout(const Duration(minutes: 5));
       _isWorkerStarted = true;
+    } on TimeoutException {
+      timedOut = true;
+      dev.log(
+        "Python Worker did not respond within 5 minutes. "
+        "It may still start later — keeping handshake server open.",
+        name: "PythonWorker",
+      );
+      // Don't clear _workerPort here — the listener may still receive it.
     } finally {
-      Future.delayed(const Duration(seconds: 5), () {
+      // Keep the handshake server alive longer in case Python is just slow.
+      // If it already started, close sooner.
+      final closeDelay = timedOut
+          ? const Duration(minutes: 2)
+          : const Duration(seconds: 5);
+      Future.delayed(closeDelay, () {
         dev.log("Closing temporary handshake server", name: "PythonWorker");
         progressServer?.close();
       });
@@ -283,12 +335,15 @@ class PythonWorkerService {
       if (taskId != null && _activeDownloadCompleters.containsKey(taskId)) {
         if (status == 'done' || status == 'error') {
           if (status == 'error') {
+            final errorMsg =
+                data['error']?.toString() ??
+                data['message']?.toString() ??
+                'Unknown error';
             dev.log(
-              "Download signal error for $taskId: ${data['error']}",
+              "Download signal error for $taskId: $errorMsg",
               name: "PythonWorker",
             );
-            _downloadErrors[taskId] =
-                data['error']?.toString() ?? 'Unknown error';
+            _downloadErrors[taskId] = errorMsg;
           } else {
             dev.log(
               "Download signal complete for $taskId",
