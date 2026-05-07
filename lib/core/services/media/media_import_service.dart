@@ -13,6 +13,8 @@ import 'package:uuid/uuid.dart';
 class MediaImportService {
   final _uuid = const Uuid();
 
+  static final RegExp _ytPattern = RegExp(r"^(.*)\s\[([a-zA-Z0-9_-]{11})\]$");
+
   MediaImportService();
 
   /// Static flag to prevent concurrent calls across any instance or hot-restart
@@ -256,13 +258,11 @@ class MediaImportService {
         final ext = p.extension(path).toLowerCase();
         if (supportedExtensions.contains(ext)) {
           final fileName = p.basename(path);
-          var title = p.basenameWithoutExtension(fileName);
+          final baseName = p.basenameWithoutExtension(fileName);
+          var title = baseName;
 
           // Regex to match "Title [VideoID]" and extract "Title" and "VideoID"
-          final ytPattern = RegExp(r"^(.*)\s\[([a-zA-Z0-9_-]{11})\]$");
-          final match = ytPattern.firstMatch(
-            p.basenameWithoutExtension(fileName),
-          );
+          final match = _ytPattern.firstMatch(baseName);
           String stableId = _uuid.v4();
 
           if (match != null) {
@@ -271,7 +271,7 @@ class MediaImportService {
           } else {
             // For non-YouTube files, use filename as a semi-stable ID
             // (Better than random UUID which causes duplicates on path change)
-            stableId = "local_${p.basenameWithoutExtension(fileName)}";
+            stableId = "local_$baseName";
           }
 
           // Replace underscores/hyphens with spaces if they look like they were sanitized
