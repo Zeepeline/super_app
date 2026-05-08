@@ -6,10 +6,7 @@ import 'package:super_app/features/book_reader/presentation/pages/book_reader_pa
 class BookActionButtons extends StatelessWidget {
   final LocalBook book;
 
-  const BookActionButtons({
-    super.key,
-    required this.book,
-  });
+  const BookActionButtons({super.key, required this.book});
 
   @override
   Widget build(BuildContext context) {

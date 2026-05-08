@@ -29,16 +29,16 @@ class DashboardStatusCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           Text(
             value,
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontSize: 16,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineMedium?.copyWith(fontSize: 16),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -46,19 +46,13 @@ class DashboardStatusCard extends StatelessWidget {
             const SizedBox(height: 4),
             const Text(
               '09:00 AM',
-              style: TextStyle(
-                color: Color(0xFF72FE8F),
-                fontSize: 12,
-              ),
+              style: TextStyle(color: Color(0xFF72FE8F), fontSize: 12),
             ),
           ] else if (type == 'meeting') ...[
             const SizedBox(height: 4),
             const Text(
               'in 45m',
-              style: TextStyle(
-                color: Colors.cyanAccent,
-                fontSize: 12,
-              ),
+              style: TextStyle(color: Colors.cyanAccent, fontSize: 12),
             ),
           ] else if (type == 'readiness' && progress != null) ...[
             const SizedBox(height: 12),
@@ -67,7 +61,9 @@ class DashboardStatusCard extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: progress,
                 backgroundColor: Colors.white10,
-                valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF72FE8F)),
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  Color(0xFF72FE8F),
+                ),
                 minHeight: 4,
               ),
             ),

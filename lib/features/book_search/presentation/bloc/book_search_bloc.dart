@@ -4,6 +4,7 @@ import '../../domain/repositories/book_search_repository.dart';
 
 // Events
 abstract class BookSearchEvent {}
+
 class PerformBookSearch extends BookSearchEvent {
   final String query;
   PerformBookSearch(this.query);
@@ -11,12 +12,16 @@ class PerformBookSearch extends BookSearchEvent {
 
 // States
 abstract class BookSearchState {}
+
 class BookSearchInitial extends BookSearchState {}
+
 class BookSearchLoading extends BookSearchState {}
+
 class BookSearchLoaded extends BookSearchState {
   final List<BookSearchResult> results;
   BookSearchLoaded(this.results);
 }
+
 class BookSearchError extends BookSearchState {
   final String message;
   BookSearchError(this.message);

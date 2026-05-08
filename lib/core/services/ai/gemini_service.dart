@@ -240,7 +240,9 @@ class GeminiService {
         }
       }
     }
-    debugPrint("GeminiService: All agentic models failed. Last error: $lastError");
+    debugPrint(
+      "GeminiService: All agentic models failed. Last error: $lastError",
+    );
     return null;
   }
 
@@ -307,7 +309,8 @@ class GeminiService {
     final apiKeys = await getApiKeys();
     if (apiKeys.isEmpty) return "API Key missing.";
 
-    final prompt = """
+    final prompt =
+        """
 Anda adalah AI Produktivitas Pakar. Gunakan Knowledge Base (KB) di bawah ini untuk memberikan 1 rekomendasi tugas yang paling relevan untuk user saat ini.
 
 KNOWLEDGE BASE:

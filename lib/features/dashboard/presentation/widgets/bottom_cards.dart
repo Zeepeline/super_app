@@ -4,11 +4,7 @@ class TrendCard extends StatelessWidget {
   final String growth;
   final List<double> dataPoints;
 
-  const TrendCard({
-    super.key,
-    required this.growth,
-    required this.dataPoints,
-  });
+  const TrendCard({super.key, required this.growth, required this.dataPoints});
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +22,9 @@ class TrendCard extends StatelessWidget {
             children: [
               Text(
                 'TREND',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
               const Icon(Icons.trending_up, color: Color(0xFF72FE8F), size: 16),
             ],
@@ -36,9 +32,9 @@ class TrendCard extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             growth,
-            style: Theme.of(context).textTheme.displayLarge?.copyWith(
-              fontSize: 24,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.displayLarge?.copyWith(fontSize: 24),
           ),
           Text(
             'Growth',
@@ -60,13 +56,15 @@ class TrendCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: p > 0.5 ? const Color(0xFF72FE8F) : Colors.white12,
                       borderRadius: BorderRadius.circular(2),
-                      boxShadow: p > 0.5 ? [
-                        BoxShadow(
-                          color: const Color(0xFF72FE8F).withOpacity(0.3),
-                          blurRadius: 8,
-                          spreadRadius: 1,
-                        )
-                      ] : null,
+                      boxShadow: p > 0.5
+                          ? [
+                              BoxShadow(
+                                color: const Color(0xFF72FE8F).withOpacity(0.3),
+                                blurRadius: 8,
+                                spreadRadius: 1,
+                              ),
+                            ]
+                          : null,
                     ),
                   ),
                 );
@@ -100,11 +98,15 @@ class InsightCard extends StatelessWidget {
             children: [
               Text(
                 'INSIGHTS',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
-              const Icon(Icons.lightbulb_outline, color: Colors.cyanAccent, size: 16),
+              const Icon(
+                Icons.lightbulb_outline,
+                color: Colors.cyanAccent,
+                size: 16,
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -128,7 +130,8 @@ class InsightCard extends StatelessWidget {
     // Basic highlighting for numbers
     final words = message.split(' ');
     return words.map((word) {
-      final isHighlight = int.tryParse(word) != null || word.contains('earlier');
+      final isHighlight =
+          int.tryParse(word) != null || word.contains('earlier');
       return TextSpan(
         text: '$word ',
         style: TextStyle(

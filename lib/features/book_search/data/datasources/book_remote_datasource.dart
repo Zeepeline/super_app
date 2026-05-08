@@ -15,7 +15,7 @@ class BookRemoteDataSourceImpl implements BookRemoteDataSource {
   @override
   Future<List<BookSearchResultModel>> searchBooks(String query) async {
     final workerService = sl<PythonWorkerService>();
-    
+
     if (!workerService.isReady) {
       // Small attempt to init if not ready, but mostly relies on main() init
       await workerService.initWorker();
@@ -23,18 +23,21 @@ class BookRemoteDataSourceImpl implements BookRemoteDataSource {
 
     final port = workerService.workerPort;
     if (port == null) {
-      throw Exception("Python Worker is starting up. Please wait a few seconds and try again.");
+      throw Exception(
+        "Python Worker is starting up. Please wait a few seconds and try again.",
+      );
     }
 
     try {
-      final response = await dio.post(
-        'http://127.0.0.1:$port/books/search',
-        data: {'query': query},
-      ).timeout(const Duration(seconds: 60));
+      final response = await dio
+          .post('http://127.0.0.1:$port/books/search', data: {'query': query})
+          .timeout(const Duration(seconds: 60));
 
       if (response.statusCode == 200) {
         final List results = response.data['results'];
-        return results.map((json) => BookSearchResultModel.fromJson(json)).toList();
+        return results
+            .map((json) => BookSearchResultModel.fromJson(json))
+            .toList();
       } else {
         throw Exception("Failed to search books: ${response.statusMessage}");
       }

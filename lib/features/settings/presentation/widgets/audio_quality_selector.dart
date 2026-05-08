@@ -80,7 +80,9 @@ class AudioQualitySelector extends StatelessWidget {
             color: isSelected ? const Color(0xFF262626) : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
             border: isSelected
-                ? Border.all(color: const Color(0xFF72fe8f).withValues(alpha: 0.2))
+                ? Border.all(
+                    color: const Color(0xFF72fe8f).withValues(alpha: 0.2),
+                  )
                 : null,
             boxShadow: isSelected
                 ? [

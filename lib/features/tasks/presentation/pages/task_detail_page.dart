@@ -25,7 +25,10 @@ class TaskDetailPage extends StatelessWidget {
                 backgroundColor: Colors.green,
               ),
             );
-            Navigator.pop(context, true); // Return true to indicate refresh needed
+            Navigator.pop(
+              context,
+              true,
+            ); // Return true to indicate refresh needed
           } else if (state is TaskDeleted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -200,28 +203,21 @@ class TaskDetailPage extends StatelessWidget {
       spacing: 16,
       runSpacing: 16,
       children: [
-        _buildMetaItem(
-          Icons.category_outlined,
-          'Category',
-          task.category,
-        ),
+        _buildMetaItem(Icons.category_outlined, 'Category', task.category),
         _buildMetaItem(
           Icons.calendar_today_outlined,
           'Due Date',
           DateFormat('MMM dd, yyyy').format(task.dueDate),
         ),
-        _buildMetaItem(
-          Icons.access_time_outlined,
-          'Schedule',
-          timeDisplay,
-        ),
+        _buildMetaItem(Icons.access_time_outlined, 'Schedule', timeDisplay),
       ],
     );
   }
 
   Widget _buildMetaItem(IconData icon, String label, String value) {
     return Container(
-      width: (SizedBox.fromSize().width), // This is a placeholder, Wrap handles width
+      width: (SizedBox.fromSize()
+          .width), // This is a placeholder, Wrap handles width
       constraints: const BoxConstraints(minWidth: 150),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -256,7 +252,6 @@ class TaskDetailPage extends StatelessWidget {
     );
   }
 
-
   Widget _buildSubTaskList() {
     return Column(
       children: task.subTasks.map((subTask) {
@@ -279,10 +274,7 @@ class TaskDetailPage extends StatelessWidget {
               Expanded(
                 child: Text(
                   subTask,
-                  style: GoogleFonts.inter(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
+                  style: GoogleFonts.inter(color: Colors.white70, fontSize: 14),
                 ),
               ),
             ],
@@ -296,7 +288,7 @@ class TaskDetailPage extends StatelessWidget {
     return BlocBuilder<TaskBloc, TaskState>(
       builder: (context, state) {
         final isLoading = state is TaskLoading;
-        
+
         return Row(
           children: [
             Expanded(
@@ -305,16 +297,13 @@ class TaskDetailPage extends StatelessWidget {
                     ? null
                     : () {
                         context.read<TaskBloc>().add(
-                              UpdateTaskStatusEvent(
-                                task: task,
-                                isCompleted: true,
-                              ),
-                            );
+                          UpdateTaskStatusEvent(task: task, isCompleted: true),
+                        );
                       },
                 child: Container(
                   height: 56,
                   decoration: BoxDecoration(
-                    color: task.isCompleted 
+                    color: task.isCompleted
                         ? Colors.green.withOpacity(0.2)
                         : Colors.white.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(100),
@@ -337,7 +326,9 @@ class TaskDetailPage extends StatelessWidget {
                         : Text(
                             task.isCompleted ? 'COMPLETED' : 'MARK COMPLETED',
                             style: GoogleFonts.plusJakartaSans(
-                              color: task.isCompleted ? Colors.green : Colors.white,
+                              color: task.isCompleted
+                                  ? Colors.green
+                                  : Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
                               letterSpacing: 1,
@@ -355,7 +346,11 @@ class TaskDetailPage extends StatelessWidget {
                 color: AppTheme.kPrimaryColor,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.play_arrow_rounded, color: Colors.black, size: 32),
+              child: const Icon(
+                Icons.play_arrow_rounded,
+                color: Colors.black,
+                size: 32,
+              ),
             ),
           ],
         );

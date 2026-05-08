@@ -30,21 +30,30 @@ class BookSearchView extends StatefulWidget {
 
 class _BookSearchViewState extends State<BookSearchView> {
   final TextEditingController _searchController = TextEditingController();
-  final List<String> _genres = ['Fiction', 'Technology', 'Self-Help', 'History', 'Science', 'Mystery'];
+  final List<String> _genres = [
+    'Fiction',
+    'Technology',
+    'Self-Help',
+    'History',
+    'Science',
+    'Mystery',
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.kBackgroundColor,
-      appBar: widget.showAppBar ? AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Text('Book Store'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ) : null,
+      appBar: widget.showAppBar
+          ? AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              title: const Text('Book Store'),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.pop(context),
+              ),
+            )
+          : null,
       body: Column(
         children: [
           _buildSearchField(context),
@@ -54,7 +63,11 @@ class _BookSearchViewState extends State<BookSearchView> {
                 if (state is BookSearchInitial) {
                   return _buildStoreHome(context);
                 } else if (state is BookSearchLoading) {
-                  return const Center(child: CircularProgressIndicator(color: AppTheme.kPrimaryColor));
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: AppTheme.kPrimaryColor,
+                    ),
+                  );
                 } else if (state is BookSearchLoaded) {
                   if (state.results.isEmpty) {
                     return const Center(child: Text('No results found.'));
@@ -132,10 +145,15 @@ class _BookSearchViewState extends State<BookSearchView> {
                 return ActionChip(
                   label: Text(genre),
                   backgroundColor: AppTheme.kSurfaceContainerLowColor,
-                  labelStyle: const TextStyle(color: Colors.white70, fontSize: 12),
+                  labelStyle: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 12,
+                  ),
                   onPressed: () {
                     _searchController.text = genre;
-                    context.read<BookSearchBloc>().add(PerformBookSearch(genre));
+                    context.read<BookSearchBloc>().add(
+                      PerformBookSearch(genre),
+                    );
                   },
                 );
               }).toList(),
@@ -148,7 +166,11 @@ class _BookSearchViewState extends State<BookSearchView> {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Row(
               children: [
-                const Icon(Icons.auto_awesome, color: AppTheme.kPrimaryColor, size: 20),
+                const Icon(
+                  Icons.auto_awesome,
+                  color: AppTheme.kPrimaryColor,
+                  size: 20,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   'Recommended for You',
@@ -164,7 +186,9 @@ class _BookSearchViewState extends State<BookSearchView> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Padding(
                   padding: EdgeInsets.all(24.0),
-                  child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                  child: Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
                 );
               }
               if (snapshot.hasError || !snapshot.hasData) {
@@ -207,7 +231,10 @@ class _BookSearchViewState extends State<BookSearchView> {
     );
   }
 
-  Widget _buildRecommendationCard(BuildContext context, BookRecommendation rec) {
+  Widget _buildRecommendationCard(
+    BuildContext context,
+    BookRecommendation rec,
+  ) {
     return GestureDetector(
       onTap: () {
         _searchController.text = rec.title;
@@ -231,14 +258,22 @@ class _BookSearchViewState extends State<BookSearchView> {
                 color: Colors.white10,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.menu_book, color: Colors.white24, size: 40),
+              child: const Icon(
+                Icons.menu_book,
+                color: Colors.white24,
+                size: 40,
+              ),
             ),
             const SizedBox(height: 12),
             Text(
               rec.title,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
@@ -250,7 +285,11 @@ class _BookSearchViewState extends State<BookSearchView> {
             const Spacer(),
             Text(
               rec.genre,
-              style: const TextStyle(color: AppTheme.kPrimaryColor, fontSize: 10, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                color: AppTheme.kPrimaryColor,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
@@ -280,12 +319,24 @@ class _BookSearchViewState extends State<BookSearchView> {
             color: Colors.white10,
             child: const Icon(Icons.book, size: 20),
           ),
-          title: Text(item['title']!, style: const TextStyle(color: Colors.white, fontSize: 14)),
-          subtitle: Text(item['author']!, style: const TextStyle(color: Colors.white38, fontSize: 12)),
-          trailing: const Icon(Icons.arrow_forward_ios, size: 12, color: Colors.white24),
+          title: Text(
+            item['title']!,
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+          ),
+          subtitle: Text(
+            item['author']!,
+            style: const TextStyle(color: Colors.white38, fontSize: 12),
+          ),
+          trailing: const Icon(
+            Icons.arrow_forward_ios,
+            size: 12,
+            color: Colors.white24,
+          ),
           onTap: () {
             _searchController.text = item['title']!;
-            context.read<BookSearchBloc>().add(PerformBookSearch(item['title']!));
+            context.read<BookSearchBloc>().add(
+              PerformBookSearch(item['title']!),
+            );
           },
         );
       },
