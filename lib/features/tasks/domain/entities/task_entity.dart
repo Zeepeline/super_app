@@ -29,15 +29,15 @@ class TaskEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        title,
-        description,
-        category,
-        priority,
-        dueDate,
-        time,
-        endTime,
-        isCompleted,
-        subTasks,
-      ];
+    id,
+    title,
+    description,
+    category,
+    priority,
+    dueDate,
+    time,
+    endTime,
+    isCompleted,
+    subTasks,
+  ];
 }

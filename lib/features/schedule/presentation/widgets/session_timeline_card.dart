@@ -125,9 +125,10 @@ class SessionTimelineCard extends StatelessWidget {
                         const SizedBox(height: 8),
                         Text(
                           session.description,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppTheme.kOnSurfaceVariantColor,
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: AppTheme.kOnSurfaceVariantColor,
+                              ),
                         ),
                         if (session.participants.isNotEmpty ||
                             session.id == '3') ...[

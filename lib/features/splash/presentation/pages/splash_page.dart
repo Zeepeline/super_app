@@ -112,7 +112,9 @@ class _SplashPageState extends State<SplashPage>
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: AppTheme.kPrimaryColor.withValues(alpha: 0.2),
+                                color: AppTheme.kPrimaryColor.withValues(
+                                  alpha: 0.2,
+                                ),
                                 blurRadius: 50,
                                 spreadRadius: 10,
                               ),
@@ -211,7 +213,9 @@ class _SplashPageState extends State<SplashPage>
                     'v1.0.0',
                     style: GoogleFonts.inter(
                       fontSize: 10,
-                      color: AppTheme.kOnSurfaceVariantColor.withValues(alpha: 0.5),
+                      color: AppTheme.kOnSurfaceVariantColor.withValues(
+                        alpha: 0.5,
+                      ),
                       letterSpacing: 2.0,
                     ),
                   ),

@@ -35,17 +35,23 @@ class AddTaskEvent extends TaskEvent {
   });
 
   @override
-  List<Object?> get props => [title, description, category, priority, dueDate, time, endTime, subTasks];
+  List<Object?> get props => [
+    title,
+    description,
+    category,
+    priority,
+    dueDate,
+    time,
+    endTime,
+    subTasks,
+  ];
 }
 
 class UpdateTaskStatusEvent extends TaskEvent {
   final TaskEntity task;
   final bool isCompleted;
 
-  const UpdateTaskStatusEvent({
-    required this.task,
-    required this.isCompleted,
-  });
+  const UpdateTaskStatusEvent({required this.task, required this.isCompleted});
 
   @override
   List<Object?> get props => [task, isCompleted];
@@ -66,9 +72,13 @@ abstract class TaskState extends Equatable {
 }
 
 class TaskInitial extends TaskState {}
+
 class TaskLoading extends TaskState {}
+
 class TaskSuccess extends TaskState {}
+
 class TaskDeleted extends TaskState {}
+
 class TaskError extends TaskState {
   final String message;
   const TaskError(this.message);
@@ -89,7 +99,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }) : super(TaskInitial()) {
     on<AddTaskEvent>((event, emit) async {
       emit(TaskLoading());
-      
+
       final task = TaskEntity(
         id: const Uuid().v4(),
         title: event.title,
@@ -103,7 +113,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       );
 
       final result = await addTask(task);
-      
+
       result.fold(
         (failure) => emit(TaskError(failure.message)),
         (_) => emit(TaskSuccess()),
@@ -112,7 +122,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
     on<UpdateTaskStatusEvent>((event, emit) async {
       emit(TaskLoading());
-      
+
       final updatedTask = TaskEntity(
         id: event.task.id,
         title: event.task.title,
@@ -127,7 +137,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       );
 
       final result = await updateTask(updatedTask);
-      
+
       result.fold(
         (failure) => emit(TaskError(failure.message)),
         (_) => emit(TaskSuccess()),

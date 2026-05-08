@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:super_app/features/tasks/domain/entities/task_entity.dart' as real_task;
+import 'package:super_app/features/tasks/domain/entities/task_entity.dart'
+    as real_task;
 
 // Re-export or use the same structure
 typedef TaskPriority = real_task.TaskPriority;
@@ -29,16 +30,16 @@ class TaskEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        title,
-        description,
-        category,
-        priority,
-        dueDate,
-        time,
-        isCompleted,
-        subTasks,
-      ];
+    id,
+    title,
+    description,
+    category,
+    priority,
+    dueDate,
+    time,
+    isCompleted,
+    subTasks,
+  ];
 }
 
 class StatusEntity extends Equatable {
@@ -64,10 +65,7 @@ class TrendEntity extends Equatable {
   final String growth;
   final List<double> dataPoints;
 
-  const TrendEntity({
-    required this.growth,
-    required this.dataPoints,
-  });
+  const TrendEntity({required this.growth, required this.dataPoints});
 
   @override
   List<Object?> get props => [growth, dataPoints];

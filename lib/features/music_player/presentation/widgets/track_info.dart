@@ -67,16 +67,16 @@ class TrackInfo extends StatelessWidget {
               // Action Button (Download if stream, Favorite if local)
               if (isStream)
                 GestureDetector(
-                  onTap: isDownloading ? null : () => ytController.downloadTrack(
-                    track, 
-                    playerCubit: context.read<PlayerCubit>()
-                  ),
+                  onTap: isDownloading
+                      ? null
+                      : () => ytController.downloadTrack(
+                          track,
+                          playerCubit: context.read<PlayerCubit>(),
+                        ),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
+                    decoration: const BoxDecoration(shape: BoxShape.circle),
                     child: isDownloading
                         ? Stack(
                             alignment: Alignment.center,
@@ -115,7 +115,9 @@ class TrackInfo extends StatelessWidget {
                       boxShadow: track.isFavorite
                           ? [
                               BoxShadow(
-                                color: AppTheme.kPrimaryColor.withValues(alpha: 0.4),
+                                color: AppTheme.kPrimaryColor.withValues(
+                                  alpha: 0.4,
+                                ),
                                 blurRadius: 12,
                                 spreadRadius: 2,
                               ),
