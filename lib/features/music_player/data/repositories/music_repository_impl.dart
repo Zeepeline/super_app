@@ -197,6 +197,34 @@ class MusicRepositoryImpl implements MusicRepository {
   }
 
   @override
+  Future<void> playPlaylist(List<TrackEntity> tracks) async {
+    if (tracks.isEmpty) return;
+
+    // Convert entities to models (the ones used by music_player)
+    final playerTracks = tracks.map((t) {
+      if (t is TrackModel) return t;
+      return TrackModel(
+        id: t.id,
+        title: t.title,
+        artist: t.artist,
+        album: t.album,
+        albumArtUrl: t.albumArtUrl,
+        duration: t.duration,
+        audioUrl: t.audioUrl,
+        localPath: t.localPath,
+        syncedLyrics: t.syncedLyrics,
+        plainLyrics: t.plainLyrics,
+      );
+    }).toList();
+
+    // Set first track as current and the rest as queue
+    localDataSource.setCurrentTrack(playerTracks.first, queue: playerTracks);
+
+    // Play the first track
+    await playTrack(playerTracks.first.id);
+  }
+
+  @override
   Future<Either<Failure, TrackEntity>> pauseTrack() async {
     try {
       await audioHandler.pause();

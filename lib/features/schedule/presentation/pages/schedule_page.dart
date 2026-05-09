@@ -394,48 +394,4 @@ class SchedulePage extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildBottomNav(BuildContext context) {
-    return Container(
-      height: 90,
-      decoration: BoxDecoration(
-        color: AppTheme.kSurfaceContainerHighColor.withOpacity(0.8),
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem(Icons.home_outlined, 'DASHBOARD', false),
-          _buildNavItem(Icons.calendar_today, 'CALENDAR', true),
-          _buildNavItem(Icons.list_alt_rounded, 'TASKS', false),
-          _buildNavItem(Icons.settings_outlined, 'SETTINGS', false),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String label, bool isActive) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          icon,
-          color: isActive
-              ? AppTheme.kPrimaryColor
-              : AppTheme.kOnSurfaceVariantColor,
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            color: isActive
-                ? AppTheme.kPrimaryColor
-                : AppTheme.kOnSurfaceVariantColor,
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    );
-  }
 }

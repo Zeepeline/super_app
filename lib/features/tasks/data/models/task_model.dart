@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 
 part 'task_model.g.dart';

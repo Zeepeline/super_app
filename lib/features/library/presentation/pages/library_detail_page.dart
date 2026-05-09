@@ -90,7 +90,7 @@ class LibraryDetailPage extends StatelessWidget {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          AppTheme.kBackgroundColor.withValues(alpha: 0.8),
+                          AppTheme.kBackgroundColor.withOpacity(0.8),
                           AppTheme.kBackgroundColor,
                         ],
                       ),

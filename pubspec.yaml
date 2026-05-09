@@ -81,6 +81,9 @@ dependencies:
   flutter_epub_viewer: ^1.2.8
   pdfx: ^2.9.2
   nfc_manager: ^3.3.0
+  flutter_local_notifications: ^17.1.2
+  workmanager: ^0.5.2
+  timezone: ^0.9.4
 
 dev_dependencies:
   flutter_test:

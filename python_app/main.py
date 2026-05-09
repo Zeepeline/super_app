@@ -81,13 +81,32 @@ class WorkerHandler(BaseHTTPRequestHandler):
                 url = data.get('url', '')
                 title = data.get('title', '')
                 source = data.get('source', '')
+                save_path = data.get('save_path', '')
                 port = DART_PORT
-                self._send_json({"status": "downloading"})
                 threading.Thread(
                     target=self._task_download_book,
-                    args=(book_id, url, title, source, port),
+                    args=(book_id, url, title, source, port, save_path),
                     daemon=True,
                 ).start()
+                self._send_json({"status": "downloading"})
+
+            elif self.path == '/yt_search':
+                # Search songs via ytmusicapi
+                query = data.get('query', '')
+                result = self._task_yt_search_sync(query)
+                self._send_json(result)
+
+            elif self.path == '/yt_smart_playlist':
+                # Create smart playlist via ytmusicapi
+                query = data.get('query', '')
+                result = self._task_yt_playlist_sync(query)
+                self._send_json(result)
+            
+            elif self.path == '/books/search':
+                # Search books synchronously
+                query = data.get('query', '')
+                result = self._task_search_sync(query)
+                self._send_json(result)
 
             else:
                 self._send_json({"error": f"Unknown path: {self.path}"}, status=404)
@@ -106,6 +125,16 @@ class WorkerHandler(BaseHTTPRequestHandler):
             self._notify_flutter(port, {"status": "search_results", "results": results})
         except Exception as e:
             self._notify_flutter(port, {"status": "error", "message": str(e)})
+
+    def _task_search_sync(self, query):
+        """Search books synchronously."""
+        try:
+            from book_service import BookService
+            service = BookService()
+            results = service.search_all(query)
+            return {"status": "ok", "results": results}
+        except Exception as e:
+            return {"status": "error", "message": str(e), "results": []}
 
     def _task_download(self, url, output_path, port, video_id):
         """Download YouTube audio using yt-dlp."""
@@ -171,7 +200,9 @@ class WorkerHandler(BaseHTTPRequestHandler):
                 'quiet': True,
                 'no_warnings': True,
                 'skip_download': True,
-                'socket_timeout': 10,
+                'socket_timeout': 20,
+                'nocheckcertificate': True,
+                'noplaylist': True,
                 'http_headers': {
                     'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)',
                 },
@@ -188,7 +219,7 @@ class WorkerHandler(BaseHTTPRequestHandler):
         except Exception as e:
             return {"status": "error", "url": None, "message": str(e)}
 
-    def _task_download_book(self, book_id, url, title, source, port):
+    def _task_download_book(self, book_id, url, title, source, port, save_path):
         """Download a book file from a URL."""
         try:
             import requests as req_lib
@@ -207,20 +238,23 @@ class WorkerHandler(BaseHTTPRequestHandler):
             self._notify_flutter(port, {
                 "status": "progress",
                 "videoId": book_id,
-                "progress": 0.1,
-                "message": f"Downloading: {title}",
+                "progress": 0.05,
+                "message": f"Starting download: {title}",
             })
 
             # Tentukan folder download
-            downloads_dir = os.path.join(current_dir, "downloads")
+            downloads_dir = save_path
+            if not downloads_dir:
+                downloads_dir = os.path.join(current_dir, "downloads")
+            
             os.makedirs(downloads_dir, exist_ok=True)
 
             # Tentukan nama file berdasarkan URL
             ext = ".pdf"
-            if url.lower().endswith(".epub"):
-                ext = ".epub"
-            elif url.lower().endswith(".mobi"):
-                ext = ".mobi"
+            low_url = url.lower()
+            if ".epub" in low_url: ext = ".epub"
+            elif ".mobi" in low_url: ext = ".mobi"
+            elif ".pdf" in low_url: ext = ".pdf"
 
             safe_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).strip()
             filename = f"{safe_title}{ext}"
@@ -261,6 +295,28 @@ class WorkerHandler(BaseHTTPRequestHandler):
                 "videoId": book_id,
                 "message": str(e),
             })
+
+    def _task_yt_search_sync(self, query):
+        """Search songs on YT Music (synchronous)."""
+        try:
+            from yt_service import YTMusicService
+            service = YTMusicService()
+            results = service.search_songs(query)
+            return {"status": "ok", "results": results}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+
+    def _task_yt_playlist_sync(self, query):
+        """Get playlist suggestion on YT Music (synchronous)."""
+        try:
+            from yt_service import YTMusicService
+            service = YTMusicService()
+            result = service.get_playlist_suggestions(query)
+            if result:
+                return {"status": "ok", "playlist": result}
+            return {"status": "error", "message": "No playlist found"}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
 
     # ===================== HELPER =====================
 

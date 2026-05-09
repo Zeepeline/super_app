@@ -18,7 +18,7 @@ class BookInfoSection extends StatelessWidget {
           book.synopsis ?? 'No synopsis available for this title.',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             height: 1.6,
-            color: Colors.white.withValues(alpha: 0.8),
+            color: Colors.white.withOpacity(0.8),
           ),
         ),
         const SizedBox(height: 40),

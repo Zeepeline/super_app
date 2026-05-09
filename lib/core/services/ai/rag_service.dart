@@ -112,6 +112,9 @@ PERTANYAAN USER: $query
         case 'download_music':
           final q = call.args['query'] as String;
           return await _aiToolsService.downloadMusic(q);
+        case 'generate_smart_playlist':
+          final q = call.args['query'] as String;
+          return await _aiToolsService.generateSmartPlaylist(q);
       }
     }
 

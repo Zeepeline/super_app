@@ -139,6 +139,12 @@ class PlayerCubit extends Cubit<PlayerState> {
     });
   }
 
+  Future<void> playPlaylist(List<TrackEntity> tracks) async {
+    emit(PlayerLoading());
+    await repository.playPlaylist(tracks);
+    // State will be updated by listeners in repository
+  }
+
   Future<void> pause() async {
     final currentState = state;
     if (currentState is PlayerLoaded) {

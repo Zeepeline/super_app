@@ -113,7 +113,7 @@ class RecommendationSection extends StatelessWidget {
             children: [
               Icon(
                 Icons.book_outlined,
-                color: AppTheme.kPrimaryColor.withValues(alpha: 0.5),
+                color: AppTheme.kPrimaryColor.withOpacity(0.5),
                 size: 32,
               ),
               const SizedBox(height: 8),
@@ -123,7 +123,7 @@ class RecommendationSection extends StatelessWidget {
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.3),
+                  color: Colors.white.withOpacity(0.3),
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
                 ),

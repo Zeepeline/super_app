@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:super_app/core/theme/app_theme.dart';
 import 'package:super_app/features/book_search/presentation/pages/book_search_page.dart';
 
@@ -17,16 +18,22 @@ class BookHeader extends StatelessWidget {
             children: [
               Text(
                 'OBSIDIAN RHYTHM',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  letterSpacing: 1.5,
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppTheme.kPrimaryColor,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 2,
                   fontSize: 10,
                 ),
               ),
+              const SizedBox(height: 4),
               Text(
-                'Koleksi Buku',
-                style: Theme.of(
-                  context,
-                ).textTheme.displayLarge?.copyWith(fontSize: 32),
+                'MY LIBRARY',
+                style: GoogleFonts.plusJakartaSans(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 28,
+                  letterSpacing: -1,
+                ),
               ),
             ],
           ),

@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:super_app/core/services/ai/ai_tools_service.dart';
 import 'package:super_app/core/services/books/book_library_service.dart';
+import 'package:super_app/core/services/notifications/smart_notification_service.dart';
 import 'package:super_app/core/theme/app_theme.dart';
 import 'package:super_app/features/ai_assistant/presentation/pages/ai_chat_page.dart';
 import 'package:super_app/features/book_collection/data/models/local_book.dart';
 import 'package:super_app/features/book_collection/presentation/pages/book_collection_page.dart';
 import 'package:super_app/features/book_reader/presentation/pages/book_reader_page.dart';
 import 'package:super_app/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:super_app/features/main_wrapper.dart';
 import 'package:super_app/features/nfc/presentation/pages/nfc_scanner_page.dart';
 import 'package:super_app/injection_container.dart';
-import 'package:super_app/main.dart';
 
 class ObsidianHomePage extends StatelessWidget {
   const ObsidianHomePage({super.key});
@@ -31,6 +35,8 @@ class ObsidianHomePage extends StatelessWidget {
                 _buildHeader(),
                 const SizedBox(height: 40),
                 _buildGreeting(context),
+                const SizedBox(height: 24),
+                const _AiSmartNotificationCard(),
                 const SizedBox(height: 40),
                 _buildQuickActions(context),
                 const SizedBox(height: 40),
@@ -197,8 +203,18 @@ class ObsidianHomePage extends StatelessWidget {
           ],
         ),
         IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.notifications_none, color: Colors.white),
+          onPressed: () async {
+            await sl<SmartNotificationService>().showSmartNotification(
+              id: 888,
+              actionType: 'test_manual',
+              itemName: 'Latihan Fokus',
+              additionalContext: 'User sedang mencoba fitur notifikasi cerdas.',
+            );
+          },
+          icon: const Icon(
+            Icons.notifications_active_outlined,
+            color: Colors.white,
+          ),
         ),
       ],
     );
@@ -405,6 +421,94 @@ class _VisualizerBar extends StatelessWidget {
         color: AppTheme.kPrimaryColor,
         borderRadius: BorderRadius.circular(2),
       ),
+    );
+  }
+}
+
+class _AiSmartNotificationCard extends StatelessWidget {
+  const _AiSmartNotificationCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final aiService = sl<AiToolsService>();
+
+    return FutureBuilder<String>(
+      future: aiService.getAiInsights(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Shimmer.fromColors(
+            baseColor: Colors.white.withOpacity(0.05),
+            highlightColor: Colors.white.withOpacity(0.1),
+            child: Container(
+              height: 100,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(24),
+              ),
+            ),
+          );
+        }
+
+        final message = snapshot.data ?? "Semoga harimu menyenangkan!";
+
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppTheme.kPrimaryColor.withOpacity(0.15),
+                Colors.white.withOpacity(0.05),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: AppTheme.kPrimaryColor.withOpacity(0.2)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: AppTheme.kPrimaryColor.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.auto_awesome,
+                      color: AppTheme.kPrimaryColor,
+                      size: 16,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    'SMART INSIGHT',
+                    style: GoogleFonts.inter(
+                      color: AppTheme.kPrimaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 10,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                message,
+                style: GoogleFonts.plusJakartaSans(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  height: 1.4,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

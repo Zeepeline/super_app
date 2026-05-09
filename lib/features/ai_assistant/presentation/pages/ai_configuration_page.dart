@@ -107,7 +107,7 @@ class _AiConfigurationPageState extends State<AiConfigurationPage> {
 
   Widget _buildAppBar(BuildContext context) {
     return SliverAppBar(
-      backgroundColor: AppTheme.kBackgroundColor.withValues(alpha: 0.8),
+      backgroundColor: AppTheme.kBackgroundColor.withOpacity(0.8),
       floating: true,
       pinned: true,
       elevation: 0,
@@ -175,9 +175,9 @@ class _AiConfigurationPageState extends State<AiConfigurationPage> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppTheme.kSurfaceContainerHighestColor.withValues(alpha: 0.3),
+        color: AppTheme.kSurfaceContainerHighestColor.withOpacity(0.3),
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Row(
         children: [
@@ -185,7 +185,7 @@ class _AiConfigurationPageState extends State<AiConfigurationPage> {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppTheme.kPrimaryColor.withValues(alpha: 0.1),
+              color: AppTheme.kPrimaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Icon(Icons.alt_route, color: AppTheme.kPrimaryColor),
@@ -213,7 +213,7 @@ class _AiConfigurationPageState extends State<AiConfigurationPage> {
             value: _isAutoSwitchEnabled,
             onChanged: (v) => setState(() => _isAutoSwitchEnabled = v),
             activeThumbColor: AppTheme.kPrimaryColor,
-            activeTrackColor: AppTheme.kPrimaryColor.withValues(alpha: 0.2),
+            activeTrackColor: AppTheme.kPrimaryColor.withOpacity(0.2),
           ),
         ],
       ),
@@ -226,7 +226,7 @@ class _AiConfigurationPageState extends State<AiConfigurationPage> {
       decoration: BoxDecoration(
         color: AppTheme.kSurfaceContainerLowColor,
         borderRadius: BorderRadius.circular(40),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.03)),
+        border: Border.all(color: Colors.white.withOpacity(0.03)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,7 +306,7 @@ class _AiConfigurationPageState extends State<AiConfigurationPage> {
                 borderRadius: BorderRadius.circular(100),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.kPrimaryColor.withValues(alpha: 0.3),
+                    color: AppTheme.kPrimaryColor.withOpacity(0.3),
                     blurRadius: 20,
                   ),
                 ],
@@ -367,7 +367,7 @@ class _AiConfigurationPageState extends State<AiConfigurationPage> {
             decoration: BoxDecoration(
               color: AppTheme.kSurfaceContainerLowColor,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.03)),
+              border: Border.all(color: Colors.white.withOpacity(0.03)),
             ),
             child: Row(
               children: [

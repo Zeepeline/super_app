@@ -26,14 +26,14 @@ class AlbumArtCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.7),
+                color: Colors.black.withOpacity(0.7),
                 blurRadius: 60,
                 offset: const Offset(0, 30),
                 spreadRadius: -15,
               ),
               if (controller.isAlbumArtHovered.value)
                 BoxShadow(
-                  color: AppTheme.kPrimaryColor.withValues(alpha: 0.1),
+                  color: AppTheme.kPrimaryColor.withOpacity(0.1),
                   blurRadius: 40,
                   spreadRadius: 8,
                 ),
@@ -66,7 +66,7 @@ class AlbumArtCard extends StatelessWidget {
                           ? loadingProgress.cumulativeBytesLoaded /
                                 loadingProgress.expectedTotalBytes!
                           : null,
-                      color: AppTheme.kPrimaryColor.withValues(alpha: 0.5),
+                      color: AppTheme.kPrimaryColor.withOpacity(0.5),
                       strokeWidth: 2,
                     ),
                   ),
@@ -93,7 +93,7 @@ class AlbumArtCard extends StatelessWidget {
                       Icon(
                         Icons.music_off_outlined,
                         size: 80,
-                        color: AppTheme.kPrimaryColor.withValues(alpha: 0.3),
+                        color: AppTheme.kPrimaryColor.withOpacity(0.3),
                       ),
                       const SizedBox(height: 16),
                       Text(

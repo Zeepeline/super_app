@@ -190,6 +190,20 @@ class GeminiService {
               requiredProperties: ['query'],
             ),
           ),
+          FunctionDeclaration(
+            'generate_smart_playlist',
+            'Membuat dan meracik playlist musik pintar berdasarkan permintaan user menggunakan YouTube Music dan mengembalikannya ke UI obrolan.',
+            Schema(
+              SchemaType.object,
+              properties: {
+                'query': Schema(
+                  SchemaType.string,
+                  description: 'Permintaan user (suasana hati, aktivitas, atau nama artis).',
+                ),
+              },
+              requiredProperties: ['query'],
+            ),
+          ),
         ],
       ),
     ];
@@ -346,6 +360,102 @@ Hanya berikan JSON, tanpa teks tambahan.
       }
     }
     return "Gagal mengambil rekomendasi.";
+  }
+
+  Future<String> createSmartPlaylist({
+    required String trackListJson,
+    required String userQuery,
+  }) async {
+    final apiKeys = await getApiKeys();
+    if (apiKeys.isEmpty) return "API Key missing.";
+
+    final prompt = """
+Anda adalah Kurator Musik Profesional. Gunakan daftar lagu (Library) user di bawah ini untuk membuat playlist yang sesuai dengan permintaan user.
+
+LIBRARY USER (JSON):
+$trackListJson
+
+PERMINTAAN USER:
+"$userQuery"
+
+TUGAS ANDA:
+1. Analisis permintaan user (suasana hati, aktivitas, atau waktu).
+2. Pilih maksimal 10 lagu dari LIBRARY USER yang paling cocok.
+3. Jika tidak ada lagu yang benar-benar pas, pilih yang paling mendekati nuansanya.
+4. Berikan respon dalam format JSON berikut:
+{
+  "playlist_name": "Nama Playlist Kreatif",
+  "reason": "Alasan singkat kenapa lagu-lagu ini dipilih dalam Bahasa Indonesia",
+  "tracks": [
+    {"id": "track_id_1", "title": "Judul Lagu 1", "artist": "Artis 1"},
+    ...
+  ]
+}
+
+Hanya berikan JSON, tanpa teks tambahan. Jika tidak ada lagu sama sekali di library, kembalikan JSON dengan list tracks kosong.
+""";
+
+    for (String apiKey in apiKeys) {
+      for (String modelName in _modelPriorityList) {
+        try {
+          final model = _createModel(modelName, apiKey);
+          final response = await model.generateContent([Content.text(prompt)]);
+          if (response.text != null) {
+            return response.text!;
+          }
+        } catch (e) {
+          if (e.toString().contains('429')) break;
+          continue;
+        }
+      }
+    }
+    return "Gagal membuat playlist.";
+  }
+
+  Future<String> createYoutubeSmartPlaylist({
+    required String userQuery,
+  }) async {
+    final apiKeys = await getApiKeys();
+    if (apiKeys.isEmpty) return "API Key missing.";
+
+    final prompt = """
+Anda adalah Kurator Musik YouTube Music Profesional. Buatlah playlist yang sempurna berdasarkan permintaan user menggunakan pengetahuan luas Anda tentang musik dunia.
+
+PERMINTAAN USER:
+"$userQuery"
+
+TUGAS ANDA:
+1. Analisis permintaan user (suasana hati, aktivitas, atau waktu).
+2. Pilih 7-10 lagu populer atau berkualitas yang tersedia di YouTube Music.
+3. Berikan respon dalam format JSON berikut:
+{
+  "playlist_name": "Nama Playlist Kreatif",
+  "reason": "Alasan singkat kenapa lagu-lagu ini dipilih dalam Bahasa Indonesia",
+  "tracks": [
+    {"title": "Judul Lagu 1", "artist": "Artis 1"},
+    {"title": "Judul Lagu 2", "artist": "Artis 2"},
+    ...
+  ]
+}
+
+Hanya berikan JSON, tanpa teks tambahan.
+""";
+
+    for (String apiKey in apiKeys) {
+      for (String modelName in _modelPriorityList) {
+        try {
+          final model = _createModel(modelName, apiKey);
+          final response = await model.generateContent([Content.text(prompt)]);
+          if (response.text != null) {
+            return response.text!;
+          }
+        } catch (e) {
+          if (e.toString().contains('429')) break;
+          continue;
+        }
+      }
+    }
+    return "Gagal membuat playlist YouTube.";
   }
 
   Future<void> deleteApiKey(String key) async {

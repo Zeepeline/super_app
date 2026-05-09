@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -10,8 +11,13 @@ import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../../core/services/music/smart_playlist_service.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../features/music_player/domain/entities/track_entity.dart';
+import '../../../../features/music_player/presentation/widgets/chat_playlist_card.dart';
 import '../../../../injection_container.dart';
+import '../../../../features/music_player/presentation/pages/music_player_page.dart';
+import '../../../../features/music_player/presentation/cubit/player_cubit.dart';
 import '../cubit/ai_chat_cubit.dart';
 import '../cubit/ai_chat_state.dart';
 import 'ai_abilities_page.dart';
@@ -96,67 +102,71 @@ class _AiChatPageState extends State<AiChatPage> {
         builder: (context, state) {
           return Scaffold(
             backgroundColor: AppTheme.kBackgroundColor,
-            body: Stack(
-              children: [
-                // Background Elements
-                _buildBackground(),
-                SafeArea(
-                  child: Column(
-                    children: [
-                      _buildHeader(context, state),
-                      Expanded(
-                        child: state.isCallMode
-                            ? _buildCallModeUI(context, state)
-                            : ListView.builder(
-                                controller: _scrollController,
-                                padding: const EdgeInsets.all(20),
-                                itemCount:
-                                    state.history.length +
-                                    (state is AiChatLoading ? 1 : 0),
-                                itemBuilder: (context, index) {
-                                  if (index == state.history.length) {
-                                    return _buildLoadingBubble();
-                                  }
-                                  final message = state.history[index];
-                                  final content = message.content;
-                                  final isUser = content.role == 'user';
-                                  final text = content.parts
-                                      .whereType<ai.TextPart>()
-                                      .map((e) => e.text)
-                                      .join();
+            body: GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              behavior: HitTestBehavior.translucent,
+              child: Stack(
+                children: [
+                  // Background Elements
+                  _buildBackground(),
+                  SafeArea(
+                    child: Column(
+                      children: [
+                        _buildHeader(context, state),
+                        Expanded(
+                          child: state.isCallMode
+                              ? _buildCallModeUI(context, state)
+                              : ListView.builder(
+                                  controller: _scrollController,
+                                  padding: const EdgeInsets.all(20),
+                                  itemCount:
+                                      state.history.length +
+                                      (state is AiChatLoading ? 1 : 0),
+                                  itemBuilder: (context, index) {
+                                    if (index == state.history.length) {
+                                      return _buildLoadingBubble();
+                                    }
+                                    final message = state.history[index];
+                                    final content = message.content;
+                                    final isUser = content.role == 'user';
+                                    final text = content.parts
+                                        .whereType<ai.TextPart>()
+                                        .map((e) => e.text)
+                                        .join();
 
-                                  final isLast =
-                                      index == state.history.length - 1;
-                                  final isSecondLast =
-                                      index == state.history.length - 2;
-                                  final showRetry =
-                                      isLast && state is AiChatError;
+                                    final isLast =
+                                        index == state.history.length - 1;
+                                    final isSecondLast =
+                                        index == state.history.length - 2;
+                                    final showRetry =
+                                        isLast && state is AiChatError;
 
-                                  // Tampilkan indikator error di bubble user jika pesan setelahnya error
-                                  final hasError =
-                                      isUser &&
-                                      isSecondLast &&
-                                      state is AiChatError;
+                                    // Tampilkan indikator error di bubble user jika pesan setelahnya error
+                                    final hasError =
+                                        isUser &&
+                                        isSecondLast &&
+                                        state is AiChatError;
 
-                                  return _ChatBubble(
-                                    text: text,
-                                    isUser: isUser,
-                                    isError: hasError,
-                                    timestamp: message.timestamp,
-                                    onRetry: showRetry
-                                        ? () => context
-                                              .read<AiChatCubit>()
-                                              .retryLastMessage()
-                                        : null,
-                                  );
-                                },
-                              ),
-                      ),
-                      if (!state.isCallMode) _buildInputArea(context, state),
-                    ],
+                                    return _ChatBubble(
+                                      text: text,
+                                      isUser: isUser,
+                                      isError: hasError,
+                                      timestamp: message.timestamp,
+                                      onRetry: showRetry
+                                          ? () => context
+                                                .read<AiChatCubit>()
+                                                .retryLastMessage()
+                                          : null,
+                                    );
+                                  },
+                                ),
+                        ),
+                        if (!state.isCallMode) _buildInputArea(context, state),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },
@@ -193,8 +203,8 @@ class _AiChatPageState extends State<AiChatPage> {
             decoration: BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  AppTheme.kPrimaryColor.withValues(alpha: 0.15),
-                  AppTheme.kBackgroundColor.withValues(alpha: 0.0),
+                  AppTheme.kPrimaryColor.withOpacity(0.15),
+                  AppTheme.kBackgroundColor.withOpacity(0.0),
                 ],
                 radius: 0.8,
               ),
@@ -278,7 +288,7 @@ class _AiChatPageState extends State<AiChatPage> {
               height: 300,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppTheme.kPrimaryColor.withValues(alpha: 0.1),
+                color: AppTheme.kPrimaryColor.withOpacity(0.1),
               ),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
@@ -467,7 +477,7 @@ class _AiChatPageState extends State<AiChatPage> {
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: Colors.white.withOpacity(0.05),
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
@@ -475,8 +485,8 @@ class _AiChatPageState extends State<AiChatPage> {
           ),
         ),
         child: Shimmer.fromColors(
-          baseColor: Colors.white.withValues(alpha: 0.1),
-          highlightColor: Colors.white.withValues(alpha: 0.2),
+          baseColor: Colors.white.withOpacity(0.1),
+          highlightColor: Colors.white.withOpacity(0.2),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -511,9 +521,9 @@ class _AiChatPageState extends State<AiChatPage> {
         width: double.infinity,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.5),
+          color: Colors.black.withOpacity(0.5),
           border: Border(
-            top: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+            top: BorderSide(color: Colors.white.withOpacity(0.05)),
           ),
         ),
         child: ElevatedButton.icon(
@@ -548,19 +558,17 @@ class _AiChatPageState extends State<AiChatPage> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.5),
-        border: Border(
-          top: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
-        ),
+        color: Colors.black.withOpacity(0.5),
+        border: Border(top: BorderSide(color: Colors.white.withOpacity(0.05))),
       ),
       child: Row(
         children: [
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.07),
+                color: Colors.white.withOpacity(0.07),
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                border: Border.all(color: Colors.white.withOpacity(0.1)),
               ),
               child: TextField(
                 controller: _messageController,
@@ -591,7 +599,7 @@ class _AiChatPageState extends State<AiChatPage> {
           //     decoration: BoxDecoration(
           //       color: state is AiChatListening
           //           ? AppTheme.kPrimaryColor
-          //           : Colors.white.withValues(alpha: 0.1),
+          //           : Colors.white.withOpacity(0.1),
           //       shape: BoxShape.circle,
           //     ),
           //     child: Icon(
@@ -668,7 +676,7 @@ class _SonicOrbState extends State<_SonicOrb>
         ),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.kPrimaryColor.withValues(alpha: 0.3),
+            color: AppTheme.kPrimaryColor.withOpacity(0.3),
             blurRadius: 60,
             spreadRadius: -15,
           ),
@@ -702,7 +710,7 @@ class _SonicOrbState extends State<_SonicOrb>
             Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppTheme.kPrimaryColor.withValues(alpha: 0.1),
+                color: AppTheme.kPrimaryColor.withOpacity(0.1),
               ),
             ),
             if (widget.isLoading)
@@ -793,7 +801,7 @@ class _OrbRippleState extends State<_OrbRipple>
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: AppTheme.kPrimaryColor.withValues(alpha: 0.2),
+                  color: AppTheme.kPrimaryColor.withOpacity(0.2),
                   width: 1,
                 ),
               ),
@@ -831,7 +839,7 @@ class _WaveformVisualizer extends StatelessWidget {
 
           return _WaveformBar(
             height: heights[index],
-            color: AppTheme.kPrimaryColor.withValues(alpha: opacities[index]),
+            color: AppTheme.kPrimaryColor.withOpacity(opacities[index]),
             duration: Duration(milliseconds: (delays[index] * 1000).toInt()),
           );
         }),
@@ -918,7 +926,7 @@ class _CallControlBar extends StatelessWidget {
               alpha: 0.4,
             ),
             borderRadius: BorderRadius.circular(48),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+            border: Border.all(color: Colors.white.withOpacity(0.05)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -978,7 +986,7 @@ class _ControlIconButton extends StatelessWidget {
               boxShadow: isEndCall
                   ? [
                       BoxShadow(
-                        color: Colors.redAccent.withValues(alpha: 0.3),
+                        color: Colors.redAccent.withOpacity(0.3),
                         blurRadius: 30,
                         offset: const Offset(0, 10),
                       ),
@@ -1071,8 +1079,8 @@ class _ChatBubble extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: isUser
-                          ? AppTheme.kPrimaryColor.withValues(alpha: 0.9)
-                          : Colors.white.withValues(alpha: 0.07),
+                          ? AppTheme.kPrimaryColor.withOpacity(0.9)
+                          : Colors.white.withOpacity(0.07),
                       borderRadius: BorderRadius.only(
                         topLeft: const Radius.circular(20),
                         topRight: const Radius.circular(20),
@@ -1081,59 +1089,11 @@ class _ChatBubble extends StatelessWidget {
                       ),
                       border: Border.all(
                         color: isUser
-                            ? Colors.white.withValues(alpha: 0.1)
-                            : Colors.white.withValues(alpha: 0.05),
+                            ? Colors.white.withOpacity(0.1)
+                            : Colors.white.withOpacity(0.05),
                       ),
                     ),
-                    child: MarkdownBody(
-                      data: text,
-                      selectable: false,
-                      styleSheet: MarkdownStyleSheet(
-                        p: TextStyle(
-                          color: isUser ? Colors.black : Colors.white,
-                          fontSize: 15,
-                          height: 1.4,
-                        ),
-                        strong: TextStyle(
-                          color: isUser ? Colors.black : Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        em: TextStyle(
-                          color: isUser ? Colors.black : Colors.white,
-                          fontStyle: FontStyle.italic,
-                        ),
-                        listBullet: TextStyle(
-                          color: isUser ? Colors.black : Colors.white70,
-                        ),
-                        h1: TextStyle(
-                          color: isUser ? Colors.black : Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        h2: TextStyle(
-                          color: isUser ? Colors.black : Colors.white,
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        h3: TextStyle(
-                          color: isUser ? Colors.black : Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        blockquote: TextStyle(
-                          color: isUser
-                              ? Colors.black.withValues(alpha: 0.7)
-                              : Colors.white70,
-                          fontStyle: FontStyle.italic,
-                        ),
-                        blockquoteDecoration: BoxDecoration(
-                          color: isUser
-                              ? Colors.black.withValues(alpha: 0.05)
-                              : Colors.white.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
+                    child: _buildMessageContent(context),
                   ),
                   const SizedBox(height: 4),
                   Padding(
@@ -1141,7 +1101,7 @@ class _ChatBubble extends StatelessWidget {
                     child: Text(
                       timeStr,
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.3),
+                        color: Colors.white.withOpacity(0.3),
                         fontSize: 10,
                       ),
                     ),
@@ -1180,6 +1140,237 @@ class _ChatBubble extends StatelessWidget {
                     ),
                   ],
                 ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessageContent(BuildContext context) {
+    if (text.startsWith('[SMART_PLAYLIST_JSON:') && text.endsWith(']')) {
+      try {
+        final jsonString = text.substring(21, text.length - 1);
+        final data = jsonDecode(jsonString);
+
+        final tracksList = (data['tracks'] as List).map((t) {
+          return TrackEntity(
+            id: t['id'],
+            title: t['title'],
+            artist: t['artist'],
+            album: 'Smart Playlist',
+            albumArtUrl: t['albumArtUrl'] ?? '',
+            audioUrl: '', // resolved later by ytExplode
+            duration: Duration(seconds: t['duration_seconds'] ?? 0),
+            localPath: null,
+            isFavorite: false,
+            syncedLyrics: null,
+            plainLyrics: null,
+          );
+        }).toList();
+
+        final response = SmartPlaylistResponse(
+          playlistName: data['playlistName'] ?? 'Playlist',
+          reason: data['reason'] ?? '',
+          tracks: tracksList,
+        );
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Berikut playlist yang saya buatkan untuk Anda:",
+              style: TextStyle(color: Colors.white, fontSize: 15),
+            ),
+            const SizedBox(height: 8),
+            ChatPlaylistCard(response: response),
+          ],
+        );
+      } catch (e) {
+        // Fallback if parsing fails
+      }
+    } else if (text.startsWith('[DOWNLOAD_MUSIC_JSON:') && text.endsWith(']')) {
+      try {
+        final jsonString = text.substring(21, text.length - 1);
+        final data = jsonDecode(jsonString);
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Selesai mencari! Saya telah memulai proses download lagu ini untuk Anda:",
+              style: TextStyle(color: Colors.white, fontSize: 15),
+            ),
+            const SizedBox(height: 8),
+            _DownloadMusicCard(
+              title: data['title'] ?? 'Lagu',
+              artist: data['artist'] ?? 'Unknown Artist',
+              thumbnail: data['thumbnail'] ?? '',
+              videoId: data['videoId'] ?? '',
+            ),
+          ],
+        );
+      } catch (e) {
+        // Fallback
+      }
+    }
+
+    return MarkdownBody(
+      data: text,
+      selectable: false,
+      styleSheet: MarkdownStyleSheet(
+        p: TextStyle(
+          color: isUser ? Colors.black : Colors.white,
+          fontSize: 15,
+          height: 1.4,
+        ),
+        strong: TextStyle(
+          color: isUser ? Colors.black : Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+        em: TextStyle(
+          color: isUser ? Colors.black : Colors.white,
+          fontStyle: FontStyle.italic,
+        ),
+        listBullet: TextStyle(color: isUser ? Colors.black : Colors.white70),
+        h1: TextStyle(
+          color: isUser ? Colors.black : Colors.white,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        h2: TextStyle(
+          color: isUser ? Colors.black : Colors.white,
+          fontSize: 17,
+          fontWeight: FontWeight.bold,
+        ),
+        h3: TextStyle(
+          color: isUser ? Colors.black : Colors.white,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+        blockquote: TextStyle(
+          color: isUser ? Colors.black.withOpacity(0.7) : Colors.white70,
+          fontStyle: FontStyle.italic,
+        ),
+        blockquoteDecoration: BoxDecoration(
+          color: isUser
+              ? Colors.black.withOpacity(0.05)
+              : Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
+  }
+}
+
+class _DownloadMusicCard extends StatelessWidget {
+  final String title;
+  final String artist;
+  final String thumbnail;
+  final String videoId;
+
+  const _DownloadMusicCard({
+    required this.title,
+    required this.artist,
+    required this.thumbnail,
+    required this.videoId,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: thumbnail.isNotEmpty
+                    ? Image.network(
+                        thumbnail,
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 60,
+                            height: 60,
+                            color: Colors.white.withOpacity(0.1),
+                            child: const Icon(Icons.music_note,
+                                color: Colors.white54),
+                          );
+                        },
+                      )
+                    : Container(
+                        width: 60,
+                        height: 60,
+                        color: Colors.white.withOpacity(0.1),
+                        child:
+                            const Icon(Icons.music_note, color: Colors.white54),
+                      ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      artist,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.6),
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                // Navigate to music player
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const MusicPlayerPage()),
+                );
+              },
+              icon: const Icon(Icons.play_arrow_rounded, color: Colors.black),
+              label: const Text(
+                "Putar Lagu",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.kPrimaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ),

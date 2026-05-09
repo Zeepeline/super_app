@@ -115,7 +115,7 @@ class _BookReaderPageState extends State<BookReaderPage> {
                           activeTrackColor: AppTheme.kPrimaryColor,
                           inactiveTrackColor: Colors.white24,
                           thumbColor: AppTheme.kPrimaryColor,
-                          overlayColor: AppTheme.kPrimaryColor.withValues(alpha: 0.2),
+                          overlayColor: AppTheme.kPrimaryColor.withOpacity(0.2),
                           trackHeight: 4,
                         ),
                         child: Slider(

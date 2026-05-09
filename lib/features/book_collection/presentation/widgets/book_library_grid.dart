@@ -99,7 +99,7 @@ class BookLibraryGrid extends StatelessWidget {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.black.withValues(alpha: 0.7),
+                                  color: Colors.black.withOpacity(0.7),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
@@ -121,7 +121,7 @@ class BookLibraryGrid extends StatelessWidget {
                                 child: Container(
                                   height: 4,
                                   decoration: BoxDecoration(
-                                    color: Colors.black.withValues(alpha: 0.5),
+                                    color: Colors.black.withOpacity(0.5),
                                     borderRadius: const BorderRadius.only(
                                       bottomLeft: Radius.circular(12),
                                       bottomRight: Radius.circular(12),

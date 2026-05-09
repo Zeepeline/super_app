@@ -51,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
                           colors: [
-                            const Color(0xFF1CB853).withValues(alpha: 0.15),
+                            const Color(0xFF1CB853).withOpacity(0.15),
                             Colors.transparent,
                           ],
                         ),
@@ -68,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
                           colors: [
-                            const Color(0xFF72FE8F).withValues(alpha: 0.1),
+                            const Color(0xFF72FE8F).withOpacity(0.1),
                             Colors.transparent,
                           ],
                         ),
@@ -116,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: AppTheme.kPrimaryColor.withValues(alpha: 0.3),
+                color: AppTheme.kPrimaryColor.withOpacity(0.3),
                 blurRadius: 20,
               ),
             ],
@@ -149,9 +149,9 @@ class _LoginPageState extends State<LoginPage> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.04),
+        color: Colors.white.withOpacity(0.04),
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(32),
@@ -253,7 +253,7 @@ class _LoginPageState extends State<LoginPage> {
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: TextStyle(
-            color: AppTheme.kOnSurfaceVariantColor.withValues(alpha: 0.3),
+            color: AppTheme.kOnSurfaceVariantColor.withOpacity(0.3),
           ),
           prefixIcon: Icon(
             icon,
@@ -299,7 +299,7 @@ class _LoginPageState extends State<LoginPage> {
               borderRadius: BorderRadius.circular(32),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.kPrimaryColor.withValues(alpha: 0.3),
+                  color: AppTheme.kPrimaryColor.withOpacity(0.3),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
@@ -336,20 +336,20 @@ class _LoginPageState extends State<LoginPage> {
   Widget _buildDivider(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.1))),
+        Expanded(child: Divider(color: Colors.white.withOpacity(0.1))),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             'OR',
             style: TextStyle(
-              color: AppTheme.kOnSurfaceVariantColor.withValues(alpha: 0.5),
+              color: AppTheme.kOnSurfaceVariantColor.withOpacity(0.5),
               fontSize: 10,
               fontWeight: FontWeight.bold,
               letterSpacing: 2.0,
             ),
           ),
         ),
-        Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.1))),
+        Expanded(child: Divider(color: Colors.white.withOpacity(0.1))),
       ],
     );
   }
@@ -386,9 +386,9 @@ class _LoginPageState extends State<LoginPage> {
     return Container(
       height: 56,
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.04),
+        color: Colors.white.withOpacity(0.04),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,

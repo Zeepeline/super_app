@@ -67,11 +67,11 @@ class _SplashPageState extends State<SplashPage>
               height: 300,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppTheme.kPrimaryColor.withValues(alpha: 0.05),
+                color: AppTheme.kPrimaryColor.withOpacity(0.05),
               ),
               child: BackdropFilter(
                 filter: ColorFilter.mode(
-                  AppTheme.kPrimaryColor.withValues(alpha: 0.05),
+                  AppTheme.kPrimaryColor.withOpacity(0.05),
                   BlendMode.srcATop,
                 ),
                 child: const SizedBox(),
@@ -86,7 +86,7 @@ class _SplashPageState extends State<SplashPage>
               height: 300,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppTheme.kPrimaryContainerColor.withValues(alpha: 0.05),
+                color: AppTheme.kPrimaryContainerColor.withOpacity(0.05),
               ),
             ),
           ),
@@ -112,7 +112,7 @@ class _SplashPageState extends State<SplashPage>
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: AppTheme.kPrimaryColor.withValues(alpha: 0.2),
+                                color: AppTheme.kPrimaryColor.withOpacity(0.2),
                                 blurRadius: 50,
                                 spreadRadius: 10,
                               ),
@@ -130,7 +130,7 @@ class _SplashPageState extends State<SplashPage>
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                AppTheme.kPrimaryColor.withValues(alpha: 0.3),
+                                AppTheme.kPrimaryColor.withOpacity(0.3),
                                 Colors.transparent,
                               ],
                             ),
@@ -200,7 +200,7 @@ class _SplashPageState extends State<SplashPage>
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          AppTheme.kPrimaryColor.withValues(alpha: 0.3),
+                          AppTheme.kPrimaryColor.withOpacity(0.3),
                           Colors.transparent,
                         ],
                       ),
@@ -211,7 +211,7 @@ class _SplashPageState extends State<SplashPage>
                     'v1.0.0',
                     style: GoogleFonts.inter(
                       fontSize: 10,
-                      color: AppTheme.kOnSurfaceVariantColor.withValues(alpha: 0.5),
+                      color: AppTheme.kOnSurfaceVariantColor.withOpacity(0.5),
                       letterSpacing: 2.0,
                     ),
                   ),

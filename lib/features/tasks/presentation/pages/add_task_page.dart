@@ -12,15 +12,16 @@ import '../../domain/entities/task_entity.dart';
 import '../bloc/task_bloc.dart';
 
 class AddTaskPage extends StatefulWidget {
-  const AddTaskPage({super.key});
+  final TaskEntity? task;
+  const AddTaskPage({super.key, this.task});
 
   @override
   State<AddTaskPage> createState() => _AddTaskPageState();
 }
 
 class _AddTaskPageState extends State<AddTaskPage> {
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descController = TextEditingController();
+  late final TextEditingController _titleController;
+  late final TextEditingController _descController;
   final TextEditingController _subTaskController = TextEditingController();
 
   String _selectedCategory = 'Work';
@@ -41,11 +42,40 @@ class _AddTaskPageState extends State<AddTaskPage> {
   @override
   void initState() {
     super.initState();
-    // Default end time to 1 hour after start time
-    _selectedEndTime = TimeOfDay(
-      hour: (_selectedStartTime.hour + 1) % 24,
-      minute: _selectedStartTime.minute,
-    );
+    _titleController = TextEditingController(text: widget.task?.title);
+    _descController = TextEditingController(text: widget.task?.description);
+
+    if (widget.task != null) {
+      _selectedCategory = widget.task!.category;
+      _selectedPriority = widget.task!.priority;
+      _selectedDate = widget.task!.dueDate;
+      _subTasks.addAll(widget.task!.subTasks);
+
+      // Parse times
+      try {
+        final startParts = widget.task!.time.split(':');
+        _selectedStartTime = TimeOfDay(
+          hour: int.parse(startParts[0]),
+          minute: int.parse(startParts[1]),
+        );
+
+        if (widget.task!.endTime != null) {
+          final endParts = widget.task!.endTime!.split(':');
+          _selectedEndTime = TimeOfDay(
+            hour: int.parse(endParts[0]),
+            minute: int.parse(endParts[1]),
+          );
+        }
+      } catch (e) {
+        debugPrint("Error parsing task time: $e");
+      }
+    } else {
+      // Default end time to 1 hour after start time
+      _selectedEndTime = TimeOfDay(
+        hour: (_selectedStartTime.hour + 1) % 24,
+        minute: _selectedStartTime.minute,
+      );
+    }
   }
 
   @override
@@ -68,18 +98,35 @@ class _AddTaskPageState extends State<AddTaskPage> {
           "${_selectedEndTime!.hour.toString().padLeft(2, '0')}:${_selectedEndTime!.minute.toString().padLeft(2, '0')}";
     }
 
-    context.read<TaskBloc>().add(
-      AddTaskEvent(
-        title: _titleController.text,
-        description: _descController.text,
-        category: _selectedCategory,
-        priority: _selectedPriority,
-        dueDate: _selectedDate,
-        time: startTimeStr,
-        endTime: endTimeStr,
-        subTasks: _subTasks,
-      ),
-    );
+    if (widget.task != null) {
+      context.read<TaskBloc>().add(
+        UpdateTaskEvent(
+          task: widget.task!.copyWith(
+            title: _titleController.text,
+            description: _descController.text,
+            category: _selectedCategory,
+            priority: _selectedPriority,
+            dueDate: _selectedDate,
+            time: startTimeStr,
+            endTime: endTimeStr,
+            subTasks: _subTasks,
+          ),
+        ),
+      );
+    } else {
+      context.read<TaskBloc>().add(
+        AddTaskEvent(
+          title: _titleController.text,
+          description: _descController.text,
+          category: _selectedCategory,
+          priority: _selectedPriority,
+          dueDate: _selectedDate,
+          time: startTimeStr,
+          endTime: endTimeStr,
+          subTasks: _subTasks,
+        ),
+      );
+    }
   }
 
   Future<void> _generateAiRecommendation() async {
@@ -120,6 +167,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
         }
       });
 
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('AI magic complete! Form filled based on context.'),
@@ -127,6 +175,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
         ),
       );
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('AI Error: $e')));
@@ -137,58 +186,61 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<TaskBloc, TaskState>(
-      listener: (context, state) {
-        if (state is TaskSuccess) {
-          Navigator.pop(context, true); // Return true to trigger refresh
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Task synchronized successfully')),
-          );
-        } else if (state is TaskError) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.message)));
-        }
-      },
-      child: Scaffold(
-        backgroundColor: const Color(0xFF0E0E0E),
-        body: SafeArea(
-          child: Column(
-            children: [
-              _buildAppBar(context),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 24),
-                      _buildLabel('Task Identity'),
-                      const SizedBox(height: 12),
-                      _buildTitleInput(),
-                      const SizedBox(height: 32),
-                      _buildLabel('Description'),
-                      const SizedBox(height: 12),
-                      _buildDescriptionInput(),
-                      const SizedBox(height: 32),
-                      _buildCategorySection(),
-                      const SizedBox(height: 24),
-                      _buildPrioritySection(),
-                      const SizedBox(height: 24),
-                      _buildScheduleSection(),
-                      const SizedBox(height: 24),
-                      _buildSubTasksSection(),
-                      const SizedBox(height: 32),
-                      _buildHeroAsset(),
-                      const SizedBox(height: 32),
-                      _buildFooterAction(),
-                      const SizedBox(height: 32),
-                    ],
+    return BlocProvider(
+      create: (context) => sl<TaskBloc>(),
+      child: BlocListener<TaskBloc, TaskState>(
+        listener: (context, state) {
+          if (state is TaskSuccess) {
+            Navigator.pop(context, true); // Return true to trigger refresh
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Task synchronized successfully')),
+            );
+          } else if (state is TaskError) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
+          }
+        },
+        child: Scaffold(
+          backgroundColor: const Color(0xFF0E0E0E),
+          body: SafeArea(
+            child: Column(
+              children: [
+                _buildAppBar(context),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 24),
+                        _buildLabel('Task Identity'),
+                        const SizedBox(height: 12),
+                        _buildTitleInput(),
+                        const SizedBox(height: 32),
+                        _buildLabel('Description'),
+                        const SizedBox(height: 12),
+                        _buildDescriptionInput(),
+                        const SizedBox(height: 32),
+                        _buildCategorySection(),
+                        const SizedBox(height: 24),
+                        _buildPrioritySection(),
+                        const SizedBox(height: 24),
+                        _buildScheduleSection(),
+                        const SizedBox(height: 24),
+                        _buildSubTasksSection(),
+                        const SizedBox(height: 32),
+                        _buildHeroAsset(),
+                        const SizedBox(height: 32),
+                        _buildFooterAction(),
+                        const SizedBox(height: 32),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -209,7 +261,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
               ),
               const SizedBox(width: 8),
               Text(
-                'NEW TASK',
+                widget.task != null ? 'EDIT TASK' : 'NEW TASK',
                 style: GoogleFonts.plusJakartaSans(
                   color: Colors.white,
                   fontWeight: FontWeight.w800,
@@ -790,7 +842,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   child: isLoading
                       ? const CircularProgressIndicator(color: Colors.black)
                       : Text(
-                          'SYNCHRONIZE TASK',
+                          widget.task != null
+                              ? 'UPDATE TASK'
+                              : 'SYNCHRONIZE TASK',
                           style: GoogleFonts.plusJakartaSans(
                             color: Colors.black,
                             fontWeight: FontWeight.w900,

@@ -60,6 +60,7 @@ class CalendarWidget extends StatelessWidget {
               crossAxisCount: 7,
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
+              childAspectRatio: 0.9,
             ),
             itemBuilder: (context, index) {
               final dayNumber = index - (firstDayOfMonth - 1) + 1;
@@ -126,7 +127,7 @@ class CalendarWidget extends StatelessWidget {
                         ),
                       ),
                       if (hasSession) ...[
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 2),
                         Container(
                           width: 4,
                           height: 4,

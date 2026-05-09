@@ -285,9 +285,9 @@ class _Header extends StatelessWidget {
           height: (isSearching ? 136 : 72) + topPadding,
           padding: EdgeInsets.only(top: topPadding, left: 20, right: 12),
           decoration: BoxDecoration(
-            color: AppTheme.kBackgroundColor.withValues(alpha: 0.8),
+            color: AppTheme.kBackgroundColor.withOpacity(0.8),
             border: Border(
-              bottom: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+              bottom: BorderSide(color: Colors.white.withOpacity(0.08)),
             ),
           ),
           child: Column(
@@ -375,10 +375,10 @@ class _Header extends StatelessWidget {
                   child: Container(
                     height: 44,
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.05),
+                      color: Colors.white.withOpacity(0.05),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.1),
+                        color: Colors.white.withOpacity(0.1),
                       ),
                     ),
                     child: TextField(

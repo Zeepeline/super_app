@@ -5,7 +5,9 @@ import 'package:intl/intl.dart';
 import 'package:super_app/core/theme/app_theme.dart';
 import 'package:super_app/features/tasks/domain/entities/task_entity.dart';
 import 'package:super_app/features/tasks/presentation/bloc/task_bloc.dart';
+
 import '../../../../injection_container.dart';
+import 'add_task_page.dart';
 
 class TaskDetailPage extends StatelessWidget {
   final TaskEntity task;
@@ -25,7 +27,10 @@ class TaskDetailPage extends StatelessWidget {
                 backgroundColor: Colors.green,
               ),
             );
-            Navigator.pop(context, true); // Return true to indicate refresh needed
+            Navigator.pop(
+              context,
+              true,
+            ); // Return true to indicate refresh needed
           } else if (state is TaskDeleted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -118,7 +123,17 @@ class TaskDetailPage extends StatelessWidget {
       actions: [
         IconButton(
           icon: const Icon(Icons.edit_outlined, color: Colors.white),
-          onPressed: () {},
+          onPressed: () async {
+            final result = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddTaskPage(task: task),
+              ),
+            );
+            if (result == true && context.mounted) {
+              Navigator.pop(context, true);
+            }
+          },
         ),
         Builder(
           builder: (context) => IconButton(
@@ -141,7 +156,9 @@ class TaskDetailPage extends StatelessWidget {
           decoration: BoxDecoration(
             color: _getPriorityColor().withOpacity(0.1),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: _getPriorityColor().withOpacity(0.3)),
+            border: Border.all(
+              color: _getPriorityColor().withOpacity(0.3),
+            ),
           ),
           child: Text(
             task.priority.toString().split('.').last.toUpperCase(),
@@ -200,28 +217,21 @@ class TaskDetailPage extends StatelessWidget {
       spacing: 16,
       runSpacing: 16,
       children: [
-        _buildMetaItem(
-          Icons.category_outlined,
-          'Category',
-          task.category,
-        ),
+        _buildMetaItem(Icons.category_outlined, 'Category', task.category),
         _buildMetaItem(
           Icons.calendar_today_outlined,
           'Due Date',
           DateFormat('MMM dd, yyyy').format(task.dueDate),
         ),
-        _buildMetaItem(
-          Icons.access_time_outlined,
-          'Schedule',
-          timeDisplay,
-        ),
+        _buildMetaItem(Icons.access_time_outlined, 'Schedule', timeDisplay),
       ],
     );
   }
 
   Widget _buildMetaItem(IconData icon, String label, String value) {
     return Container(
-      width: (SizedBox.fromSize().width), // This is a placeholder, Wrap handles width
+      width: (SizedBox.fromSize()
+          .width), // This is a placeholder, Wrap handles width
       constraints: const BoxConstraints(minWidth: 150),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -256,7 +266,6 @@ class TaskDetailPage extends StatelessWidget {
     );
   }
 
-
   Widget _buildSubTaskList() {
     return Column(
       children: task.subTasks.map((subTask) {
@@ -279,10 +288,7 @@ class TaskDetailPage extends StatelessWidget {
               Expanded(
                 child: Text(
                   subTask,
-                  style: GoogleFonts.inter(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
+                  style: GoogleFonts.inter(color: Colors.white70, fontSize: 14),
                 ),
               ),
             ],
@@ -296,7 +302,7 @@ class TaskDetailPage extends StatelessWidget {
     return BlocBuilder<TaskBloc, TaskState>(
       builder: (context, state) {
         final isLoading = state is TaskLoading;
-        
+
         return Row(
           children: [
             Expanded(
@@ -305,16 +311,13 @@ class TaskDetailPage extends StatelessWidget {
                     ? null
                     : () {
                         context.read<TaskBloc>().add(
-                              UpdateTaskStatusEvent(
-                                task: task,
-                                isCompleted: true,
-                              ),
-                            );
+                          UpdateTaskStatusEvent(task: task, isCompleted: true),
+                        );
                       },
                 child: Container(
                   height: 56,
                   decoration: BoxDecoration(
-                    color: task.isCompleted 
+                    color: task.isCompleted
                         ? Colors.green.withOpacity(0.2)
                         : Colors.white.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(100),
@@ -337,7 +340,9 @@ class TaskDetailPage extends StatelessWidget {
                         : Text(
                             task.isCompleted ? 'COMPLETED' : 'MARK COMPLETED',
                             style: GoogleFonts.plusJakartaSans(
-                              color: task.isCompleted ? Colors.green : Colors.white,
+                              color: task.isCompleted
+                                  ? Colors.green
+                                  : Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
                               letterSpacing: 1,
@@ -351,11 +356,15 @@ class TaskDetailPage extends StatelessWidget {
             Container(
               width: 56,
               height: 56,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppTheme.kPrimaryColor,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.play_arrow_rounded, color: Colors.black, size: 32),
+              child: const Icon(
+                Icons.play_arrow_rounded,
+                color: Colors.black,
+                size: 32,
+              ),
             ),
           ],
         );

@@ -15,6 +15,8 @@ abstract class MusicRepository {
     TrackEntity? track,
   });
 
+  Future<void> playPlaylist(List<TrackEntity> tracks);
+
   Future<Either<Failure, TrackEntity>> pauseTrack();
 
   Future<Either<Failure, TrackEntity>> seekTo(Duration position);

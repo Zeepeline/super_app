@@ -36,19 +36,40 @@ class AudioHandler extends BaseAudioHandler with SeekHandler {
       playbackState.add(_transformEvent(_player.playbackEvent));
     });
 
-    // WATCHDOG: For streaming tracks, sometimes 'completed' state is never reached.
-    // We check if position is >= duration - 500ms to trigger next track.
+    // WATCHDOG: For streaming tracks, just_audio often reports an incorrect
+    // (longer) duration based on bitrate estimation. We use the METADATA duration
+    // (from YouTube API) as the source of truth for end-of-track detection.
     _player.positionStream.listen((position) {
-      final duration = _player.duration;
-      if (duration != null && duration > Duration.zero) {
-        // If we are within 1 second of the end and still playing/buffering
-        if (position >= duration - const Duration(milliseconds: 1000)) {
+      // Use metadata duration (accurate) instead of _player.duration (inaccurate for streams)
+      final metaDuration = mediaItem.value?.duration;
+      final playerDuration = _player.duration;
+
+      // Pick the SHORTER of the two durations as the real end point.
+      // Metadata duration is usually correct; player duration can be inflated.
+      Duration? effectiveDuration;
+      if (metaDuration != null && metaDuration > Duration.zero) {
+        if (playerDuration != null && playerDuration > Duration.zero) {
+          effectiveDuration = metaDuration < playerDuration
+              ? metaDuration
+              : playerDuration;
+        } else {
+          effectiveDuration = metaDuration;
+        }
+      } else {
+        effectiveDuration = playerDuration;
+      }
+
+      if (effectiveDuration != null && effectiveDuration > Duration.zero) {
+        // If we are within 2 seconds of the effective end and still playing
+        if (position >= effectiveDuration - const Duration(seconds: 2)) {
           if (_player.processingState != ProcessingState.completed &&
               _player.playing) {
             dev.log(
-              "AudioHandler: Watchdog detected end of stream. Forcing next...",
+              "AudioHandler: Watchdog detected end of track. "
+              "Position: ${position.inSeconds}s, "
+              "Meta duration: ${metaDuration?.inSeconds}s, "
+              "Player duration: ${playerDuration?.inSeconds}s",
             );
-            // Pause first to prevent multiple triggers
             _player.pause();
             skipToNext();
           }

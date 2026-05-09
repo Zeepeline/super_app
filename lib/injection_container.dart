@@ -24,6 +24,8 @@ import 'package:super_app/core/services/media/audio_handler.dart'
     as custom_audio;
 import 'package:super_app/core/services/media/lyrics_service.dart';
 import 'package:super_app/core/services/media/media_import_service.dart';
+import 'package:super_app/core/services/music/smart_playlist_service.dart';
+import 'package:super_app/core/services/notifications/smart_notification_service.dart';
 import 'package:super_app/core/utils/hive_box_constants.dart';
 import 'package:super_app/features/ai_assistant/presentation/cubit/ai_chat_cubit.dart';
 import 'package:super_app/features/auth/data/datasources/auth_remote_datasource.dart';
@@ -117,6 +119,9 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   sl.registerSingleton<YouTubeExplodeService>(YouTubeExplodeService());
   sl.registerSingleton<SecureStorageService>(SecureStorageService());
   sl.registerSingleton<GeminiService>(GeminiService(sl()));
+  sl.registerSingleton<SmartPlaylistService>(
+    SmartPlaylistService(sl(), sl(), sl()),
+  );
   sl.registerLazySingleton<VoiceService>(() => VoiceService());
   sl.registerLazySingleton<UserMemoryService>(() => UserMemoryService());
   sl.registerLazySingleton<NativeDeviceService>(() => NativeDeviceService());
@@ -132,6 +137,7 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
       sl<YouTubeExplodeService>(),
       sl<BookLibraryService>(),
       sl<GeminiService>(),
+      sl<SmartPlaylistService>(),
     ),
   );
 
@@ -295,4 +301,6 @@ Future<void> init(audio_service.AudioHandler audioHandler) async {
   sl.registerSingleton<PlayerCubit>(
     PlayerCubit(repository: sl(), lyricsService: sl()),
   );
+  // Notifications
+  sl.registerLazySingleton(() => SmartNotificationService(sl()));
 }

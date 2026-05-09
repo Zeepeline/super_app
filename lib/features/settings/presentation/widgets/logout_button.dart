@@ -18,10 +18,10 @@ class LogoutButton extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 16),
               decoration: BoxDecoration(
-                color: const Color(0xFFd53d18).withValues(alpha: 0.05),
+                color: const Color(0xFFd53d18).withOpacity(0.05),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: const Color(0xFFd53d18).withValues(alpha: 0.2),
+                  color: const Color(0xFFd53d18).withOpacity(0.2),
                 ),
               ),
               child: const Row(
@@ -58,7 +58,7 @@ class LogoutButton extends StatelessWidget {
               Text(
                 'v4.12.0 • EST 2021',
                 style: TextStyle(
-                  color: const Color(0xFFadaaaa).withValues(alpha: 0.4),
+                  color: const Color(0xFFadaaaa).withOpacity(0.4),
                   fontSize: 8,
                   fontFamily: 'monospace',
                 ),

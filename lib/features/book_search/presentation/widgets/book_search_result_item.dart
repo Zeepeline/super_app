@@ -18,7 +18,7 @@ class BookSearchResultItem extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppTheme.kSurfaceColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,9 +148,9 @@ class BookSearchResultItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: badgeColor.withValues(alpha: 0.2),
+        color: badgeColor.withOpacity(0.2),
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: badgeColor.withValues(alpha: 0.5)),
+        border: Border.all(color: badgeColor.withOpacity(0.5)),
       ),
       child: Text(
         source.toUpperCase(),

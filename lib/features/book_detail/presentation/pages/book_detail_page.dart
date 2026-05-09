@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:super_app/core/services/books/book_library_service.dart';
 import 'package:super_app/core/services/books/book_store_service.dart';
@@ -150,21 +151,32 @@ class _BookDetailPageState extends State<BookDetailPage> {
 
   Widget _buildAppBar(BuildContext context) {
     return SliverAppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppTheme.kBackgroundColor.withOpacity(0.8),
       elevation: 0,
+      centerTitle: true,
+      title: Text(
+        'BOOK DETAIL',
+        style: GoogleFonts.plusJakartaSans(
+          color: Colors.white,
+          fontWeight: FontWeight.w800,
+          fontSize: 14,
+          letterSpacing: 2,
+        ),
+      ),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.white),
+        icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
         onPressed: () => Navigator.pop(context),
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.share_outlined, color: Colors.white),
+          icon: const Icon(Icons.share_outlined, color: Colors.white, size: 20),
           onPressed: () {},
         ),
         IconButton(
-          icon: const Icon(Icons.more_vert, color: Colors.white),
+          icon: const Icon(Icons.more_horiz, color: Colors.white, size: 22),
           onPressed: () {},
         ),
+        const SizedBox(width: 8),
       ],
       pinned: true,
     );
@@ -180,7 +192,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: AppTheme.kPrimaryColor.withValues(alpha: 0.2),
+              color: AppTheme.kPrimaryColor.withOpacity(0.2),
               blurRadius: 40,
               spreadRadius: 5,
             ),
@@ -214,7 +226,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.7),
+                    color: Colors.black.withOpacity(0.7),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
@@ -292,14 +304,14 @@ class _BookDetailPageState extends State<BookDetailPage> {
         children: [
           Icon(
             Icons.book_rounded,
-            color: AppTheme.kPrimaryColor.withValues(alpha: 0.3),
+            color: AppTheme.kPrimaryColor.withOpacity(0.3),
             size: 64,
           ),
           const SizedBox(height: 16),
           Text(
             'NO COVER AVAILABLE',
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: Colors.white.withOpacity(0.2),
               fontSize: 12,
               fontWeight: FontWeight.bold,
               letterSpacing: 2,

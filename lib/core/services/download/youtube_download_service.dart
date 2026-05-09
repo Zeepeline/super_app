@@ -316,7 +316,7 @@ class YoutubeDownloadService {
                 'http://127.0.0.1:${_workerService.workerPort}/get_url',
                 data: {"video_id": videoId},
               )
-              .timeout(const Duration(seconds: 10));
+              .timeout(const Duration(seconds: 30));
 
           if (response.statusCode == 200 && response.data['url'] != null) {
             final url = response.data['url'];

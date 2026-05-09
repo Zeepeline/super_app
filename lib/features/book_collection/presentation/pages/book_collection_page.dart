@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:super_app/core/services/books/book_library_service.dart';
 import 'package:super_app/core/theme/app_theme.dart';
 import 'package:super_app/features/book_collection/data/models/local_book.dart';
+import 'package:super_app/features/book_preferences/presentation/pages/book_preferences_page.dart';
 import 'package:super_app/features/book_search/presentation/pages/book_search_page.dart';
 import 'package:super_app/injection_container.dart';
 
@@ -12,6 +13,7 @@ import '../widgets/book_header.dart';
 import '../widgets/book_library_grid.dart';
 import '../widgets/book_tabs.dart';
 import '../widgets/featured_book_card.dart';
+import '../widgets/popular_book_carousel.dart';
 
 class BookCollectionPage extends StatefulWidget {
   const BookCollectionPage({super.key});
@@ -41,12 +43,7 @@ class _BookCollectionPageState extends State<BookCollectionPage> {
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
-                const Center(
-                  child: Text(
-                    'Settings Coming Soon',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+                const BookPreferencesPage(),
               ],
             ),
             Positioned(
@@ -82,6 +79,8 @@ class _BookCollectionPageState extends State<BookCollectionPage> {
           const SizedBox(height: 20),
           const BookHeader(),
           const SizedBox(height: 24),
+          const PopularBookCarousel(),
+          const SizedBox(height: 32),
           const BookTabs(tabs: ['All', 'Reading', 'Finished']),
           const SizedBox(height: 24),
           FutureBuilder<List<LocalBook>>(
@@ -164,7 +163,7 @@ class _BookCollectionPageState extends State<BookCollectionPage> {
     return Container(
       height: 100,
       decoration: BoxDecoration(
-        color: AppTheme.kBackgroundColor.withValues(alpha: 0.4),
+        color: AppTheme.kBackgroundColor.withOpacity(0.4),
       ),
       child: ClipRRect(
         child: BackdropFilter(

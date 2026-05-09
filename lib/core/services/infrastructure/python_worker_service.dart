@@ -4,6 +4,7 @@ import 'dart:developer' as dev;
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:serious_python/serious_python.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:super_app/features/book_search/domain/entities/book_search_result.dart';
@@ -195,6 +196,9 @@ class PythonWorkerService {
     registerTaskCompleter(taskId, completer);
 
     try {
+      final docDir = await getApplicationDocumentsDirectory();
+      final savePath = '${docDir.path}/SoundWave/Books';
+
       dev.log(
         "Requesting download for book: ${book.title}",
         name: "PythonWorker",
@@ -209,6 +213,7 @@ class PythonWorkerService {
           "author": book.author,
           "format": book.format,
           "source": book.source,
+          "save_path": savePath,
         },
       );
 
@@ -228,6 +233,35 @@ class PythonWorkerService {
       rethrow;
     } finally {
       removeTaskCompleter(taskId);
+    }
+  }
+
+  /// Melakukan permintaan POST sinkron ke worker
+  Future<Map<String, dynamic>> postSync(String path, Map<String, dynamic> data) async {
+    if (!isReady) await initWorker();
+    
+    if (_workerPort == null) {
+      throw Exception('Python Worker is not ready.');
+    }
+
+    try {
+      final response = await _dio.post(
+        'http://127.0.0.1:$_workerPort$path',
+        data: data,
+        options: Options(
+          receiveTimeout: const Duration(seconds: 30),
+          connectTimeout: const Duration(seconds: 10),
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data as Map<String, dynamic>;
+      } else {
+        throw Exception('Worker returned status: ${response.statusCode}');
+      }
+    } catch (e) {
+      dev.log("Error in postSync ($path): $e", name: "PythonWorker", error: e);
+      rethrow;
     }
   }
 

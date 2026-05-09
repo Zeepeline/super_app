@@ -2,37 +2,16 @@ import requests
 import os
 import json
 from concurrent.futures import ThreadPoolExecutor
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class BookService:
     def __init__(self):
         pass
 
     def search_libgen(self, query):
-        # mirrors = ["https://libgen.is", "https://libgen.rs", "https://libgen.st", "https://libgen.li"]
-        try:
-            results = self.libgen.search_title(query)
-            if not results: return []
-            formatted = []
-            for r in results[:10]:
-                # Libgen cover URL pattern (often requires a specific host)
-                cover = ""
-                if r.get("Descr"): # Sometimes description contains cover info or we use a placeholder
-                    cover = f"https://libgen.is/covers/{r.get('Coverurl')}"
-                
-                formatted.append({
-                    "source": "Libgen",
-                    "id": r.get("ID"),
-                    "title": r.get("Title"),
-                    "author": r.get("Author"),
-                    "format": r.get("Extension"),
-                    "size": r.get("Size"),
-                    "year": r.get("Year"),
-                    "cover_url": cover,
-                    "mirror": r.get("Mirror_1") or r.get("Mirror_2")
-                })
-            return formatted
-        except:
-            return []
+        # Libgen search is currently disabled as it requires external library
+        return []
 
     def search_internet_archive(self, query):
         try:
@@ -45,7 +24,7 @@ class BookService:
                 'rows': 15,
                 'page': 1
             }
-            response = requests.get(url, params=params, timeout=20)
+            response = requests.get(url, params=params, timeout=20, verify=False)
             if response.status_code == 200:
                 data = response.json()
                 docs = data.get('response', {}).get('docs', [])
@@ -80,7 +59,7 @@ class BookService:
     def search_gutenberg(self, query):
         try:
             url = f"https://gutendex.com/books/?search={query}"
-            response = requests.get(url, timeout=20)
+            response = requests.get(url, timeout=20, verify=False)
             if response.status_code == 200:
                 data = response.json()
                 results = data.get("results", [])

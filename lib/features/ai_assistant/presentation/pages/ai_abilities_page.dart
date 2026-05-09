@@ -23,7 +23,7 @@ class AiAbilitiesPage extends StatelessWidget {
               height: 400,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppTheme.kPrimaryColor.withValues(alpha: 0.1),
+                color: AppTheme.kPrimaryColor.withOpacity(0.1),
               ),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
@@ -70,10 +70,10 @@ class AiAbilitiesPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: AppTheme.kPrimaryColor.withValues(alpha: 0.1),
+              color: AppTheme.kPrimaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: AppTheme.kPrimaryColor.withValues(alpha: 0.2),
+                color: AppTheme.kPrimaryColor.withOpacity(0.2),
               ),
             ),
             child: Text(
@@ -201,9 +201,9 @@ class _AbilityCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: Colors.white.withOpacity(0.08)),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
@@ -218,7 +218,7 @@ class _AbilityCard extends StatelessWidget {
                 height: 80,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: ability.color.withValues(alpha: 0.1),
+                  color: ability.color.withOpacity(0.1),
                 ),
               ),
             ),
@@ -231,7 +231,7 @@ class _AbilityCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: ability.color.withValues(alpha: 0.15),
+                      color: ability.color.withOpacity(0.15),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(ability.icon, color: ability.color, size: 28),

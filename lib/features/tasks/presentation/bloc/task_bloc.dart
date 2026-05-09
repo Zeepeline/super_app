@@ -51,6 +51,14 @@ class UpdateTaskStatusEvent extends TaskEvent {
   List<Object?> get props => [task, isCompleted];
 }
 
+class UpdateTaskEvent extends TaskEvent {
+  final TaskEntity task;
+  const UpdateTaskEvent({required this.task});
+
+  @override
+  List<Object?> get props => [task];
+}
+
 class DeleteTaskEvent extends TaskEvent {
   final String id;
   const DeleteTaskEvent(this.id);
@@ -113,20 +121,20 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<UpdateTaskStatusEvent>((event, emit) async {
       emit(TaskLoading());
       
-      final updatedTask = TaskEntity(
-        id: event.task.id,
-        title: event.task.title,
-        description: event.task.description,
-        category: event.task.category,
-        priority: event.task.priority,
-        dueDate: event.task.dueDate,
-        time: event.task.time,
-        endTime: event.task.endTime,
-        isCompleted: event.isCompleted,
-        subTasks: event.task.subTasks,
-      );
+      final updatedTask = event.task.copyWith(isCompleted: event.isCompleted);
 
       final result = await updateTask(updatedTask);
+      
+      result.fold(
+        (failure) => emit(TaskError(failure.message)),
+        (_) => emit(TaskSuccess()),
+      );
+    });
+
+    on<UpdateTaskEvent>((event, emit) async {
+      emit(TaskLoading());
+      
+      final result = await updateTask(event.task);
       
       result.fold(
         (failure) => emit(TaskError(failure.message)),

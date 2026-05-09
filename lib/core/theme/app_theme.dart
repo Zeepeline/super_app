@@ -21,8 +21,8 @@ class AppTheme {
     fontSize: 80,
     height: 1.0,
     shadows: [
-      Shadow(color: kPrimaryColor.withValues(alpha: 0.4), blurRadius: 20),
-      Shadow(color: kPrimaryColor.withValues(alpha: 0.2), blurRadius: 40),
+      Shadow(color: kPrimaryColor.withOpacity(0.4), blurRadius: 20),
+      Shadow(color: kPrimaryColor.withOpacity(0.2), blurRadius: 40),
     ],
   );
 

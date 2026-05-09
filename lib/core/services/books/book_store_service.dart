@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:super_app/core/services/ai/gemini_service.dart';
 import 'package:super_app/core/services/books/book_library_service.dart';
 import 'package:super_app/features/book_search/domain/entities/book_search_result.dart';
@@ -153,6 +154,45 @@ class BookStoreService {
       return _getDefaultRecommendations().take(2).toList();
     }
   }
+
+  Future<List<BookRecommendation>> getPopularBooks() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final today = DateTime.now().toIso8601String().split('T')[0];
+      final cachedDate = prefs.getString('popular_books_date');
+      final cachedData = prefs.getString('popular_books_data');
+
+      if (cachedDate == today && cachedData != null) {
+        final List<dynamic> data = jsonDecode(cachedData);
+        return data.map((item) => BookRecommendation.fromJson(item)).toList();
+      }
+
+      const prompt = """
+      You are a world-class librarian. List 5 of the most popular and trending books released in 2024 or 2025.
+      Return the response ONLY as a JSON list of objects with these keys: "title", "author", "genre", "reason", "coverUrl".
+      For "coverUrl", provide a direct image URL of the book cover (e.g. from OpenLibrary) or a very high quality Unsplash image related to the theme.
+      """;
+
+      final response = await _geminiService.getChatResponse(prompt);
+
+      String jsonStr = response;
+      if (jsonStr.contains('```json')) {
+        jsonStr = jsonStr.split('```json')[1].split('```')[0];
+      } else if (jsonStr.contains('```')) {
+        jsonStr = jsonStr.split('```')[1].split('```')[0];
+      }
+
+      // Save to cache
+      await prefs.setString('popular_books_date', today);
+      await prefs.setString('popular_books_data', jsonStr);
+
+      final List<dynamic> data = jsonDecode(jsonStr);
+      return data.map((item) => BookRecommendation.fromJson(item)).toList();
+    } catch (e) {
+      debugPrint("Error getting popular books: $e");
+      return _getDefaultRecommendations();
+    }
+  }
 }
 
 class BookRecommendation {
@@ -179,4 +219,12 @@ class BookRecommendation {
       coverUrl: json['coverUrl'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'title': title,
+        'author': author,
+        'genre': genre,
+        'reason': reason,
+        'coverUrl': coverUrl,
+      };
 }

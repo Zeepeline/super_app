@@ -27,6 +27,32 @@ class TaskEntity extends Equatable {
     this.subTasks = const [],
   });
 
+  TaskEntity copyWith({
+    String? id,
+    String? title,
+    String? description,
+    String? category,
+    TaskPriority? priority,
+    DateTime? dueDate,
+    String? time,
+    String? endTime,
+    bool? isCompleted,
+    List<String>? subTasks,
+  }) {
+    return TaskEntity(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      category: category ?? this.category,
+      priority: priority ?? this.priority,
+      dueDate: dueDate ?? this.dueDate,
+      time: time ?? this.time,
+      endTime: endTime ?? this.endTime,
+      isCompleted: isCompleted ?? this.isCompleted,
+      subTasks: subTasks ?? this.subTasks,
+    );
+  }
+
   @override
   List<Object?> get props => [
         id,

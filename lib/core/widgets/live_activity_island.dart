@@ -81,9 +81,9 @@ class _LiveActivityIslandState extends State<LiveActivityIsland> {
                         duration: const Duration(milliseconds: 600),
                         curve: Curves.elasticOut,
                         width: _isExpanded.value ? 340 : 200,
-                        height: _isExpanded.value ? 84 : 40,
+                        height: _isExpanded.value ? 92 : 40,
                         decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.8),
+                          color: Colors.black.withOpacity(0.8),
                           borderRadius: BorderRadius.circular(
                             _isExpanded.value ? 28 : 20,
                           ),
@@ -97,7 +97,7 @@ class _LiveActivityIslandState extends State<LiveActivityIsland> {
                             ),
                           ],
                           border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.05),
+                            color: Colors.white.withOpacity(0.05),
                             width: 0.5,
                           ),
                         ),
@@ -220,7 +220,7 @@ class _LiveActivityIslandState extends State<LiveActivityIsland> {
                   : Container(
                       width: 52,
                       height: 52,
-                      color: Colors.white.withValues(alpha: 0.05),
+                      color: Colors.white.withOpacity(0.05),
                       child: const Icon(
                         Icons.music_note,
                         color: AppTheme.kPrimaryColor,
@@ -244,7 +244,7 @@ class _LiveActivityIslandState extends State<LiveActivityIsland> {
                   Text(
                     mediaItem.artist ?? 'Unknown Artist',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: Colors.white.withOpacity(0.5),
                       fontSize: 13,
                     ),
                     maxLines: 1,
@@ -295,7 +295,7 @@ class _LiveActivityIslandState extends State<LiveActivityIsland> {
               height: 4,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: Colors.white.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -310,7 +310,7 @@ class _LiveActivityIslandState extends State<LiveActivityIsland> {
                   borderRadius: BorderRadius.circular(2),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.kPrimaryColor.withValues(alpha: 0.3),
+                      color: AppTheme.kPrimaryColor.withOpacity(0.3),
                       blurRadius: 4,
                       offset: const Offset(0, 1),
                     ),

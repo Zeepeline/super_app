@@ -39,7 +39,7 @@ class OnboardingPage extends StatelessWidget {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          AppTheme.kBackgroundColor.withValues(alpha: 0.6),
+                          AppTheme.kBackgroundColor.withOpacity(0.6),
                           AppTheme.kBackgroundColor,
                         ],
                         stops: const [0.0, 0.6, 1.0],
@@ -143,9 +143,9 @@ class OnboardingPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: AppTheme.kPrimaryColor.withValues(alpha: 0.1),
+        color: AppTheme.kPrimaryColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.kPrimaryColor.withValues(alpha: 0.2)),
+        border: Border.all(color: AppTheme.kPrimaryColor.withOpacity(0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -233,7 +233,7 @@ class OnboardingPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(36),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.kPrimaryColor.withValues(alpha: 0.3),
+                  color: AppTheme.kPrimaryColor.withOpacity(0.3),
                   blurRadius: 40,
                   offset: const Offset(0, 10),
                 ),

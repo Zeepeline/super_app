@@ -54,9 +54,9 @@ class _Header extends StatelessWidget {
             right: 20,
           ),
           decoration: BoxDecoration(
-            color: AppTheme.kBackgroundColor.withValues(alpha: 0.75),
+            color: AppTheme.kBackgroundColor.withOpacity(0.75),
             border: Border(
-              bottom: BorderSide(color: Colors.white.withValues(alpha: 0.06)),
+              bottom: BorderSide(color: Colors.white.withOpacity(0.06)),
             ),
           ),
           child: const Row(
@@ -114,9 +114,9 @@ class _SearchBar extends StatelessWidget {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.07),
+                color: Colors.white.withOpacity(0.07),
                 borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                border: Border.all(color: Colors.white.withOpacity(0.1)),
               ),
               child: TextField(
                 controller: controller.searchTextController,
@@ -128,11 +128,11 @@ class _SearchBar extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: 'Cari lagu, artis, atau album...',
                   hintStyle: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.35),
+                    color: Colors.white.withOpacity(0.35),
                   ),
                   prefixIcon: Icon(
                     Icons.search_rounded,
-                    color: Colors.white.withValues(alpha: 0.4),
+                    color: Colors.white.withOpacity(0.4),
                   ),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(
@@ -145,7 +145,7 @@ class _SearchBar extends StatelessWidget {
                         : IconButton(
                             icon: Icon(
                               Icons.clear_rounded,
-                              color: Colors.white.withValues(alpha: 0.4),
+                              color: Colors.white.withOpacity(0.4),
                               size: 18,
                             ),
                             onPressed: () {
@@ -268,9 +268,9 @@ class _VideoCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: Colors.white.withOpacity(0.05),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.07)),
+          border: Border.all(color: Colors.white.withOpacity(0.07)),
         ),
         child: Row(
           children: [
@@ -287,10 +287,10 @@ class _VideoCard extends StatelessWidget {
                 errorBuilder: (_, __, ___) => Container(
                   width: 100,
                   height: 80,
-                  color: Colors.white.withValues(alpha: 0.08),
+                  color: Colors.white.withOpacity(0.08),
                   child: Icon(
                     Icons.music_video_rounded,
-                    color: Colors.white.withValues(alpha: 0.3),
+                    color: Colors.white.withOpacity(0.3),
                     size: 28,
                   ),
                 ),
@@ -322,7 +322,7 @@ class _VideoCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.45),
+                        color: Colors.white.withOpacity(0.45),
                         fontSize: 11,
                       ),
                     ),
@@ -332,13 +332,13 @@ class _VideoCard extends StatelessWidget {
                         Icon(
                           Icons.access_time_rounded,
                           size: 11,
-                          color: Colors.white.withValues(alpha: 0.35),
+                          color: Colors.white.withOpacity(0.35),
                         ),
                         const SizedBox(width: 3),
                         Text(
                           durationStr,
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.35),
+                            color: Colors.white.withOpacity(0.35),
                             fontSize: 11,
                           ),
                         ),
@@ -392,7 +392,7 @@ class _DownloadButton extends StatelessWidget {
             child: CircularProgressIndicator(
               value: progress > 0 ? progress : null,
               color: AppTheme.kPrimaryColor,
-              backgroundColor: AppTheme.kPrimaryColor.withValues(alpha: 0.1),
+              backgroundColor: AppTheme.kPrimaryColor.withOpacity(0.1),
               strokeWidth: 3,
             ),
           ),
@@ -413,7 +413,7 @@ class _DownloadButton extends StatelessWidget {
         width: 42,
         height: 42,
         decoration: BoxDecoration(
-          color: Colors.green.withValues(alpha: 0.15),
+          color: Colors.green.withOpacity(0.15),
           shape: BoxShape.circle,
         ),
         child: const Icon(Icons.check_rounded, color: Colors.green, size: 22),
@@ -427,7 +427,7 @@ class _DownloadButton extends StatelessWidget {
           width: 42,
           height: 42,
           decoration: BoxDecoration(
-            color: Colors.redAccent.withValues(alpha: 0.15),
+            color: Colors.redAccent.withOpacity(0.15),
             shape: BoxShape.circle,
           ),
           child: const Icon(
@@ -453,7 +453,7 @@ class _DownloadButton extends StatelessWidget {
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: AppTheme.kPrimaryColor.withValues(alpha: 0.35),
+              color: AppTheme.kPrimaryColor.withOpacity(0.35),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -492,7 +492,7 @@ class _EmptyState extends StatelessWidget {
               width: 90,
               height: 90,
               decoration: BoxDecoration(
-                color: AppTheme.kPrimaryColor.withValues(alpha: 0.12),
+                color: AppTheme.kPrimaryColor.withOpacity(0.12),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: AppTheme.kPrimaryColor, size: 42),
@@ -512,7 +512,7 @@ class _EmptyState extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.white.withValues(alpha: 0.45),
+                color: Colors.white.withOpacity(0.45),
                 height: 1.5,
               ),
             ),
