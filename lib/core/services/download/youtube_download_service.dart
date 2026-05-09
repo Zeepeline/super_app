@@ -385,10 +385,12 @@ class YoutubeDownloadService {
     );
   }
 
+  static final RegExp _illegalFilenameChars = RegExp(r'[<>:"/\\|?*]');
+  static final RegExp _controlChars = RegExp(r'[\x00-\x1F\x7F]');
+
   String _sanitizeFilename(String name) {
-    final illegalChars = RegExp(r'[<>:"/\\|?*]');
-    String sanitized = name.replaceAll(illegalChars, '_');
-    sanitized = sanitized.replaceAll(RegExp(r'[\x00-\x1F\x7F]'), '');
+    String sanitized = name.replaceAll(_illegalFilenameChars, '_');
+    sanitized = sanitized.replaceAll(_controlChars, '');
     sanitized = sanitized.trim();
     if (sanitized.length > 200) {
       sanitized = sanitized.substring(0, 200);

@@ -214,12 +214,13 @@ class MediaImportService {
         );
       }
 
-   
       return importedTracks;
     } catch (e) {
       return [];
     }
   }
+
+  static final RegExp _ytPattern = RegExp(r"^(.*)\s\[([a-zA-Z0-9_-]{11})\]$");
 
   /// NEW: Scan the internal /music folder (where WebView downloads go).
   /// [existingPaths] optionally allows skipping tracks already in the library.
@@ -256,13 +257,11 @@ class MediaImportService {
         final ext = p.extension(path).toLowerCase();
         if (supportedExtensions.contains(ext)) {
           final fileName = p.basename(path);
-          var title = p.basenameWithoutExtension(fileName);
+          final baseName = p.basenameWithoutExtension(fileName);
+          var title = baseName;
 
           // Regex to match "Title [VideoID]" and extract "Title" and "VideoID"
-          final ytPattern = RegExp(r"^(.*)\s\[([a-zA-Z0-9_-]{11})\]$");
-          final match = ytPattern.firstMatch(
-            p.basenameWithoutExtension(fileName),
-          );
+          final match = _ytPattern.firstMatch(baseName);
           String stableId = _uuid.v4();
 
           if (match != null) {
@@ -298,7 +297,6 @@ class MediaImportService {
         }
       }
 
-    
       return discoveredTracks;
     } catch (e) {
       return [];
