@@ -10,9 +10,9 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   DashboardBloc({required this.getDashboardData}) : super(DashboardInitial()) {
     on<LoadDashboardDataEvent>((event, emit) async {
       emit(DashboardLoading());
-      
+
       final result = await getDashboardData(NoParams());
-      
+
       result.fold(
         (failure) => emit(DashboardError(message: failure.message)),
         (data) => emit(DashboardLoaded(dashboardData: data)),

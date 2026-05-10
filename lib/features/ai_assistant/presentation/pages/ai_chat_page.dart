@@ -1303,8 +1303,10 @@ class _DownloadMusicCard extends StatelessWidget {
                             width: 60,
                             height: 60,
                             color: Colors.white.withOpacity(0.1),
-                            child: const Icon(Icons.music_note,
-                                color: Colors.white54),
+                            child: const Icon(
+                              Icons.music_note,
+                              color: Colors.white54,
+                            ),
                           );
                         },
                       )
@@ -1312,8 +1314,10 @@ class _DownloadMusicCard extends StatelessWidget {
                         width: 60,
                         height: 60,
                         color: Colors.white.withOpacity(0.1),
-                        child:
-                            const Icon(Icons.music_note, color: Colors.white54),
+                        child: const Icon(
+                          Icons.music_note,
+                          color: Colors.white54,
+                        ),
                       ),
               ),
               const SizedBox(width: 12),
@@ -1355,7 +1359,8 @@ class _DownloadMusicCard extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const MusicPlayerPage()),
+                    builder: (context) => const MusicPlayerPage(),
+                  ),
                 );
               },
               icon: const Icon(Icons.play_arrow_rounded, color: Colors.black),

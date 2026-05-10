@@ -90,20 +90,28 @@ class _BookReaderPageState extends State<BookReaderPage> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 100), // Di atas ReaderControls
+              padding: const EdgeInsets.only(
+                bottom: 100,
+              ), // Di atas ReaderControls
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (_totalPages > 0)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.black54,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(
                         'Page $_currentPage of $_totalPages (${((_currentPage / _totalPages) * 100).toInt()}%)',
-                        style: const TextStyle(color: Colors.white, fontSize: 12),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   const SizedBox(height: 8),
@@ -119,7 +127,10 @@ class _BookReaderPageState extends State<BookReaderPage> {
                           trackHeight: 4,
                         ),
                         child: Slider(
-                          value: _currentPage.toDouble().clamp(1, _totalPages.toDouble()),
+                          value: _currentPage.toDouble().clamp(
+                            1,
+                            _totalPages.toDouble(),
+                          ),
                           min: 1,
                           max: _totalPages.toDouble(),
                           onChanged: (value) {
@@ -148,4 +159,3 @@ class _BookReaderPageState extends State<BookReaderPage> {
     );
   }
 }
-

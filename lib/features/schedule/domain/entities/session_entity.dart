@@ -20,5 +20,13 @@ class SessionEntity extends Equatable {
   });
 
   @override
-  List<Object?> get props => [id, time, title, description, tag, participants, isLive];
+  List<Object?> get props => [
+    id,
+    time,
+    title,
+    description,
+    tag,
+    participants,
+    isLive,
+  ];
 }

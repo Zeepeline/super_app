@@ -214,7 +214,6 @@ class MediaImportService {
         );
       }
 
-   
       return importedTracks;
     } catch (e) {
       return [];
@@ -298,7 +297,6 @@ class MediaImportService {
         }
       }
 
-    
       return discoveredTracks;
     } catch (e) {
       return [];
