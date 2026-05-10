@@ -57,7 +57,11 @@ class BookRecommendationDetailPage extends StatelessWidget {
         ),
       ),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
+        icon: const Icon(
+          Icons.arrow_back_ios_new,
+          color: Colors.white,
+          size: 20,
+        ),
         onPressed: () => Navigator.pop(context),
       ),
     );
@@ -83,7 +87,8 @@ class BookRecommendationDetailPage extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(24),
             child: Image.network(
-              recommendation.coverUrl ?? 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=400',
+              recommendation.coverUrl ??
+                  'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=400',
               fit: BoxFit.cover,
             ),
           ),
@@ -125,9 +130,7 @@ class BookRecommendationDetailPage extends StatelessWidget {
           child: _buildInfoItem(Icons.category_outlined, recommendation.genre),
         ),
         const SizedBox(width: 12),
-        Expanded(
-          child: _buildInfoItem(Icons.star_outline, 'Trending'),
-        ),
+        Expanded(child: _buildInfoItem(Icons.star_outline, 'Trending')),
       ],
     );
   }
@@ -200,7 +203,9 @@ class BookRecommendationDetailPage extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.kPrimaryColor,
           foregroundColor: Colors.black,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           elevation: 0,
         ),
         child: Row(

@@ -43,7 +43,9 @@ class BookHeader extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const BookSearchPage()),
+                    MaterialPageRoute(
+                      builder: (context) => const BookSearchPage(),
+                    ),
                   );
                 },
                 child: Container(
@@ -52,7 +54,11 @@ class BookHeader extends StatelessWidget {
                     color: AppTheme.kSurfaceContainerLowColor,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.search, color: Colors.white, size: 24),
+                  child: const Icon(
+                    Icons.search,
+                    color: Colors.white,
+                    size: 24,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),

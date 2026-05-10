@@ -39,7 +39,9 @@ class RagIndexerService {
       await MobileRag.instance.addDocument(augmentedContent);
       debugPrint("RagIndexerService: Indexed track ${track.titleField}");
     } catch (e) {
-      debugPrint("RagIndexerService: Failed to index track ${track.titleField}: $e");
+      debugPrint(
+        "RagIndexerService: Failed to index track ${track.titleField}: $e",
+      );
     }
   }
 

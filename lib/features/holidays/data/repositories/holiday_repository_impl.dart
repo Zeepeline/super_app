@@ -37,7 +37,9 @@ class HolidayRepositoryImpl implements HolidayRepository {
       if (localHolidays.isNotEmpty) {
         return Right(localHolidays);
       }
-      return const Left(CacheFailure('No internet connection and no cached data found.'));
+      return const Left(
+        CacheFailure('No internet connection and no cached data found.'),
+      );
     }
   }
 }

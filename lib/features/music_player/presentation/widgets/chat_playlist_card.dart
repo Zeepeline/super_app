@@ -17,9 +17,7 @@ class ChatPlaylistCard extends StatelessWidget {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          'Memutar: ${response.playlistName}',
-        ),
+        content: Text('Memutar: ${response.playlistName}'),
         backgroundColor: AppTheme.kPrimaryColor,
       ),
     );
@@ -94,7 +92,9 @@ class ChatPlaylistCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           // Daftar Lagu Teratas
-          ...response.tracks.take(3).map(
+          ...response.tracks
+              .take(3)
+              .map(
                 (t) => Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: Row(
@@ -124,10 +124,7 @@ class ChatPlaylistCard extends StatelessWidget {
               padding: const EdgeInsets.only(left: 24, top: 4),
               child: Text(
                 '+ ${response.tracks.length - 3} lagu lainnya',
-                style: const TextStyle(
-                  color: Colors.white38,
-                  fontSize: 12,
-                ),
+                style: const TextStyle(color: Colors.white38, fontSize: 12),
               ),
             ),
           const SizedBox(height: 16),

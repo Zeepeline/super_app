@@ -126,9 +126,7 @@ class TaskDetailPage extends StatelessWidget {
           onPressed: () async {
             final result = await Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => AddTaskPage(task: task),
-              ),
+              MaterialPageRoute(builder: (context) => AddTaskPage(task: task)),
             );
             if (result == true && context.mounted) {
               Navigator.pop(context, true);
@@ -156,9 +154,7 @@ class TaskDetailPage extends StatelessWidget {
           decoration: BoxDecoration(
             color: _getPriorityColor().withOpacity(0.1),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: _getPriorityColor().withOpacity(0.3),
-            ),
+            border: Border.all(color: _getPriorityColor().withOpacity(0.3)),
           ),
           child: Text(
             task.priority.toString().split('.').last.toUpperCase(),

@@ -198,7 +198,8 @@ class GeminiService {
               properties: {
                 'query': Schema(
                   SchemaType.string,
-                  description: 'Permintaan user (suasana hati, aktivitas, atau nama artis).',
+                  description:
+                      'Permintaan user (suasana hati, aktivitas, atau nama artis).',
                 ),
               },
               requiredProperties: ['query'],
@@ -254,7 +255,9 @@ class GeminiService {
         }
       }
     }
-    debugPrint("GeminiService: All agentic models failed. Last error: $lastError");
+    debugPrint(
+      "GeminiService: All agentic models failed. Last error: $lastError",
+    );
     return null;
   }
 
@@ -321,7 +324,8 @@ class GeminiService {
     final apiKeys = await getApiKeys();
     if (apiKeys.isEmpty) return "API Key missing.";
 
-    final prompt = """
+    final prompt =
+        """
 Anda adalah AI Produktivitas Pakar. Gunakan Knowledge Base (KB) di bawah ini untuk memberikan 1 rekomendasi tugas yang paling relevan untuk user saat ini.
 
 KNOWLEDGE BASE:
@@ -369,7 +373,8 @@ Hanya berikan JSON, tanpa teks tambahan.
     final apiKeys = await getApiKeys();
     if (apiKeys.isEmpty) return "API Key missing.";
 
-    final prompt = """
+    final prompt =
+        """
 Anda adalah Kurator Musik Profesional. Gunakan daftar lagu (Library) user di bawah ini untuk membuat playlist yang sesuai dengan permintaan user.
 
 LIBRARY USER (JSON):
@@ -412,13 +417,12 @@ Hanya berikan JSON, tanpa teks tambahan. Jika tidak ada lagu sama sekali di libr
     return "Gagal membuat playlist.";
   }
 
-  Future<String> createYoutubeSmartPlaylist({
-    required String userQuery,
-  }) async {
+  Future<String> createYoutubeSmartPlaylist({required String userQuery}) async {
     final apiKeys = await getApiKeys();
     if (apiKeys.isEmpty) return "API Key missing.";
 
-    final prompt = """
+    final prompt =
+        """
 Anda adalah Kurator Musik YouTube Music Profesional. Buatlah playlist yang sempurna berdasarkan permintaan user menggunakan pengetahuan luas Anda tentang musik dunia.
 
 PERMINTAAN USER:
