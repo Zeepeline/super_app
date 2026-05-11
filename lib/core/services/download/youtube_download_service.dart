@@ -18,6 +18,10 @@ class YoutubeDownloadService {
   final LyricsService _lyricsService;
   final PythonWorkerService _workerService;
 
+  // Pre-compiled RegExps for performance optimization
+  static final _illegalChars = RegExp(r'[<>:"/\\|?*]');
+  static final _controlChars = RegExp(r'[\x00-\x1F\x7F]');
+
   YoutubeDownloadService(this._lyricsService, this._workerService);
 
   void dispose() {
@@ -386,9 +390,8 @@ class YoutubeDownloadService {
   }
 
   String _sanitizeFilename(String name) {
-    final illegalChars = RegExp(r'[<>:"/\\|?*]');
-    String sanitized = name.replaceAll(illegalChars, '_');
-    sanitized = sanitized.replaceAll(RegExp(r'[\x00-\x1F\x7F]'), '');
+    String sanitized = name.replaceAll(_illegalChars, '_');
+    sanitized = sanitized.replaceAll(_controlChars, '');
     sanitized = sanitized.trim();
     if (sanitized.length > 200) {
       sanitized = sanitized.substring(0, 200);

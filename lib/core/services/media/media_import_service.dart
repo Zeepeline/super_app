@@ -13,6 +13,9 @@ import 'package:uuid/uuid.dart';
 class MediaImportService {
   final _uuid = const Uuid();
 
+  // Pre-compiled RegExps for performance optimization
+  static final _ytPattern = RegExp(r"^(.*)\s\[([a-zA-Z0-9_-]{11})\]$");
+
   MediaImportService();
 
   /// Static flag to prevent concurrent calls across any instance or hot-restart
@@ -214,7 +217,6 @@ class MediaImportService {
         );
       }
 
-   
       return importedTracks;
     } catch (e) {
       return [];
@@ -259,8 +261,7 @@ class MediaImportService {
           var title = p.basenameWithoutExtension(fileName);
 
           // Regex to match "Title [VideoID]" and extract "Title" and "VideoID"
-          final ytPattern = RegExp(r"^(.*)\s\[([a-zA-Z0-9_-]{11})\]$");
-          final match = ytPattern.firstMatch(
+          final match = _ytPattern.firstMatch(
             p.basenameWithoutExtension(fileName),
           );
           String stableId = _uuid.v4();
@@ -298,7 +299,6 @@ class MediaImportService {
         }
       }
 
-    
       return discoveredTracks;
     } catch (e) {
       return [];
