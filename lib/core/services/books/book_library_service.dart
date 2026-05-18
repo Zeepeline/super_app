@@ -27,7 +27,7 @@ class BookLibraryService {
 
       final List<FileSystemEntity> files = await booksDir.list().toList();
       final box = Hive.box(HiveBoxConstants.booksMetadataBox);
-      
+
       dev.log(
         "Found ${files.length} total files in directory.",
         name: "BookLibrary",
@@ -46,7 +46,7 @@ class BookLibraryService {
             // Merge with metadata from Hive
             final metadata = box.get(book.id) as Map?;
             LocalBook finalBook = book;
-            
+
             if (metadata != null) {
               finalBook = LocalBook(
                 id: book.id,

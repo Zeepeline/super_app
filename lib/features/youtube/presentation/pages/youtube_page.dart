@@ -154,7 +154,8 @@ class _YouTubePageState extends State<YouTubePage> {
           },
           onNavigationRequest: (NavigationRequest request) {
             // Prevent potential null WKNavigationAction by being explicit
-            if (request.url.contains('googleads') || request.url.contains('doubleclick')) {
+            if (request.url.contains('googleads') ||
+                request.url.contains('doubleclick')) {
               return NavigationDecision.prevent;
             }
             return NavigationDecision.navigate;
@@ -167,7 +168,8 @@ class _YouTubePageState extends State<YouTubePage> {
 
     // Additional iOS fixes for stability
     if (_webController.platform is WebKitWebViewController) {
-      final webKitController = _webController.platform as WebKitWebViewController;
+      final webKitController =
+          _webController.platform as WebKitWebViewController;
       webKitController.setInspectable(true);
     }
 
@@ -377,9 +379,7 @@ class _Header extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.05),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.1),
-                      ),
+                      border: Border.all(color: Colors.white.withOpacity(0.1)),
                     ),
                     child: TextField(
                       controller: searchController,

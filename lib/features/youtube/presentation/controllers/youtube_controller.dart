@@ -67,7 +67,9 @@ class YouTubeController extends GetxController {
       final streamUrl = await _downloadService.getStreamUrl(videoId);
 
       if (streamUrl == null) {
-        throw Exception('Gagal mendapatkan link streaming musik. Silakan coba lagi atau pilih lagu lain.');
+        throw Exception(
+          'Gagal mendapatkan link streaming musik. Silakan coba lagi atau pilih lagu lain.',
+        );
       }
 
       // 3. Create TrackEntity
@@ -150,7 +152,10 @@ class YouTubeController extends GetxController {
     }
   }
 
-  Future<void> downloadTrack(TrackEntity track, {PlayerCubit? playerCubit}) async {
+  Future<void> downloadTrack(
+    TrackEntity track, {
+    PlayerCubit? playerCubit,
+  }) async {
     final videoId = track.id;
 
     // Already downloading or done
@@ -183,7 +188,7 @@ class YouTubeController extends GetxController {
 
       // Instantly update the currently playing track in PlayerCubit if it's the one we downloaded
       if (playerCubit != null) {
-         playerCubit.markCurrentTrackAsDownloaded(trackToSave.localPath!);
+        playerCubit.markCurrentTrackAsDownloaded(trackToSave.localPath!);
       }
 
       _showSnackbar(

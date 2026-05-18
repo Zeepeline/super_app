@@ -70,7 +70,6 @@ class DownloadService {
       final actualSize = totalSize ?? response.contentLength;
       int received = 0;
 
-
       await for (final data in response) {
         received += data.length;
         ios.add(data);
