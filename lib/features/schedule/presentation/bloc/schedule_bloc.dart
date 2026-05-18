@@ -23,11 +23,8 @@ class LoadScheduleEvent extends ScheduleEvent {
 abstract class ScheduleState extends Equatable {
   final DateTime selectedDate;
   final List<HolidayEntity> holidays;
-  
-  const ScheduleState({
-    required this.selectedDate,
-    required this.holidays,
-  });
+
+  const ScheduleState({required this.selectedDate, required this.holidays});
 
   @override
   List<Object> get props => [selectedDate, holidays];
@@ -35,9 +32,10 @@ abstract class ScheduleState extends Equatable {
   HolidayEntity? getHolidayForDate(DateTime date) {
     try {
       return holidays.firstWhere(
-        (h) => h.date.year == date.year && 
-               h.date.month == date.month && 
-               h.date.day == date.day
+        (h) =>
+            h.date.year == date.year &&
+            h.date.month == date.month &&
+            h.date.day == date.day,
       );
     } catch (_) {
       return null;
@@ -46,24 +44,21 @@ abstract class ScheduleState extends Equatable {
 }
 
 class ScheduleInitial extends ScheduleState {
-  ScheduleInitial() : super(
-    selectedDate: DateTime.now(),
-    holidays: const [],
-  );
+  ScheduleInitial() : super(selectedDate: DateTime.now(), holidays: const []);
 }
 
 class ScheduleLoading extends ScheduleState {
   const ScheduleLoading({
-    required DateTime selectedDate, 
+    required DateTime selectedDate,
     required List<HolidayEntity> holidays,
   }) : super(selectedDate: selectedDate, holidays: holidays);
 }
 
 class ScheduleLoaded extends ScheduleState {
   final List<SessionEntity> sessions;
-  
+
   const ScheduleLoaded({
-    required this.sessions, 
+    required this.sessions,
     required List<HolidayEntity> holidays,
     required DateTime selectedDate,
   }) : super(selectedDate: selectedDate, holidays: holidays);
@@ -75,8 +70,8 @@ class ScheduleLoaded extends ScheduleState {
 class ScheduleError extends ScheduleState {
   final String message;
   const ScheduleError({
-    required this.message, 
-    required DateTime selectedDate, 
+    required this.message,
+    required DateTime selectedDate,
     required List<HolidayEntity> holidays,
   }) : super(selectedDate: selectedDate, holidays: holidays);
 
@@ -88,43 +83,41 @@ class ScheduleError extends ScheduleState {
 class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   final GetSessions getSessions;
   final GetHolidays getHolidays;
-  
+
   List<HolidayEntity> _cachedHolidays = [];
   int? _cachedYear;
 
-  ScheduleBloc({
-    required this.getSessions,
-    required this.getHolidays,
-  }) : super(ScheduleInitial()) {
+  ScheduleBloc({required this.getSessions, required this.getHolidays})
+    : super(ScheduleInitial()) {
     on<LoadScheduleEvent>((event, emit) async {
-      emit(ScheduleLoading(
-        selectedDate: event.date, 
-        holidays: _cachedHolidays,
-      ));
-      
+      emit(
+        ScheduleLoading(selectedDate: event.date, holidays: _cachedHolidays),
+      );
+
       if (_cachedYear != event.date.year) {
         final holidayResult = await getHolidays(event.date.year);
-        holidayResult.fold(
-          (failure) => null,
-          (holidays) {
-            _cachedHolidays = holidays;
-            _cachedYear = event.date.year;
-          },
-        );
+        holidayResult.fold((failure) => null, (holidays) {
+          _cachedHolidays = holidays;
+          _cachedYear = event.date.year;
+        });
       }
 
       final sessionResult = await getSessions(event.date);
       sessionResult.fold(
-        (failure) => emit(ScheduleError(
-          message: failure.message, 
-          selectedDate: event.date,
-          holidays: _cachedHolidays,
-        )),
-        (sessions) => emit(ScheduleLoaded(
-          sessions: sessions,
-          holidays: _cachedHolidays,
-          selectedDate: event.date,
-        )),
+        (failure) => emit(
+          ScheduleError(
+            message: failure.message,
+            selectedDate: event.date,
+            holidays: _cachedHolidays,
+          ),
+        ),
+        (sessions) => emit(
+          ScheduleLoaded(
+            sessions: sessions,
+            holidays: _cachedHolidays,
+            selectedDate: event.date,
+          ),
+        ),
       );
     });
   }

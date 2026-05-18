@@ -35,7 +35,9 @@ class BookInfoSection extends StatelessWidget {
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: (book.genreTags ?? ['LOCAL']).map((tag) => GenreTag(label: tag.toUpperCase())).toList(),
+          children: (book.genreTags ?? ['LOCAL'])
+              .map((tag) => GenreTag(label: tag.toUpperCase()))
+              .toList(),
         ),
       ],
     );
@@ -58,9 +60,7 @@ class BookInfoSection extends StatelessWidget {
       children: [
         Text(
           label,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            fontSize: 10,
-          ),
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 10),
         ),
         Text(
           value,

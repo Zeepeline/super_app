@@ -67,10 +67,13 @@ class _VinylRecordState extends State<VinylRecord>
                   boxShadow: widget.isPlaying
                       ? [
                           BoxShadow(
-                            color: AppTheme.kPrimaryColor.withValues(alpha: 0.15 +
+                            color: AppTheme.kPrimaryColor.withValues(
+                              alpha:
+                                  0.15 +
                                   0.15 *
                                       math.sin(
-                                        _rotationController.value * 2 * math.pi,),
+                                        _rotationController.value * 2 * math.pi,
+                                      ),
                             ),
                             blurRadius:
                                 30 +

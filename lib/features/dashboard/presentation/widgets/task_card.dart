@@ -65,7 +65,10 @@ class DashboardTaskCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      const Text('•', style: TextStyle(color: Color(0xFFADAAAA))),
+                      const Text(
+                        '•',
+                        style: TextStyle(color: Color(0xFFADAAAA)),
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         estimatedTime,
@@ -81,7 +84,9 @@ class DashboardTaskCard extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
-                      decoration: isCompleted ? TextDecoration.lineThrough : null,
+                      decoration: isCompleted
+                          ? TextDecoration.lineThrough
+                          : null,
                     ),
                   ),
                 ],

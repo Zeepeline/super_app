@@ -16,7 +16,9 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
   });
 
   @override
-  Future<Either<Failure, List<SessionEntity>>> getSessionsByDate(DateTime date) async {
+  Future<Either<Failure, List<SessionEntity>>> getSessionsByDate(
+    DateTime date,
+  ) async {
     try {
       // Fetch remote sessions (dummy/external)
       final remoteSessions = await remoteDataSource.getSessionsByDate(date);
@@ -25,10 +27,12 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
       final tasksResult = await taskRepository.getTasks();
 
       return tasksResult.fold(
-        (failure) => Right(remoteSessions), // If tasks fail, still show remote sessions
+        (failure) =>
+            Right(remoteSessions), // If tasks fail, still show remote sessions
         (realTasks) {
           final now = DateTime.now();
-          final isToday = now.year == date.year &&
+          final isToday =
+              now.year == date.year &&
               now.month == date.month &&
               now.day == date.day;
 
@@ -42,7 +46,7 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
           // Map tasks to SessionEntity with dynamic isLive status
           final taskSessions = dateTasks.map((t) {
             bool isLive = false;
-            
+
             if (isToday) {
               try {
                 // Parse start time (expecting HH:mm)
@@ -50,20 +54,32 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
                 if (startParts.length == 2) {
                   final startHour = int.parse(startParts[0]);
                   final startMinute = int.parse(startParts[1]);
-                  final startTime = DateTime(now.year, now.month, now.day, startHour, startMinute);
-                  
+                  final startTime = DateTime(
+                    now.year,
+                    now.month,
+                    now.day,
+                    startHour,
+                    startMinute,
+                  );
+
                   DateTime endTime;
                   if (t.endTime != null) {
                     final endParts = t.endTime!.split(':');
                     if (endParts.length == 2) {
-                      endTime = DateTime(now.year, now.month, now.day, int.parse(endParts[0]), int.parse(endParts[1]));
+                      endTime = DateTime(
+                        now.year,
+                        now.month,
+                        now.day,
+                        int.parse(endParts[0]),
+                        int.parse(endParts[1]),
+                      );
                     } else {
                       endTime = startTime.add(const Duration(hours: 1));
                     }
                   } else {
                     endTime = startTime.add(const Duration(hours: 1));
                   }
-                  
+
                   if (now.isAfter(startTime) && now.isBefore(endTime)) {
                     isLive = true;
                   }
@@ -91,7 +107,7 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
 
           // Combine both
           final combined = [...remoteSessions, ...taskSessions];
-          
+
           // Sort by time (assuming time is HH:mm format)
           combined.sort((a, b) => a.time.compareTo(b.time));
 
