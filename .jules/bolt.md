@@ -1,0 +1,3 @@
+## 2025-01-24 - Consolidated RegExp Pattern for Metadata Cleaning
+**Learning:** Sequential `replaceAll` calls with dynamic `RegExp` instantiation create significant overhead. Consolidating 19 calls into 3 passes with `static final` regex members resulted in a ~6.15x speedup (from 5032ms to 818ms for 100k iterations). Performing specific metadata removal before generic bracket removal ensures anchors like `$` match correctly before noise is stripped.
+**Action:** Always pre-compile `RegExp` for high-frequency string cleaning and look for opportunities to combine patterns into single-pass replacements using alternation.
