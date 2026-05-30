@@ -1,0 +1,3 @@
+## 2025-05-22 - RegExp Consolidation and Pre-compilation
+**Learning:** Consolidating multiple sequential String.replaceAll calls into a single pass with a combined RegExp pattern significantly reduces string iterations and memory allocations. Pre-compiling RegExps as static final members avoids expensive repeated compilation during runtime, especially in loops. Using non-capturing groups (?:...) further optimizes matching performance when sub-matches are not needed.
+**Action:** Always check for repeated RegExp instantiation in high-frequency paths and consolidate multi-pass string cleaning into single-pass combined patterns.
