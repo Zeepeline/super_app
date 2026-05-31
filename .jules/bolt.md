@@ -1,0 +1,3 @@
+## 2025-05-15 - High-frequency Stream Rebuilds in LyricsView
+**Learning:** Using `StreamBuilder` on a high-frequency stream (like audio position updates at 50-100ms intervals) to rebuild a complex list view causes significant CPU overhead and UI jank. Even if the visible content hasn't changed, Flutter still performs the build and diffing process.
+**Action:** Replace `StreamBuilder` with a manual `StreamSubscription` in a `StatefulWidget`. Only call `setState` when the derived state (e.g., the active lyric index) actually changes. Use binary search (O(log n)) for derived state calculation to keep the listener execution time minimal.
