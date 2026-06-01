@@ -14,6 +14,9 @@ import 'package:super_app/features/home/data/models/track_model.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 class YoutubeDownloadService {
+  static final RegExp _illegalChars = RegExp(r'[<>:"/\\|?*]');
+  static final RegExp _controlChars = RegExp(r'[\x00-\x1F\x7F]');
+
   final YoutubeExplode _yt = YoutubeExplode();
   final LyricsService _lyricsService;
   final PythonWorkerService _workerService;
@@ -386,9 +389,8 @@ class YoutubeDownloadService {
   }
 
   String _sanitizeFilename(String name) {
-    final illegalChars = RegExp(r'[<>:"/\\|?*]');
-    String sanitized = name.replaceAll(illegalChars, '_');
-    sanitized = sanitized.replaceAll(RegExp(r'[\x00-\x1F\x7F]'), '');
+    String sanitized = name.replaceAll(_illegalChars, '_');
+    sanitized = sanitized.replaceAll(_controlChars, '');
     sanitized = sanitized.trim();
     if (sanitized.length > 200) {
       sanitized = sanitized.substring(0, 200);
