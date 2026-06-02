@@ -18,6 +18,9 @@ class PlayerUIController extends GetxController {
   final RxBool isShuffle = false.obs;
   final RxBool isRepeat = false.obs;
 
+  // Track active lyric index
+  final RxInt activeIndex = (-1).obs;
+
   // UI ONLY states
   final RxBool isAlbumArtHovered = false.obs;
   final RxBool isDragging = false.obs;
@@ -26,9 +29,23 @@ class PlayerUIController extends GetxController {
   final RxString rawLyrics = ''.obs;
 
   StreamSubscription? _blocSubscription;
+  StreamSubscription<Duration>? _positionSubscription;
 
   // Reactive position stream
   Stream<Duration> get positionStream => AudioService.position;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _positionSubscription = positionStream.listen((position) {
+      if (lyrics.isNotEmpty) {
+        final newIndex = _lyricsService.findActiveIndex(lyrics, position);
+        if (newIndex != activeIndex.value) {
+          activeIndex.value = newIndex;
+        }
+      }
+    });
+  }
 
   void bindCubit(PlayerCubit cubit) {
     _blocSubscription?.cancel();
@@ -64,6 +81,7 @@ class PlayerUIController extends GetxController {
   @override
   void onClose() {
     _blocSubscription?.cancel();
+    _positionSubscription?.cancel();
     super.onClose();
   }
 
@@ -86,6 +104,7 @@ class PlayerUIController extends GetxController {
     if (lrc == null || lrc.isEmpty) {
       if (lyrics.isNotEmpty) lyrics.clear();
       if (rawLyrics.value.isNotEmpty) rawLyrics.value = '';
+      activeIndex.value = -1;
       return;
     }
 
@@ -93,5 +112,6 @@ class PlayerUIController extends GetxController {
 
     rawLyrics.value = lrc;
     lyrics.value = _lyricsService.parseLrc(lrc);
+    activeIndex.value = -1; // Reset index when lyrics change
   }
 }

@@ -1,0 +1,3 @@
+## 2026-06-02 - Optimized High-Frequency Lyric Synchronization
+**Learning:** Replacing a `StreamBuilder` that performs linear search ((n)$) on every position tick with a GetX worker (`ever`) and binary search ((\log n)$) prevents redundant rebuilds. The UI now only updates when the active lyric index actually changes, drastically reducing CPU usage during playback.
+**Action:** For any UI component driven by a high-frequency stream (like playback position), always prefer event-driven updates (workers/listeners) over `StreamBuilder` if the target state (e.g., active index) changes less frequently than the stream itself.
