@@ -237,9 +237,12 @@ class PythonWorkerService {
   }
 
   /// Melakukan permintaan POST sinkron ke worker
-  Future<Map<String, dynamic>> postSync(String path, Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> postSync(
+    String path,
+    Map<String, dynamic> data,
+  ) async {
     if (!isReady) await initWorker();
-    
+
     if (_workerPort == null) {
       throw Exception('Python Worker is not ready.');
     }

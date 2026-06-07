@@ -24,9 +24,11 @@ class HolidayLocalDataSourceImpl implements HolidayLocalDataSource {
   Future<List<HolidayModel>> getCachedHolidays(int year) async {
     final box = await hive.openBox('holiday_cache');
     final List<dynamic>? data = box.get(_getBoxKey(year));
-    
+
     if (data != null) {
-      return data.map((json) => HolidayModel.fromJson(Map<String, dynamic>.from(json))).toList();
+      return data
+          .map((json) => HolidayModel.fromJson(Map<String, dynamic>.from(json)))
+          .toList();
     }
     return [];
   }

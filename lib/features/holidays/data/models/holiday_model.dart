@@ -15,7 +15,7 @@ class HolidayModel extends HolidayEntity {
     final year = int.parse(parts[0]);
     final month = int.parse(parts[1]);
     final day = int.parse(parts[2]);
-    
+
     return HolidayModel(
       date: DateTime(year, month, day),
       name: json['keterangan'] ?? '',

@@ -127,9 +127,7 @@ class _SearchBar extends StatelessWidget {
                 onSubmitted: controller.search,
                 decoration: InputDecoration(
                   hintText: 'Cari lagu, artis, atau album...',
-                  hintStyle: TextStyle(
-                    color: Colors.white.withOpacity(0.35),
-                  ),
+                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.35)),
                   prefixIcon: Icon(
                     Icons.search_rounded,
                     color: Colors.white.withOpacity(0.4),

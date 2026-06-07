@@ -221,10 +221,10 @@ class BookRecommendation {
   }
 
   Map<String, dynamic> toJson() => {
-        'title': title,
-        'author': author,
-        'genre': genre,
-        'reason': reason,
-        'coverUrl': coverUrl,
-      };
+    'title': title,
+    'author': author,
+    'genre': genre,
+    'reason': reason,
+    'coverUrl': coverUrl,
+  };
 }
