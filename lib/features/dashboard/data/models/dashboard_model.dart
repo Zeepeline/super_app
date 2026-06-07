@@ -55,13 +55,13 @@ class TaskModel extends TaskEntity {
       description: json['description'] ?? '',
       category: json['category'] ?? 'Work',
       priority: _parsePriority(json['priority']),
-      dueDate: json['due_date'] != null 
-          ? DateTime.parse(json['due_date']) 
+      dueDate: json['due_date'] != null
+          ? DateTime.parse(json['due_date'])
           : DateTime.now(),
       time: json['time'] ?? '00:00',
       isCompleted: json['is_completed'] ?? false,
-      subTasks: json['sub_tasks'] != null 
-          ? List<String>.from(json['sub_tasks']) 
+      subTasks: json['sub_tasks'] != null
+          ? List<String>.from(json['sub_tasks'])
           : [],
     );
   }
@@ -69,9 +69,12 @@ class TaskModel extends TaskEntity {
   static TaskPriority _parsePriority(dynamic priority) {
     if (priority is String) {
       switch (priority.toLowerCase()) {
-        case 'high': return TaskPriority.high;
-        case 'low': return TaskPriority.low;
-        default: return TaskPriority.medium;
+        case 'high':
+          return TaskPriority.high;
+        case 'low':
+          return TaskPriority.low;
+        default:
+          return TaskPriority.medium;
       }
     }
     return TaskPriority.medium;

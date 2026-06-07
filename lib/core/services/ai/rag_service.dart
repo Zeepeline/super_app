@@ -32,7 +32,9 @@ class RagService {
       // Graph Search (Entity-Linker)
       // Ekstrak entitas sederhana dari query
       final words = query.split(' ').where((w) => w.length > 3).toList();
-      final relatedFacts = _aiToolsService.getMemoryService().findRelatedFacts(words);
+      final relatedFacts = _aiToolsService.getMemoryService().findRelatedFacts(
+        words,
+      );
       if (relatedFacts.isNotEmpty) {
         graphContext = relatedFacts.map((f) => "- $f").join("\n");
       }
@@ -41,7 +43,7 @@ class RagService {
     }
 
     // 2. Tools sudah didefinisikan secara global di GeminiService
-    const List<Tool>? tools = null; 
+    const List<Tool>? tools = null;
 
     // 3. Prepare Prompt with Augmented Context (Hybrid RAG)
     final prompt =
