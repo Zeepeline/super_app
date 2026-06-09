@@ -8,7 +8,7 @@ class LyricsView extends StatelessWidget {
   final String? plainLyrics;
   final PlayerUIController controller = Get.find<PlayerUIController>();
   final ScrollController _scrollController = ScrollController();
-  
+
   // Use a map to store keys for each lyric line
   final Map<int, GlobalKey> _itemKeys = {};
 
@@ -43,15 +43,11 @@ class LyricsView extends StatelessWidget {
           builder: (context, snapshot) {
             final position = snapshot.data ?? Duration.zero;
 
-            // Find active index
-            int activeIndex = -1;
-            for (int i = 0; i < controller.lyrics.length; i++) {
-              if (position >= controller.lyrics[i].startTime) {
-                activeIndex = i;
-              } else {
-                break;
-              }
-            }
+            // Efficiently find active index using binary search (O(log n))
+            final activeIndex = controller.lyricsService.findActiveIndex(
+              position,
+              controller.lyrics,
+            );
 
             // Trigger scroll with centering
             if (activeIndex != -1) {
@@ -62,7 +58,10 @@ class LyricsView extends StatelessWidget {
 
             return ListView.builder(
               controller: _scrollController,
-              padding: EdgeInsets.only(top: topPadding, bottom: screenHeight * 0.7),
+              padding: EdgeInsets.only(
+                top: topPadding,
+                bottom: screenHeight * 0.7,
+              ),
               itemCount: controller.lyrics.length,
               itemBuilder: (context, index) {
                 final lyric = controller.lyrics[index];
