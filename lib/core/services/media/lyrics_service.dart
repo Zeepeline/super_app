@@ -8,6 +8,56 @@ class LyricsService {
   final Dio _dio;
   final yt_exp.YoutubeExplode _yt = yt_exp.YoutubeExplode();
 
+  // Pre-compiled RegExps for performance
+  static final _officialRegExp = RegExp(
+    r'\(Official.*?\)',
+    caseSensitive: false,
+  );
+  static final _officialBracketRegExp = RegExp(
+    r'\[Official.*?\]',
+    caseSensitive: false,
+  );
+  static final _lyricVideoRegExp = RegExp(
+    r'\(Lyric.*?Video\)',
+    caseSensitive: false,
+  );
+  static final _lyricVideoBracketRegExp = RegExp(
+    r'\[Lyric.*?Video\]',
+    caseSensitive: false,
+  );
+  static final _musicVideoRegExp = RegExp(
+    r'\(Music.*?Video\)',
+    caseSensitive: false,
+  );
+  static final _musicVideoBracketRegExp = RegExp(
+    r'\[Music.*?Video\]',
+    caseSensitive: false,
+  );
+  static final _videoRegExp = RegExp(r'\(Video\)', caseSensitive: false);
+  static final _videoBracketRegExp = RegExp(r'\[Video\]', caseSensitive: false);
+  static final _audioRegExp = RegExp(r'\(Audio\)', caseSensitive: false);
+  static final _audioBracketRegExp = RegExp(r'\[Audio\]', caseSensitive: false);
+  static final _visualizerRegExp = RegExp(
+    r'\(Visualizer\)',
+    caseSensitive: false,
+  );
+  static final _visualizerBracketRegExp = RegExp(
+    r'\[Visualizer\]',
+    caseSensitive: false,
+  );
+  static final _explicitRegExp = RegExp(r'\(Explicit\)', caseSensitive: false);
+  static final _explicitBracketRegExp = RegExp(
+    r'\[Explicit\]',
+    caseSensitive: false,
+  );
+  static final _featRegExp = RegExp(r'\(feat\..*?\)', caseSensitive: false);
+  static final _ftRegExp = RegExp(r'\(ft\..*?\)', caseSensitive: false);
+  static final _featEndRegExp = RegExp(r'feat\..*$', caseSensitive: false);
+  static final _bracketsRegExp = RegExp(r'\[.*?\]');
+  static final _whitespaceRegExp = RegExp(r'\s+');
+  static final _tagRegex = RegExp(r'\[(\d+):(\d+)\.(\d+)\]');
+  static final _anyTagRegex = RegExp(r'\[.*?\]');
+
   LyricsService(this._dio);
 
   Future<Map<String, String?>> fetchLyrics(
@@ -165,32 +215,34 @@ class LyricsService {
   }
 
   String _cleanMetadata(String text) {
-    if (text.isEmpty) return text;
+    if (text.isEmpty) {
+      return text;
+    }
 
     return text
         // Remove common YouTube tags in brackets/parentheses
-        .replaceAll(RegExp(r'\(Official.*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Official.*?\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Lyric.*?Video\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Lyric.*?Video\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Music.*?Video\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Music.*?Video\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Video\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Video\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Audio\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Audio\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Visualizer\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Visualizer\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Explicit\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Explicit\]', caseSensitive: false), '')
+        .replaceAll(_officialRegExp, '')
+        .replaceAll(_officialBracketRegExp, '')
+        .replaceAll(_lyricVideoRegExp, '')
+        .replaceAll(_lyricVideoBracketRegExp, '')
+        .replaceAll(_musicVideoRegExp, '')
+        .replaceAll(_musicVideoBracketRegExp, '')
+        .replaceAll(_videoRegExp, '')
+        .replaceAll(_videoBracketRegExp, '')
+        .replaceAll(_audioRegExp, '')
+        .replaceAll(_audioBracketRegExp, '')
+        .replaceAll(_visualizerRegExp, '')
+        .replaceAll(_visualizerBracketRegExp, '')
+        .replaceAll(_explicitRegExp, '')
+        .replaceAll(_explicitBracketRegExp, '')
         // Remove features
-        .replaceAll(RegExp(r'\(feat\..*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(ft\..*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'feat\..*$', caseSensitive: false), '')
+        .replaceAll(_featRegExp, '')
+        .replaceAll(_ftRegExp, '')
+        .replaceAll(_featEndRegExp, '')
         // Remove anything else in brackets (often junk)
-        .replaceAll(RegExp(r'\[.*?\]'), '')
+        .replaceAll(_bracketsRegExp, '')
         // Clean up whitespace
-        .replaceAll(RegExp(r'\s+'), ' ')
+        .replaceAll(_whitespaceRegExp, ' ')
         .trim();
   }
 
@@ -200,17 +252,18 @@ class LyricsService {
     final lines = lrc.split('\n');
     final lyricLines = <LyricLine>[];
 
-    // Regular expression to match all [mm:ss.xx] or [mm:ss.xxx] in a line
-    final tagRegex = RegExp(r'\[(\d+):(\d+)\.(\d+)\]');
-
     for (var line in lines) {
       // Find all timestamp matches in the line
-      final matches = tagRegex.allMatches(line);
-      if (matches.isEmpty) continue;
+      final matches = _tagRegex.allMatches(line);
+      if (matches.isEmpty) {
+        continue;
+      }
 
       // Extract text: everything that is not a tag
-      final text = line.replaceAll(RegExp(r'\[.*?\]'), '').trim();
-      if (text.isEmpty) continue;
+      final text = line.replaceAll(_anyTagRegex, '').trim();
+      if (text.isEmpty) {
+        continue;
+      }
 
       for (var match in matches) {
         final minutes = int.parse(match.group(1)!);
@@ -242,5 +295,25 @@ class LyricsService {
     lyricLines.sort((a, b) => a.startTime.compareTo(b.startTime));
 
     return lyricLines;
+  }
+
+  /// Efficiently find the active lyric index using binary search (O(log n)).
+  int findActiveIndex(Duration position, List<LyricLine> lyrics) {
+    if (lyrics.isEmpty) return -1;
+
+    int low = 0;
+    int high = lyrics.length - 1;
+    int result = -1;
+
+    while (low <= high) {
+      int mid = low + (high - low) ~/ 2;
+      if (lyrics[mid].startTime <= position) {
+        result = mid;
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
+    }
+    return result;
   }
 }
