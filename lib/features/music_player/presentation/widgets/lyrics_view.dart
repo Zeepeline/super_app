@@ -3,16 +3,38 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:super_app/features/music_player/presentation/controllers/player_ui_controller.dart';
 
-class LyricsView extends StatelessWidget {
+class LyricsView extends StatefulWidget {
   final String? syncedLyrics;
   final String? plainLyrics;
+
+  const LyricsView({super.key, this.syncedLyrics, this.plainLyrics});
+
+  @override
+  State<LyricsView> createState() => _LyricsViewState();
+}
+
+class _LyricsViewState extends State<LyricsView> {
   final PlayerUIController controller = Get.find<PlayerUIController>();
   final ScrollController _scrollController = ScrollController();
-  
-  // Use a map to store keys for each lyric line
   final Map<int, GlobalKey> _itemKeys = {};
+  int _activeIndex = -1;
 
-  LyricsView({super.key, this.syncedLyrics, this.plainLyrics});
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.updateLyrics(widget.syncedLyrics);
+    });
+  }
+
+  @override
+  void didUpdateWidget(LyricsView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.syncedLyrics != oldWidget.syncedLyrics) {
+      controller.updateLyrics(widget.syncedLyrics);
+      _activeIndex = -1;
+    }
+  }
 
   void _scrollToCurrent(int index) {
     final key = _itemKeys[index];
@@ -21,7 +43,7 @@ class LyricsView extends StatelessWidget {
         key.currentContext!,
         duration: const Duration(milliseconds: 800),
         curve: Curves.easeOutCubic,
-        alignment: 0.15, // Keep active lyric at 15% from the top
+        alignment: 0.15,
       );
     }
   }
@@ -31,11 +53,6 @@ class LyricsView extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
     final topPadding = screenHeight * 0.15;
 
-    // Update lyrics in controller
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.updateLyrics(syncedLyrics);
-    });
-
     return Obx(() {
       if (controller.lyrics.isNotEmpty) {
         return StreamBuilder<Duration>(
@@ -43,32 +60,31 @@ class LyricsView extends StatelessWidget {
           builder: (context, snapshot) {
             final position = snapshot.data ?? Duration.zero;
 
-            // Find active index
-            int activeIndex = -1;
-            for (int i = 0; i < controller.lyrics.length; i++) {
-              if (position >= controller.lyrics[i].startTime) {
-                activeIndex = i;
-              } else {
-                break;
-              }
-            }
+            // Use optimized binary search from LyricsService
+            final newIndex = controller.lyricsService.findActiveIndex(
+              controller.lyrics,
+              position,
+            );
 
-            // Trigger scroll with centering
-            if (activeIndex != -1) {
+            // Only trigger updates and scrolling if the active index changed
+            if (newIndex != _activeIndex && newIndex != -1) {
+              _activeIndex = newIndex;
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                _scrollToCurrent(activeIndex);
+                if (mounted) _scrollToCurrent(newIndex);
               });
             }
 
             return ListView.builder(
               controller: _scrollController,
-              padding: EdgeInsets.only(top: topPadding, bottom: screenHeight * 0.7),
+              padding: EdgeInsets.only(
+                top: topPadding,
+                bottom: screenHeight * 0.7,
+              ),
               itemCount: controller.lyrics.length,
               itemBuilder: (context, index) {
                 final lyric = controller.lyrics[index];
-                final isActive = index == activeIndex;
+                final isActive = index == _activeIndex;
 
-                // Create or reuse key for this index
                 _itemKeys[index] ??= GlobalKey();
 
                 return AnimatedContainer(
@@ -98,11 +114,11 @@ class LyricsView extends StatelessWidget {
         );
       }
 
-      if (plainLyrics != null && plainLyrics!.isNotEmpty) {
+      if (widget.plainLyrics != null && widget.plainLyrics!.isNotEmpty) {
         return SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
           child: Text(
-            plainLyrics!,
+            widget.plainLyrics!,
             style: GoogleFonts.plusJakartaSans(
               fontSize: 18,
               fontWeight: FontWeight.w500,
