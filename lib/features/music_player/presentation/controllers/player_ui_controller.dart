@@ -9,7 +9,7 @@ import 'package:super_app/features/music_player/presentation/cubit/player_cubit.
 import 'package:super_app/features/music_player/presentation/cubit/player_state.dart';
 
 class PlayerUIController extends GetxController {
-  final LyricsService _lyricsService = sl<LyricsService>();
+  final LyricsService lyricsService = sl<LyricsService>();
 
   // Track states mirrored from BLoC for fine-grained reactivity
   final Rxn<TrackEntity> currentTrack = Rxn<TrackEntity>();
@@ -92,6 +92,6 @@ class PlayerUIController extends GetxController {
     if (rawLyrics.value == lrc) return;
 
     rawLyrics.value = lrc;
-    lyrics.value = _lyricsService.parseLrc(lrc);
+    lyrics.value = lyricsService.parseLrc(lrc);
   }
 }
