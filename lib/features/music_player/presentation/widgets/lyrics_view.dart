@@ -43,15 +43,11 @@ class LyricsView extends StatelessWidget {
           builder: (context, snapshot) {
             final position = snapshot.data ?? Duration.zero;
 
-            // Find active index
-            int activeIndex = -1;
-            for (int i = 0; i < controller.lyrics.length; i++) {
-              if (position >= controller.lyrics[i].startTime) {
-                activeIndex = i;
-              } else {
-                break;
-              }
-            }
+            // Find active index using optimized binary search
+            final activeIndex = controller.lyricsService.findActiveIndex(
+              controller.lyrics,
+              position,
+            );
 
             // Trigger scroll with centering
             if (activeIndex != -1) {
