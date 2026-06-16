@@ -15,6 +15,9 @@ class MediaImportService {
 
   MediaImportService();
 
+  /// Pre-compiled regex for YouTube video ID extraction
+  static final _ytPattern = RegExp(r"^(.*)\s\[([a-zA-Z0-9_-]{11})\]$");
+
   /// Static flag to prevent concurrent calls across any instance or hot-restart
   static bool _isPickerActive = false;
 
@@ -123,44 +126,51 @@ class MediaImportService {
 
     final supportedExtensions = ['.mp3', '.m4a', '.wav', '.flac'];
 
-    for (var path in filePaths) {
-      if (path == null) continue;
-      final ext = p.extension(path).toLowerCase();
+    // Reuse a single player instance for duration extraction to save resources
+    final player = AudioPlayer();
+    try {
+      for (var path in filePaths) {
+        if (path == null) continue;
+        final ext = p.extension(path).toLowerCase();
 
-      if (supportedExtensions.contains(ext)) {
-        final file = File(path);
-        final fileName = p.basename(path);
-        final newPath = p.join(musicDir.path, fileName);
+        if (supportedExtensions.contains(ext)) {
+          final file = File(path);
+          final fileName = p.basename(path);
+          final newPath = p.join(musicDir.path, fileName);
 
-        // Copy to internal storage
-        await file.copy(newPath);
+          // Copy to internal storage
+          await file.copy(newPath);
 
-        final title = p.basenameWithoutExtension(fileName);
-        // lyrics are now fetched on-demand during playback or during direct download
-        final durationText = await getAudioDurationText(newPath);
+          final title = p.basenameWithoutExtension(fileName);
+          // lyrics are now fetched on-demand during playback or during direct download
+          final durationText = await getAudioDurationText(newPath, player: player);
 
-        importedTracks.add(
-          TrackModel(
-            idField: _uuid.v4(),
-            titleField: title,
-            artistField: 'Local Artist',
-            albumField: 'Local Music',
-            albumArtUrlField:
-                'https://images.unsplash.com/photo-1514525253361-bee8ea36b745?auto=format&fit=crop&q=80&w=300',
-            durationField: durationText,
-            localPathField: newPath,
-            audioUrlField: newPath,
-            syncedLyricsField: null,
-            plainLyricsField: null,
-          ),
-        );
+          importedTracks.add(
+            TrackModel(
+              idField: _uuid.v4(),
+              titleField: title,
+              artistField: 'Local Artist',
+              albumField: 'Local Music',
+              albumArtUrlField:
+                  'https://images.unsplash.com/photo-1514525253361-bee8ea36b745?auto=format&fit=crop&q=80&w=300',
+              durationField: durationText,
+              localPathField: newPath,
+              audioUrlField: newPath,
+              syncedLyricsField: null,
+              plainLyricsField: null,
+            ),
+          );
+        }
       }
+    } finally {
+      await player.dispose();
     }
     return importedTracks;
   }
 
   /// Load music files bundled with the app (from assets/music/).
   Future<List<TrackModel>> loadBundledAssets() async {
+    final player = AudioPlayer();
     try {
       final appDir = await getApplicationDocumentsDirectory();
       final musicDir = Directory(p.join(appDir.path, 'imported_music'));
@@ -195,6 +205,7 @@ class MediaImportService {
         final durationText = await getAudioDurationText(
           'assets/music/$fileName',
           isAsset: true,
+          player: player,
         );
 
         importedTracks.add(
@@ -214,10 +225,11 @@ class MediaImportService {
         );
       }
 
-   
       return importedTracks;
     } catch (e) {
       return [];
+    } finally {
+      await player.dispose();
     }
   }
 
@@ -249,38 +261,39 @@ class MediaImportService {
       final List<TrackModel> discoveredTracks = [];
       final supportedExtensions = ['.mp3', '.m4a', '.wav', '.flac'];
 
-      for (var path in filePaths) {
-        // QUICK EXIT: skip if we already have this in library
-        if (existingPaths != null && existingPaths.contains(path)) continue;
+      // Reuse a single player instance for duration extraction to save resources
+      final player = AudioPlayer();
+      try {
+        for (var path in filePaths) {
+          // QUICK EXIT: skip if we already have this in library
+          if (existingPaths != null && existingPaths.contains(path)) continue;
 
-        final ext = p.extension(path).toLowerCase();
-        if (supportedExtensions.contains(ext)) {
-          final fileName = p.basename(path);
-          var title = p.basenameWithoutExtension(fileName);
+          final ext = p.extension(path).toLowerCase();
+          if (supportedExtensions.contains(ext)) {
+            final fileName = p.basename(path);
+            final baseName = p.basenameWithoutExtension(fileName);
+            var title = baseName;
 
-          // Regex to match "Title [VideoID]" and extract "Title" and "VideoID"
-          final ytPattern = RegExp(r"^(.*)\s\[([a-zA-Z0-9_-]{11})\]$");
-          final match = ytPattern.firstMatch(
-            p.basenameWithoutExtension(fileName),
-          );
-          String stableId = _uuid.v4();
+            // Regex to match "Title [VideoID]" and extract "Title" and "VideoID"
+            final match = _ytPattern.firstMatch(baseName);
+            String stableId = _uuid.v4();
 
-          if (match != null) {
-            title = match.group(1)!;
-            stableId = match.group(2)!; // Use YouTube ID as stable ID
-          } else {
-            // For non-YouTube files, use filename as a semi-stable ID
-            // (Better than random UUID which causes duplicates on path change)
-            stableId = "local_${p.basenameWithoutExtension(fileName)}";
-          }
+            if (match != null) {
+              title = match.group(1)!;
+              stableId = match.group(2)!; // Use YouTube ID as stable ID
+            } else {
+              // For non-YouTube files, use filename as a semi-stable ID
+              // (Better than random UUID which causes duplicates on path change)
+              stableId = "local_$baseName";
+            }
 
-          // Replace underscores/hyphens with spaces if they look like they were sanitized
-          title = title.replaceAll('_', ' ').replaceAll('-', ' ');
+            // Replace underscores/hyphens with spaces if they look like they were sanitized
+            title = title.replaceAll('_', ' ').replaceAll('-', ' ');
 
-          // lyrics are now fetched on-demand during playback or during direct download
-          final durationText = await getAudioDurationText(path);
+            // lyrics are now fetched on-demand during playback or during direct download
+            final durationText = await getAudioDurationText(path, player: player);
 
-          discoveredTracks.add(
+            discoveredTracks.add(
             TrackModel(
               idField: stableId,
               titleField: title,
@@ -299,24 +312,29 @@ class MediaImportService {
       }
 
     
-      return discoveredTracks;
+        return discoveredTracks;
+      } finally {
+        await player.dispose();
+      }
     } catch (e) {
       return [];
     }
   }
 
   /// Helper to get formatted duration (m:ss) from a file or asset.
+  /// [player] optionally allows reusing an existing AudioPlayer instance.
   Future<String> getAudioDurationText(
     String path, {
     bool isAsset = false,
+    AudioPlayer? player,
   }) async {
-    final player = AudioPlayer();
+    final effectivePlayer = player ?? AudioPlayer();
     try {
       Duration? duration;
       if (isAsset) {
-        duration = await player.setAsset(path);
+        duration = await effectivePlayer.setAsset(path);
       } else {
-        duration = await player.setFilePath(path);
+        duration = await effectivePlayer.setFilePath(path);
       }
 
       if (duration == null || duration == Duration.zero) return "0:00";
@@ -327,7 +345,9 @@ class MediaImportService {
     } catch (e) {
       return "0:00";
     } finally {
-      await player.dispose();
+      if (player == null) {
+        await effectivePlayer.dispose();
+      }
     }
   }
 }
