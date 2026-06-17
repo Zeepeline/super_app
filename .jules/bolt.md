@@ -1,0 +1,3 @@
+## 2025-05-22 - Redundant Scroll Animations in Stream-Driven UI
+**Learning:** In Flutter, triggering animations (like `Scrollable.ensureVisible`) inside `addPostFrameCallback` from a `StreamBuilder` can cause significant UI thread jank if the stream updates frequently (e.g., a position stream). Even if the goal is to keep an item in view, the animation should only be triggered when the target actually changes.
+**Action:** Always implement a stateful check (e.g., `_lastActiveIndex`) to compare the new target with the previous one before initiating a scroll animation in position-driven UI components.
