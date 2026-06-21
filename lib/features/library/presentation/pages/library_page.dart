@@ -125,18 +125,20 @@ class LibraryPage extends StatelessWidget {
                         }
 
                         if (state.selectedCategory == LibraryCategory.artists) {
-                          final artists = allTracks
-                              .map((t) => t.artist)
-                              .toSet()
-                              .toList();
+                          // Group by artist in a single pass O(N)
+                          final Map<String, List<home.TrackEntity>>
+                          artistGroups = {};
+                          for (var t in allTracks) {
+                            artistGroups.putIfAbsent(t.artist, () => []).add(t);
+                          }
+                          final artists = artistGroups.keys.toList();
+
                           return ListView.builder(
                             padding: EdgeInsets.zero,
                             itemCount: artists.length,
                             itemBuilder: (context, index) {
                               final artist = artists[index];
-                              final artistTracks = allTracks
-                                  .where((t) => t.artist == artist)
-                                  .toList();
+                              final artistTracks = artistGroups[artist]!;
                               return _buildArtistItem(
                                 context,
                                 artist,
