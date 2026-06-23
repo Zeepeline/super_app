@@ -48,7 +48,9 @@ class LyricsService {
           'plain': data['plainLyrics'] as String?,
         };
       }
-    } catch (e) {}
+    } catch (e) {
+      // Ignore errors and continue to next layer
+    }
 
     // LAYER 2: Try YouTube Captions if ID is available
     if (youtubeId != null) {
@@ -159,8 +161,10 @@ class LyricsService {
           'synced': bestMatch['syncedLyrics'] as String?,
           'plain': bestMatch['plainLyrics'] as String?,
         };
-      } else {}
-    } catch (e) {}
+      }
+    } catch (e) {
+      // Ignore errors and return empty
+    }
     return {'synced': null, 'plain': null};
   }
 
@@ -242,5 +246,27 @@ class LyricsService {
     lyricLines.sort((a, b) => a.startTime.compareTo(b.startTime));
 
     return lyricLines;
+  }
+
+  /// Efficiently find the active lyric index based on the current position
+  /// using binary search (O(log n)).
+  int findActiveIndex(List<LyricLine> lyrics, Duration position) {
+    if (lyrics.isEmpty) return -1;
+    if (position < lyrics[0].startTime) return -1;
+
+    int low = 0;
+    int high = lyrics.length - 1;
+    int result = -1;
+
+    while (low <= high) {
+      int mid = low + ((high - low) >> 1);
+      if (lyrics[mid].startTime <= position) {
+        result = mid;
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
+    }
+    return result;
   }
 }
