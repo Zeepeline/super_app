@@ -243,4 +243,28 @@ class LyricsService {
 
     return lyricLines;
   }
+
+  /// Finds the index of the lyric line that should be active at the given [position].
+  /// Uses binary search for O(log n) performance.
+  int findActiveIndex(List<LyricLine> lyrics, Duration position) {
+    if (lyrics.isEmpty) return -1;
+    if (position < lyrics.first.startTime) return -1;
+
+    int low = 0;
+    int high = lyrics.length - 1;
+
+    while (low <= high) {
+      // Bitwise right-shift for fast midpoint calculation
+      int mid = low + ((high - low) >> 1);
+      if (lyrics[mid].startTime <= position) {
+        if (mid == lyrics.length - 1 || lyrics[mid + 1].startTime > position) {
+          return mid;
+        }
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
+    }
+    return -1;
+  }
 }
