@@ -70,3 +70,23 @@ class TrackEntity extends Equatable {
     plainLyrics,
   ];
 }
+
+extension TrackEntityX on TrackEntity {
+  Duration get durationObject {
+    if (duration.isEmpty) return Duration.zero;
+    final parts = duration.split(':');
+    if (parts.length == 2) {
+      return Duration(
+        minutes: int.tryParse(parts[0]) ?? 0,
+        seconds: int.tryParse(parts[1]) ?? 0,
+      );
+    } else if (parts.length == 3) {
+      return Duration(
+        hours: int.tryParse(parts[0]) ?? 0,
+        minutes: int.tryParse(parts[1]) ?? 0,
+        seconds: int.tryParse(parts[2]) ?? 0,
+      );
+    }
+    return Duration.zero;
+  }
+}
