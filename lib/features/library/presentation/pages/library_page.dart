@@ -13,9 +13,8 @@ import 'library_detail_page.dart';
 class LibraryPage extends StatelessWidget {
   const LibraryPage({super.key});
 
-  void _showFullPlayer(BuildContext context, home.TrackEntity track) {
-    // Convert home entity to player entity
-    final playerTrack = player.TrackEntity(
+  player.TrackEntity _toPlayerTrack(home.TrackEntity track) {
+    return player.TrackEntity(
       id: track.id,
       title: track.title,
       artist: track.artist,
@@ -26,6 +25,10 @@ class LibraryPage extends StatelessWidget {
       isFavorite: track.isFavorite,
       localPath: track.localPath,
     );
+  }
+
+  void _showFullPlayer(BuildContext context, home.TrackEntity track) {
+    final playerTrack = _toPlayerTrack(track);
 
     Navigator.of(context).push(
       PageRouteBuilder(
@@ -51,25 +54,6 @@ class LibraryPage extends StatelessWidget {
     context.read<PlayerCubit>().selectAndPlay(playerTrack);
   }
 
-  List<player.TrackEntity> _convertToPlayerTracks(
-    List<home.TrackEntity> tracks,
-  ) {
-    return tracks
-        .map(
-          (track) => player.TrackEntity(
-            id: track.id,
-            title: track.title,
-            artist: track.artist,
-            album: track.album,
-            albumArtUrl: track.albumArtUrl,
-            audioUrl: track.audioUrl,
-            duration: _parseDuration(track.duration),
-            isFavorite: track.isFavorite,
-            localPath: track.localPath,
-          ),
-        )
-        .toList();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,36 +109,32 @@ class LibraryPage extends StatelessWidget {
                         }
 
                         if (state.selectedCategory == LibraryCategory.artists) {
-                          final artists = allTracks
-                              .map((t) => t.artist)
-                              .toSet()
-                              .toList();
+                          // Optimization: Group by artist in O(N) single pass and pre-convert
+                          final artistGroups = <String, List<player.TrackEntity>>{};
+                          for (final t in allTracks) {
+                            artistGroups.putIfAbsent(t.artist, () => []).add(_toPlayerTrack(t));
+                          }
+
+                          final artists = artistGroups.keys.toList();
                           return ListView.builder(
                             padding: EdgeInsets.zero,
                             itemCount: artists.length,
                             itemBuilder: (context, index) {
                               final artist = artists[index];
-                              final artistTracks = allTracks
-                                  .where((t) => t.artist == artist)
-                                  .toList();
                               return _buildArtistItem(
                                 context,
                                 artist,
-                                _convertToPlayerTracks(artistTracks),
+                                artistGroups[artist]!,
                               );
                             },
                           );
                         } else if (state.selectedCategory ==
                             LibraryCategory.albums) {
-                          // Group by album name + artist, keeping the first art URL found
-                          final Map<String, List<home.TrackEntity>>
-                          albumGroups = {};
-                          for (var t in allTracks) {
+                          // Optimization: Group by album in O(N) single pass and pre-convert
+                          final albumGroups = <String, List<player.TrackEntity>>{};
+                          for (final t in allTracks) {
                             final key = "${t.album}|${t.artist}";
-                            if (!albumGroups.containsKey(key)) {
-                              albumGroups[key] = [];
-                            }
-                            albumGroups[key]!.add(t);
+                            albumGroups.putIfAbsent(key, () => []).add(_toPlayerTrack(t));
                           }
 
                           final albumKeys = albumGroups.keys.toList();
@@ -174,7 +154,7 @@ class LibraryPage extends StatelessWidget {
                                 albumName,
                                 artist,
                                 artUrl,
-                                _convertToPlayerTracks(albumTracks),
+                                albumTracks,
                               );
                             },
                           );
