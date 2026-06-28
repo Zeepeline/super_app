@@ -8,6 +8,14 @@ class LyricsService {
   final Dio _dio;
   final yt_exp.YoutubeExplode _yt = yt_exp.YoutubeExplode();
 
+  static final _metadataPattern = RegExp(
+    r'(\((?:Official|Lyric|Music|Video|Audio|Visualizer|Explicit|feat\.|ft\.).*?\)|\[(?:Official|Lyric|Music|Video|Audio|Visualizer|Explicit).*?\]|feat\..*$)',
+    caseSensitive: false,
+  );
+  static final _bracketPattern = RegExp(r'\[.*?\]');
+  static final _whitespacePattern = RegExp(r'\s+');
+  static final _tagRegex = RegExp(r'\[(\d+):(\d+)\.(\d+)\]');
+
   LyricsService(this._dio);
 
   Future<Map<String, String?>> fetchLyrics(
@@ -48,7 +56,9 @@ class LyricsService {
           'plain': data['plainLyrics'] as String?,
         };
       }
-    } catch (e) {}
+    } catch (e) {
+      // Ignore errors in background fetch
+    }
 
     // LAYER 2: Try YouTube Captions if ID is available
     if (youtubeId != null) {
@@ -159,8 +169,12 @@ class LyricsService {
           'synced': bestMatch['syncedLyrics'] as String?,
           'plain': bestMatch['plainLyrics'] as String?,
         };
-      } else {}
-    } catch (e) {}
+      } else {
+        // No matches found
+      }
+    } catch (e) {
+      // Ignore errors in fallback search
+    }
     return {'synced': null, 'plain': null};
   }
 
@@ -168,29 +182,10 @@ class LyricsService {
     if (text.isEmpty) return text;
 
     return text
-        // Remove common YouTube tags in brackets/parentheses
-        .replaceAll(RegExp(r'\(Official.*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Official.*?\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Lyric.*?Video\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Lyric.*?Video\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Music.*?Video\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Music.*?Video\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Video\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Video\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Audio\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Audio\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Visualizer\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Visualizer\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Explicit\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Explicit\]', caseSensitive: false), '')
-        // Remove features
-        .replaceAll(RegExp(r'\(feat\..*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(ft\..*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'feat\..*$', caseSensitive: false), '')
-        // Remove anything else in brackets (often junk)
-        .replaceAll(RegExp(r'\[.*?\]'), '')
-        // Clean up whitespace
-        .replaceAll(RegExp(r'\s+'), ' ')
+        // Consolidate metadata cleaning into passes with pre-compiled RegExps
+        .replaceAll(_metadataPattern, '')
+        .replaceAll(_bracketPattern, '')
+        .replaceAll(_whitespacePattern, ' ')
         .trim();
   }
 
@@ -200,16 +195,13 @@ class LyricsService {
     final lines = lrc.split('\n');
     final lyricLines = <LyricLine>[];
 
-    // Regular expression to match all [mm:ss.xx] or [mm:ss.xxx] in a line
-    final tagRegex = RegExp(r'\[(\d+):(\d+)\.(\d+)\]');
-
     for (var line in lines) {
-      // Find all timestamp matches in the line
-      final matches = tagRegex.allMatches(line);
+      // Find all timestamp matches in the line using pre-compiled RegExp
+      final matches = _tagRegex.allMatches(line);
       if (matches.isEmpty) continue;
 
       // Extract text: everything that is not a tag
-      final text = line.replaceAll(RegExp(r'\[.*?\]'), '').trim();
+      final text = line.replaceAll(_bracketPattern, '').trim();
       if (text.isEmpty) continue;
 
       for (var match in matches) {
@@ -242,5 +234,31 @@ class LyricsService {
     lyricLines.sort((a, b) => a.startTime.compareTo(b.startTime));
 
     return lyricLines;
+  }
+
+  /// Finds the index of the active lyric line for the given [position]
+  /// using an O(log n) binary search.
+  int findActiveIndex(List<LyricLine> lyrics, Duration position) {
+    if (lyrics.isEmpty) return -1;
+    if (position < lyrics[0].startTime) return -1;
+
+    int low = 0;
+    int high = lyrics.length - 1;
+
+    while (low <= high) {
+      // Use bitwise right-shift for faster midpoint calculation
+      int mid = low + ((high - low) >> 1);
+
+      if (lyrics[mid].startTime <= position) {
+        if (mid == lyrics.length - 1 || lyrics[mid + 1].startTime > position) {
+          return mid;
+        }
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
+    }
+
+    return -1;
   }
 }
