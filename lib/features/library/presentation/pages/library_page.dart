@@ -13,19 +13,23 @@ import 'library_detail_page.dart';
 class LibraryPage extends StatelessWidget {
   const LibraryPage({super.key});
 
-  void _showFullPlayer(BuildContext context, home.TrackEntity track) {
-    // Convert home entity to player entity
-    final playerTrack = player.TrackEntity(
+  player.TrackEntity _toPlayerTrack(home.TrackEntity track) {
+    return player.TrackEntity(
       id: track.id,
       title: track.title,
       artist: track.artist,
       album: track.album,
       albumArtUrl: track.albumArtUrl,
       audioUrl: track.audioUrl,
-      duration: _parseDuration(track.duration),
+      duration: track.durationObject,
       isFavorite: track.isFavorite,
       localPath: track.localPath,
     );
+  }
+
+  void _showFullPlayer(BuildContext context, home.TrackEntity track) {
+    // Convert home entity to player entity
+    final playerTrack = _toPlayerTrack(track);
 
     Navigator.of(context).push(
       PageRouteBuilder(
@@ -54,21 +58,7 @@ class LibraryPage extends StatelessWidget {
   List<player.TrackEntity> _convertToPlayerTracks(
     List<home.TrackEntity> tracks,
   ) {
-    return tracks
-        .map(
-          (track) => player.TrackEntity(
-            id: track.id,
-            title: track.title,
-            artist: track.artist,
-            album: track.album,
-            albumArtUrl: track.albumArtUrl,
-            audioUrl: track.audioUrl,
-            duration: _parseDuration(track.duration),
-            isFavorite: track.isFavorite,
-            localPath: track.localPath,
-          ),
-        )
-        .toList();
+    return tracks.map(_toPlayerTrack).toList();
   }
 
   @override
@@ -125,18 +115,24 @@ class LibraryPage extends StatelessWidget {
                         }
 
                         if (state.selectedCategory == LibraryCategory.artists) {
-                          final artists = allTracks
-                              .map((t) => t.artist)
-                              .toSet()
-                              .toList();
+                          // Group by artist in a single pass O(N)
+                          final Map<String, List<home.TrackEntity>>
+                          artistGroups = {};
+                          for (var t in allTracks) {
+                            if (!artistGroups.containsKey(t.artist)) {
+                              artistGroups[t.artist] = [];
+                            }
+                            artistGroups[t.artist]!.add(t);
+                          }
+
+                          final artists = artistGroups.keys.toList();
+
                           return ListView.builder(
                             padding: EdgeInsets.zero,
                             itemCount: artists.length,
                             itemBuilder: (context, index) {
                               final artist = artists[index];
-                              final artistTracks = allTracks
-                                  .where((t) => t.artist == artist)
-                                  .toList();
+                              final artistTracks = artistGroups[artist]!;
                               return _buildArtistItem(
                                 context,
                                 artist,
@@ -484,21 +480,4 @@ class LibraryPage extends StatelessWidget {
     );
   }
 
-  Duration _parseDuration(String durationStr) {
-    if (durationStr.isEmpty) return Duration.zero;
-    final parts = durationStr.split(':');
-    if (parts.length == 2) {
-      return Duration(
-        minutes: int.tryParse(parts[0]) ?? 0,
-        seconds: int.tryParse(parts[1]) ?? 0,
-      );
-    } else if (parts.length == 3) {
-      return Duration(
-        hours: int.tryParse(parts[0]) ?? 0,
-        minutes: int.tryParse(parts[1]) ?? 0,
-        seconds: int.tryParse(parts[2]) ?? 0,
-      );
-    }
-    return Duration.zero;
-  }
 }
