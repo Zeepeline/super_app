@@ -8,7 +8,37 @@ class LyricsService {
   final Dio _dio;
   final yt_exp.YoutubeExplode _yt = yt_exp.YoutubeExplode();
 
+  // Pre-compiled RegExps for performance
+  static final _metadataPattern = RegExp(
+    r'(\((?:Official|Lyric|Music|Video|Audio|Visualizer|Explicit|feat\.|ft\.).*?\)|\[(?:Official|Lyric|Music|Video|Audio|Visualizer|Explicit).*?\]|feat\..*$)',
+    caseSensitive: false,
+  );
+  static final _bracketPattern = RegExp(r'\[.*?\]');
+  static final _spacePattern = RegExp(r'\s+');
+  static final _tagRegex = RegExp(r'\[(\d+):(\d+)\.(\d+)\]');
+
   LyricsService(this._dio);
+
+  /// Finds the active lyric index based on the current playback position using binary search (O(log n)).
+  int findActiveIndex(List<LyricLine> lyrics, Duration position) {
+    if (lyrics.isEmpty) return -1;
+
+    int low = 0;
+    int high = lyrics.length - 1;
+    int activeIndex = -1;
+
+    while (low <= high) {
+      // Use bitwise right shift for high-performance midpoint calculation
+      int mid = low + ((high - low) >> 1);
+      if (lyrics[mid].startTime <= position) {
+        activeIndex = mid;
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
+    }
+    return activeIndex;
+  }
 
   Future<Map<String, String?>> fetchLyrics(
     String artist,
@@ -48,7 +78,9 @@ class LyricsService {
           'plain': data['plainLyrics'] as String?,
         };
       }
-    } catch (e) {}
+    } catch (e) {
+      // Ignore errors during lyric fetch
+    }
 
     // LAYER 2: Try YouTube Captions if ID is available
     if (youtubeId != null) {
@@ -159,8 +191,10 @@ class LyricsService {
           'synced': bestMatch['syncedLyrics'] as String?,
           'plain': bestMatch['plainLyrics'] as String?,
         };
-      } else {}
-    } catch (e) {}
+      }
+    } catch (e) {
+      // Ignore errors during search fallback
+    }
     return {'synced': null, 'plain': null};
   }
 
@@ -168,29 +202,12 @@ class LyricsService {
     if (text.isEmpty) return text;
 
     return text
-        // Remove common YouTube tags in brackets/parentheses
-        .replaceAll(RegExp(r'\(Official.*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Official.*?\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Lyric.*?Video\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Lyric.*?Video\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Music.*?Video\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Music.*?Video\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Video\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Video\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Audio\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Audio\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Visualizer\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Visualizer\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Explicit\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Explicit\]', caseSensitive: false), '')
-        // Remove features
-        .replaceAll(RegExp(r'\(feat\..*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(ft\..*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'feat\..*$', caseSensitive: false), '')
+        // Consolidate common YouTube tags and features into a single pass
+        .replaceAll(_metadataPattern, '')
         // Remove anything else in brackets (often junk)
-        .replaceAll(RegExp(r'\[.*?\]'), '')
+        .replaceAll(_bracketPattern, '')
         // Clean up whitespace
-        .replaceAll(RegExp(r'\s+'), ' ')
+        .replaceAll(_spacePattern, ' ')
         .trim();
   }
 
@@ -200,16 +217,13 @@ class LyricsService {
     final lines = lrc.split('\n');
     final lyricLines = <LyricLine>[];
 
-    // Regular expression to match all [mm:ss.xx] or [mm:ss.xxx] in a line
-    final tagRegex = RegExp(r'\[(\d+):(\d+)\.(\d+)\]');
-
     for (var line in lines) {
       // Find all timestamp matches in the line
-      final matches = tagRegex.allMatches(line);
+      final matches = _tagRegex.allMatches(line);
       if (matches.isEmpty) continue;
 
       // Extract text: everything that is not a tag
-      final text = line.replaceAll(RegExp(r'\[.*?\]'), '').trim();
+      final text = line.replaceAll(_bracketPattern, '').trim();
       if (text.isEmpty) continue;
 
       for (var match in matches) {
