@@ -9,6 +9,7 @@ import 'package:super_app/features/music_player/presentation/pages/music_player_
 
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/entities/track_entity.dart' as home;
+import '../../domain/entities/track_entity.dart';
 
 class PopularTrackCard extends StatelessWidget {
   final home.TrackEntity track;
@@ -24,7 +25,7 @@ class PopularTrackCard extends StatelessWidget {
       album: track.album,
       albumArtUrl: track.albumArtUrl,
       audioUrl: track.audioUrl,
-      duration: _parseDuration(track.duration),
+      duration: track.durationObject,
       isFavorite: track.isFavorite,
       localPath: track.localPath,
     );
@@ -167,21 +168,4 @@ class PopularTrackCard extends StatelessWidget {
     );
   }
 
-  Duration _parseDuration(String durationStr) {
-    if (durationStr.isEmpty) return Duration.zero;
-    final parts = durationStr.split(':');
-    if (parts.length == 2) {
-      return Duration(
-        minutes: int.tryParse(parts[0]) ?? 0,
-        seconds: int.tryParse(parts[1]) ?? 0,
-      );
-    } else if (parts.length == 3) {
-      return Duration(
-        hours: int.tryParse(parts[0]) ?? 0,
-        minutes: int.tryParse(parts[1]) ?? 0,
-        seconds: int.tryParse(parts[2]) ?? 0,
-      );
-    }
-    return Duration.zero;
-  }
 }

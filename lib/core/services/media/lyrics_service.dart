@@ -8,6 +8,15 @@ class LyricsService {
   final Dio _dio;
   final yt_exp.YoutubeExplode _yt = yt_exp.YoutubeExplode();
 
+  // Pre-compiled RegExps for performance
+  static final RegExp _metadataPattern = RegExp(
+    r'(\((?:Official|Lyric|Music|Video|Audio|Visualizer|Explicit|feat\.|ft\.).*?\)|\[(?:Official|Lyric|Music|Video|Audio|Visualizer|Explicit).*?\]|feat\..*$)',
+    caseSensitive: false,
+  );
+  static final RegExp _bracketPattern = RegExp(r'\[.*?\]');
+  static final RegExp _whitespacePattern = RegExp(r'\s+');
+  static final RegExp _tagRegex = RegExp(r'\[(\d+):(\d+)\.(\d+)\]');
+
   LyricsService(this._dio);
 
   Future<Map<String, String?>> fetchLyrics(
@@ -167,30 +176,11 @@ class LyricsService {
   String _cleanMetadata(String text) {
     if (text.isEmpty) return text;
 
+    // Optimized: Single pass for most metadata tags using pre-compiled RegExps
     return text
-        // Remove common YouTube tags in brackets/parentheses
-        .replaceAll(RegExp(r'\(Official.*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Official.*?\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Lyric.*?Video\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Lyric.*?Video\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Music.*?Video\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Music.*?Video\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Video\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Video\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Audio\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Audio\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Visualizer\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Visualizer\]', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(Explicit\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\[Explicit\]', caseSensitive: false), '')
-        // Remove features
-        .replaceAll(RegExp(r'\(feat\..*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'\(ft\..*?\)', caseSensitive: false), '')
-        .replaceAll(RegExp(r'feat\..*$', caseSensitive: false), '')
-        // Remove anything else in brackets (often junk)
-        .replaceAll(RegExp(r'\[.*?\]'), '')
-        // Clean up whitespace
-        .replaceAll(RegExp(r'\s+'), ' ')
+        .replaceAll(_metadataPattern, '')
+        .replaceAll(_bracketPattern, '')
+        .replaceAll(_whitespacePattern, ' ')
         .trim();
   }
 
@@ -200,16 +190,13 @@ class LyricsService {
     final lines = lrc.split('\n');
     final lyricLines = <LyricLine>[];
 
-    // Regular expression to match all [mm:ss.xx] or [mm:ss.xxx] in a line
-    final tagRegex = RegExp(r'\[(\d+):(\d+)\.(\d+)\]');
-
     for (var line in lines) {
       // Find all timestamp matches in the line
-      final matches = tagRegex.allMatches(line);
+      final matches = _tagRegex.allMatches(line);
       if (matches.isEmpty) continue;
 
       // Extract text: everything that is not a tag
-      final text = line.replaceAll(RegExp(r'\[.*?\]'), '').trim();
+      final text = line.replaceAll(_bracketPattern, '').trim();
       if (text.isEmpty) continue;
 
       for (var match in matches) {
@@ -242,5 +229,28 @@ class LyricsService {
     lyricLines.sort((a, b) => a.startTime.compareTo(b.startTime));
 
     return lyricLines;
+  }
+
+  /// Finds the index of the active lyric line for the given position using binary search (O(log n)).
+  int findActiveIndex(List<LyricLine> lyrics, Duration position) {
+    if (lyrics.isEmpty) return -1;
+    if (position < lyrics[0].startTime) return -1;
+
+    int low = 0;
+    int high = lyrics.length - 1;
+
+    while (low <= high) {
+      // Use bitwise right shift for efficient midpoint calculation
+      int mid = low + ((high - low) >> 1);
+      if (lyrics[mid].startTime <= position) {
+        if (mid == lyrics.length - 1 || lyrics[mid + 1].startTime > position) {
+          return mid;
+        }
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
+    }
+    return -1;
   }
 }
