@@ -24,7 +24,7 @@ class PopularTrackCard extends StatelessWidget {
       album: track.album,
       albumArtUrl: track.albumArtUrl,
       audioUrl: track.audioUrl,
-      duration: _parseDuration(track.duration),
+      duration: track.durationObject,
       isFavorite: track.isFavorite,
       localPath: track.localPath,
     );
@@ -167,21 +167,4 @@ class PopularTrackCard extends StatelessWidget {
     );
   }
 
-  Duration _parseDuration(String durationStr) {
-    if (durationStr.isEmpty) return Duration.zero;
-    final parts = durationStr.split(':');
-    if (parts.length == 2) {
-      return Duration(
-        minutes: int.tryParse(parts[0]) ?? 0,
-        seconds: int.tryParse(parts[1]) ?? 0,
-      );
-    } else if (parts.length == 3) {
-      return Duration(
-        hours: int.tryParse(parts[0]) ?? 0,
-        minutes: int.tryParse(parts[1]) ?? 0,
-        seconds: int.tryParse(parts[2]) ?? 0,
-      );
-    }
-    return Duration.zero;
-  }
 }
