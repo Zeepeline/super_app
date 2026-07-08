@@ -11,6 +11,8 @@ import 'package:super_app/features/music_player/presentation/cubit/player_state.
 class PlayerUIController extends GetxController {
   final LyricsService _lyricsService = sl<LyricsService>();
 
+  LyricsService get lyricsService => _lyricsService;
+
   // Track states mirrored from BLoC for fine-grained reactivity
   final Rxn<TrackEntity> currentTrack = Rxn<TrackEntity>();
   final RxBool isPlaying = false.obs;
