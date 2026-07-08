@@ -3,16 +3,40 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:super_app/features/music_player/presentation/controllers/player_ui_controller.dart';
 
-class LyricsView extends StatelessWidget {
+class LyricsView extends StatefulWidget {
   final String? syncedLyrics;
   final String? plainLyrics;
+
+  const LyricsView({super.key, this.syncedLyrics, this.plainLyrics});
+
+  @override
+  State<LyricsView> createState() => _LyricsViewState();
+}
+
+class _LyricsViewState extends State<LyricsView> {
   final PlayerUIController controller = Get.find<PlayerUIController>();
   final ScrollController _scrollController = ScrollController();
-  
+
   // Use a map to store keys for each lyric line
   final Map<int, GlobalKey> _itemKeys = {};
 
-  LyricsView({super.key, this.syncedLyrics, this.plainLyrics});
+  // Cache last active index to avoid redundant scrolls
+  int _lastActiveIndex = -1;
+
+  @override
+  void didUpdateWidget(LyricsView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.syncedLyrics != oldWidget.syncedLyrics) {
+      _lastActiveIndex = -1;
+      _itemKeys.clear();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   void _scrollToCurrent(int index) {
     final key = _itemKeys[index];
@@ -33,7 +57,7 @@ class LyricsView extends StatelessWidget {
 
     // Update lyrics in controller
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.updateLyrics(syncedLyrics);
+      controller.updateLyrics(widget.syncedLyrics);
     });
 
     return Obx(() {
@@ -43,18 +67,15 @@ class LyricsView extends StatelessWidget {
           builder: (context, snapshot) {
             final position = snapshot.data ?? Duration.zero;
 
-            // Find active index
-            int activeIndex = -1;
-            for (int i = 0; i < controller.lyrics.length; i++) {
-              if (position >= controller.lyrics[i].startTime) {
-                activeIndex = i;
-              } else {
-                break;
-              }
-            }
+            // Optimized: Find active index using binary search
+            int activeIndex = controller.lyricsService.findActiveIndex(
+              controller.lyrics,
+              position,
+            );
 
-            // Trigger scroll with centering
-            if (activeIndex != -1) {
+            // Optimized: Only trigger scroll if active index has changed
+            if (activeIndex != -1 && activeIndex != _lastActiveIndex) {
+              _lastActiveIndex = activeIndex;
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 _scrollToCurrent(activeIndex);
               });
@@ -62,7 +83,10 @@ class LyricsView extends StatelessWidget {
 
             return ListView.builder(
               controller: _scrollController,
-              padding: EdgeInsets.only(top: topPadding, bottom: screenHeight * 0.7),
+              padding: EdgeInsets.only(
+                top: topPadding,
+                bottom: screenHeight * 0.7,
+              ),
               itemCount: controller.lyrics.length,
               itemBuilder: (context, index) {
                 final lyric = controller.lyrics[index];
@@ -98,11 +122,11 @@ class LyricsView extends StatelessWidget {
         );
       }
 
-      if (plainLyrics != null && plainLyrics!.isNotEmpty) {
+      if (widget.plainLyrics != null && widget.plainLyrics!.isNotEmpty) {
         return SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
           child: Text(
-            plainLyrics!,
+            widget.plainLyrics!,
             style: GoogleFonts.plusJakartaSans(
               fontSize: 18,
               fontWeight: FontWeight.w500,
